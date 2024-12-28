@@ -188,6 +188,29 @@ namespace EntityComponents {
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	};
+	struct ComponentViewFollow final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentViewFollow() {
+			hasSystem = true;
+			panelViewToFollow = PanelName::GameView;
+		};
+		ComponentViewFollow(PanelName _panelViewToFollow) :
+			ComponentViewFollow()
+		{
+			panelViewToFollow = _panelViewToFollow;
+		};
+
+		PanelName panelViewToFollow;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentViewFollow(panelViewToFollow));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
 }
 
 #endif

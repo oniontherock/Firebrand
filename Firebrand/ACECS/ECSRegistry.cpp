@@ -7,7 +7,7 @@
 
 uint32_t MAX_ENTITIES = 100;
 uint16_t MAX_EVENT_TYPES = 3;
-uint16_t MAX_COMPONENT_TYPES = 32;
+uint16_t MAX_COMPONENT_TYPES = 5;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -78,7 +78,7 @@ void EntityComponents::componentIDsInitialize() {
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
 
-	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentViewFollow>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 }
@@ -125,6 +125,8 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentPosition>(sf::Vector2f(256.f, 256.f)),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member"),
+			createComponentPairFromType<ComponentViewFollow>(PanelName::GameView),
+
 		}
 	);
 
@@ -225,4 +227,38 @@ void ComponentSprite::system(Entity& entity) {
 		sprite.setRotation(entity.entityComponentGet<ComponentRotation>()->rotation * 180.f / Mathf::PI);
 	}
 }
+void ComponentViewFollow::system(Entity& entity) {
+
+	if (entity.entityComponentHas<ComponentPosition>()) {
+
+		auto& panel = PanelManager::panelGet(panelViewToFollow);
+
+		// camera position prior to movement
+		sf::Vector2f cameraPositionPrev = panel.viewRect.getPosition();
+		// camera position prior to movement,
+		sf::Vector2f cameraPositionPrevNaturalized = cameraPositionPrev;
+
+		auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+
+		sf::Vector2f posDiff = positionComponent->position - panel.viewGet().getCenter();
+
+		float lerp = 0.15f;
+
+		panel.viewMove(posDiff * lerp);
+		panel.viewUpdate();
+
+		sf::Vector2f mousePos = panel.viewMousePositionGet();
+
+		sf::Vector2f mouseDiff = mousePos - panel.viewGet().getCenter();
+
+		lerp = 0.025f;
+
+		mouseDiff.x *= lerp / (16.f / 9.f);
+		mouseDiff.y *= lerp * (16.f / 9.f);
+
+		panel.viewMove(mouseDiff);
+		panel.viewUpdate();
+	}
+}
+
 #pragma endregion Systems

@@ -51,4 +51,7 @@ void EntityComponents::ComponentPosition::load(std::ifstream& str) {}
 
 void EntityComponents::ComponentRotation::save(std::ofstream& str) {}
 void EntityComponents::ComponentRotation::load(std::ifstream& str) {}
+
+void EntityComponents::ComponentViewFollow::save(std::ofstream& str) {}
+void EntityComponents::ComponentViewFollow::load(std::ifstream& str) {}
 #pragma endregion
