@@ -11,11 +11,15 @@
 // the GameLevel and BaseLevel relationship isn't like the Component relationship where there can be many types of components,
 struct GameLevel : public BaseLevel {
 	// not sure whether this default constructor is necessary, but I've included it just in case.
-	GameLevel() = default;
-	// inherit the constructors of BaseLevel so that the user doesn't need to specify them
-	using BaseLevel::BaseLevel;
+	GameLevel();
+	GameLevel(LevelCoordinate _idX, LevelCoordinate _idY, LevelCoordinate _idZ);
+	GameLevel(LevelPosition _id);
+
+	sf::Vector2u levelSize;
 
 	uint32_t exampleVariable = 0;
+
+	std::vector<EntityId> entitiesDrawable;
 };
 
 using GameLevelGrid = LevelGrid<GameLevel>;

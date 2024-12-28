@@ -1,7 +1,12 @@
 #include "ECSRegistry.hpp"
+#include <Auxiliary/Math.hpp>
+#include <Auxiliary/TimeHandler.hpp>
+#include <Auxiliary/VectorMath.hpp>
+#include <Graphics/PanelManager.hpp>
+#include <Input.hpp>
 
-uint32_t MAX_ENTITIES = 10000;
-uint16_t MAX_EVENT_TYPES = 32;
+uint32_t MAX_ENTITIES = 100;
+uint16_t MAX_EVENT_TYPES = 3;
 uint16_t MAX_COMPONENT_TYPES = 32;
 
 void ECSRegistry::ECSInitialize() {
@@ -32,11 +37,15 @@ which is very important, because if EventA sends and event, EventB will always r
 but if the order were swapped, EventB would never receive it
 */
 void EntityEvents::eventIDsInitialize() {
-
 	using EventRegistry = TypeIDAllocator<Event>;
 
 	EventRegistry::typeRegister<EventIDs<EventInitialize>>();
-	EventRegistry::typeRegister<EventIDs<EventExample>>();
+	EventRegistry::typeRegister<EventIDs<EventMove>>();
+	EventRegistry::typeRegister<EventIDs<EventRotate>>();
+
+	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
+	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
+	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 }
 
 #pragma endregion Events
@@ -58,10 +67,20 @@ but if the order were swapped, ComponentB would never receive it
 
 
 void EntityComponents::componentIDsInitialize() {
-
 	using ComponentRegistry = TypeIDAllocator<Component>;
 
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentExample>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentMoveByInput>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotateToMouse>>();
+
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentPosition>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotation>>();
+
+	// sprites/drawing
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
+
+	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
+	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
+	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 }
 
 #pragma endregion Components
@@ -73,12 +92,42 @@ void EntityComponents::componentTemplatesInitialize() {
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
-		"Example Template",
+		"Transform",
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentExample>(),
+			createComponentPairFromType<ComponentPosition>(),
+			createComponentPairFromType<ComponentRotation>(),
 		}
 		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Input Controlled",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentMoveByInput>(),
+			createComponentPairFromType<ComponentRotateToMouse>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Player",
+		{
+			"Input Controlled",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentMoveByInput>(120.f),
+			createComponentPairFromType<ComponentPosition>(sf::Vector2f(256.f, 256.f)),
+			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
+			createComponentPairFromType<ComponentSprite>("Art/Squad Member"),
+		}
+	);
+
 }
 
 #pragma endregion Component Templates
@@ -92,7 +141,88 @@ using namespace EntityEvents;
 
 // if the system is not using the entity parameter, remove it's name to avoid a C4100 error
 
-void ComponentExample::system(Entity& entity) {
-}
+void ComponentMoveByInput::system(Entity& entity) {
+	sf::Vector2f inputAxis;
+	inputAxis.x = float(InputInterface::inputGetActive("Move Right") - InputInterface::inputGetActive("Move Left"));
+	inputAxis.y = float(InputInterface::inputGetActive("Move Down") - InputInterface::inputGetActive("Move Up"));
 
+	if (inputAxis.x != 0 || inputAxis.y != 0) {
+
+		inputAxis = Vector2fMath::normalize(inputAxis) * moveSpeed * static_cast<float>(TimeHandler::deltaSimulatedGet());
+
+		auto* moveEvent = entity.entityEventAddAndGet<EventMove>();
+		moveEvent->moveAxis = inputAxis;
+	}
+}
+void ComponentRotateToMouse::system(Entity& entity) {
+	if (entity.entityComponentHas<ComponentPosition>() && entity.entityComponentHas<ComponentRotation>()) {
+		const float delta = float(TimeHandler::deltaSimulatedGet());
+
+		const float turnSpeedDelta = turnSpeed * delta;
+
+		auto& gameViewPanel = PanelManager::panelGet(PanelName::GameView);
+
+		float angle = Vector2fMath::angle(entity.entityComponentGet<ComponentPosition>()->position, gameViewPanel.viewMousePositionGet());
+
+		auto* rotationComponent = entity.entityComponentGet<ComponentRotation>();
+
+		// wrap rotation between -PI and +PI
+		if (rotationComponent->rotation >= +Mathf::PI) rotationComponent->rotation -= Mathf::TAU;
+		if (rotationComponent->rotation <= -Mathf::PI) rotationComponent->rotation += Mathf::TAU;
+
+		float angleDiff = angle - rotationComponent->rotation;
+
+		// wrap angleDiff between -PI and +PI
+		if (angleDiff >= +Mathf::PI) angleDiff -= Mathf::TAU;
+		if (angleDiff <= -Mathf::PI) angleDiff += Mathf::TAU;
+
+		auto* rotateEvent = entity.entityEventAddAndGet<EntityEvents::EventRotate>();
+
+		if (angleDiff > turnSpeedDelta) {
+			rotateEvent->rotateAmount = turnSpeedDelta;
+		}
+		else if (angleDiff < -turnSpeedDelta) {
+			rotateEvent->rotateAmount = -turnSpeedDelta;
+		}
+		else {
+			rotateEvent->rotateAmount = angleDiff;
+		}
+	}
+}
+void ComponentPosition::system(Entity& entity) {
+	if (entity.entityEventHas<EventMove>()) {
+
+		auto moveEvents = entity.entityEventGetAllOfType<EventMove>();
+
+		for (uint32_t i = 0; i < moveEvents.size(); i++) {
+			position += moveEvents[i]->moveAxis;
+		}
+	}
+}
+void ComponentRotation::system(Entity& entity) {
+	if (entity.entityEventHas<EventRotate>()) {
+
+		auto rotateEvents = entity.entityEventGetAllOfType<EventRotate>();
+
+		for (uint32_t i = 0; i < rotateEvents.size(); i++) {
+			rotation += rotateEvents[i]->rotateAmount;
+		}
+	}
+}
+void ComponentSprite::system(Entity& entity) {
+
+	if (!entity.entityComponentHas<ComponentPosition>()) return;
+
+	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+
+	sf::Texture& texture = GraphicsStore::textureStore.objectGet(fileName);
+
+	sprite.setTexture(texture);
+	sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
+	sprite.setPosition(positionComponent->position);
+
+	if (entity.entityComponentHas<ComponentRotation>()) {
+		sprite.setRotation(entity.entityComponentGet<ComponentRotation>()->rotation * 180.f / Mathf::PI);
+	}
+}
 #pragma endregion Systems

@@ -34,12 +34,21 @@ std::ifstream& operator>> (std::ifstream& str, GameLevel& item) {
 	return str;
 }
 #pragma region Components
-
-void EntityComponents::ComponentExample::save(std::ofstream& str) {
-	str << var;
+void EntityComponents::ComponentRotateToMouse::save(std::ofstream& str) {
+	str << turnSpeed;
 }
-void EntityComponents::ComponentExample::load(std::ifstream& str) {
-	str >> var;
+void EntityComponents::ComponentRotateToMouse::load(std::ifstream& str) {
+	str >> turnSpeed;
 }
+void EntityComponents::ComponentMoveByInput::save(std::ofstream& str) {}
+void EntityComponents::ComponentMoveByInput::load(std::ifstream& str) {}
 
+void EntityComponents::ComponentSprite::save(std::ofstream& str) {}
+void EntityComponents::ComponentSprite::load(std::ifstream& str) {}
+
+void EntityComponents::ComponentPosition::save(std::ofstream& str) {}
+void EntityComponents::ComponentPosition::load(std::ifstream& str) {}
+
+void EntityComponents::ComponentRotation::save(std::ofstream& str) {}
+void EntityComponents::ComponentRotation::load(std::ifstream& str) {}
 #pragma endregion

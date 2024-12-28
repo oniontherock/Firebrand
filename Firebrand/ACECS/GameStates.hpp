@@ -24,6 +24,8 @@ struct GameStatePlay : public GameState {
 
 	Modes mode = Normal;
 
+	bool isFirstRun = true;
+
 	void gameStateUpdate() final;
 };
 
