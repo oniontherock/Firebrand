@@ -143,6 +143,7 @@
     <ClCompile Include="ACECS\SaveFunctions.cpp" />
     <ClCompile Include="ACECS\SaveOperations.cpp" />
     <ClCompile Include="Include\Game\GameData.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +152,8 @@
     <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\sfml-graphics-d-2.dll" />
     <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\sfml-system-d-2.dll" />
     <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\sfml-window-d-2.dll" />
+    <None Include="Include\Shaders\Blur.glsl" />
+    <None Include="Include\Shaders\Grayscale.glsl" />
     <None Include="packages.config" />
     <None Include="PropertySheet.props" />
     <Text Include="readme.txt">
@@ -170,6 +173,7 @@
     <ClInclude Include="ACECS\Panels.hpp" />
     <ClInclude Include="ACECS\SaveOperations.hpp" />
     <ClInclude Include="Include\Game\GameData.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

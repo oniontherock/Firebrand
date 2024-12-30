@@ -1,6 +1,11 @@
 #ifndef __GAME_LEVEL_H__
 #define __GAME_LEVEL_H__
 
+#include "../Include/Game/World/Procedural Generation/Path Generation/PathGenerator.hpp"
+#include <Auxiliary/Math.hpp>
+#include <Auxiliary/NumberGenerator.hpp>
+#include <Auxiliary/VectorMath.hpp>
+#include <SFML/Graphics.hpp>
 #include <World/Level.hpp>
 #include <World/LevelGrid.hpp>
 
@@ -20,6 +25,20 @@ struct GameLevel : public BaseLevel {
 	uint32_t exampleVariable = 0;
 
 	std::vector<EntityId> entitiesDrawable;
+
+	PathGenerator pathGenerator;
+
+	// texture for the background
+	sf::RenderTexture backgroundTexture;
+	// texture for the paths
+	sf::RenderTexture pathsTexture;
+
+	void pathsGenerate();
+	void backgroundDraw();
+
+private:
+	void grassDraw();
+	void pathsDraw();
 };
 
 using GameLevelGrid = LevelGrid<GameLevel>;

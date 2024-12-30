@@ -27,6 +27,9 @@ struct GameStatePlay : public GameState {
 	bool isFirstRun = true;
 
 	void gameStateUpdate() final;
+
+private:
+	void gameStateStart();
 };
 
 

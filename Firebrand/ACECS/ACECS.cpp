@@ -22,10 +22,15 @@ void Engine::inputsRegister() {
 // game states are registered here
 void Engine::panelsRegister() {
 	using namespace PanelManager;
-	panelAdd(PanelTypes::GameView, PanelPtr(new PanelGameView(
+	panelAdd(PanelTypes::StaticView, PanelPtr(new PanelStaticView(
 		PanelRect(0, 0, 1280, 720), // screen coordinates
 		PanelRect(0, 0, 1280, 720), // world coordinates
 		sf::Color::Black
+	)));
+	panelAdd(PanelTypes::DynamicView, PanelPtr(new PanelDynamicView(
+		PanelRect(0, 0, 1280, 720), // screen coordinates
+		PanelRect(0, 0, 1280, 720), // world coordinates
+		sf::Color::Transparent
 	)));
 }
 
@@ -49,7 +54,8 @@ void Engine::gameStatesRegister() {
 		// the panels belonging to this GameState,
 		// note the commas after every panel name, without commas every name will become a single string
 		{
-			PanelTypes::GameView,
+			PanelTypes::StaticView,
+			PanelTypes::DynamicView,
 		}
 		)));
 
@@ -70,7 +76,8 @@ void Engine::gameStatesRegister() {
 		// the panels belonging to this GameState,
 		// note the commas after every panel name, without commas every name will become a single string
 		{
-			PanelTypes::GameView,
+			PanelTypes::StaticView,
+			PanelTypes::DynamicView,
 		}
 		)));
 

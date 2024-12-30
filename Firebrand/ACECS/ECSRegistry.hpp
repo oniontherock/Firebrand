@@ -194,18 +194,18 @@ namespace EntityComponents {
 
 		ComponentViewFollow() {
 			hasSystem = true;
-			panelViewToFollow = PanelName::GameView;
+			panelViewsToFollow = std::vector<PanelName>();
 		};
-		ComponentViewFollow(PanelName _panelViewToFollow) :
+		ComponentViewFollow(std::vector<PanelName> _panelViewsToFollow) :
 			ComponentViewFollow()
 		{
-			panelViewToFollow = _panelViewToFollow;
+			panelViewsToFollow = _panelViewsToFollow;
 		};
 
-		PanelName panelViewToFollow;
+		std::vector<PanelName> panelViewsToFollow;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentViewFollow(panelViewToFollow));
+			return std::unique_ptr<Duplicatable>(new ComponentViewFollow(panelViewsToFollow));
 		};
 
 		void save(std::ofstream& str) override;

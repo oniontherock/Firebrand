@@ -125,7 +125,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentPosition>(sf::Vector2f(256.f, 256.f)),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member"),
-			createComponentPairFromType<ComponentViewFollow>(PanelName::GameView),
+			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView } ),
 
 		}
 	);
@@ -162,7 +162,7 @@ void ComponentRotateToMouse::system(Entity& entity) {
 
 		const float turnSpeedDelta = turnSpeed * delta;
 
-		auto& gameViewPanel = PanelManager::panelGet(PanelName::GameView);
+		auto& gameViewPanel = PanelManager::panelGet(PanelName::StaticView);
 
 		float angle = Vector2fMath::angle(entity.entityComponentGet<ComponentPosition>()->position, gameViewPanel.viewMousePositionGet());
 
@@ -231,33 +231,35 @@ void ComponentViewFollow::system(Entity& entity) {
 
 	if (entity.entityComponentHas<ComponentPosition>()) {
 
-		auto& panel = PanelManager::panelGet(panelViewToFollow);
+		for (auto& panelName : panelViewsToFollow) {
+			auto& panel = PanelManager::panelGet(panelName);
 
-		// camera position prior to movement
-		sf::Vector2f cameraPositionPrev = panel.viewRect.getPosition();
-		// camera position prior to movement,
-		sf::Vector2f cameraPositionPrevNaturalized = cameraPositionPrev;
+			// camera position prior to movement
+			sf::Vector2f cameraPositionPrev = panel.viewRect.getPosition();
+			// camera position prior to movement,
+			sf::Vector2f cameraPositionPrevNaturalized = cameraPositionPrev;
 
-		auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+			auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
 
-		sf::Vector2f posDiff = positionComponent->position - panel.viewGet().getCenter();
+			sf::Vector2f posDiff = positionComponent->position - panel.viewGet().getCenter();
 
-		float lerp = 0.15f;
+			float lerp = 0.15f;
 
-		panel.viewMove(posDiff * lerp);
-		panel.viewUpdate();
+			panel.viewMove(posDiff * lerp);
+			panel.viewUpdate();
 
-		sf::Vector2f mousePos = panel.viewMousePositionGet();
+			sf::Vector2f mousePos = panel.viewMousePositionGet();
 
-		sf::Vector2f mouseDiff = mousePos - panel.viewGet().getCenter();
+			sf::Vector2f mouseDiff = mousePos - panel.viewGet().getCenter();
 
-		lerp = 0.025f;
+			lerp = 0.025f;
 
-		mouseDiff.x *= lerp / (16.f / 9.f);
-		mouseDiff.y *= lerp * (16.f / 9.f);
+			mouseDiff.x *= lerp / (16.f / 9.f);
+			mouseDiff.y *= lerp * (16.f / 9.f);
 
-		panel.viewMove(mouseDiff);
-		panel.viewUpdate();
+			panel.viewMove(mouseDiff);
+			panel.viewUpdate();
+		}
 	}
 }
 
