@@ -1,6 +1,7 @@
 #ifndef __GAME_LEVEL_H__
 #define __GAME_LEVEL_H__
 
+#include "../Include/Game/Pathfinding/AStar/Grid/AStarGrid.hpp"
 #include "../Include/Game/World/Procedural Generation/Path Generation/PathGenerator.hpp"
 #include <Auxiliary/Math.hpp>
 #include <Auxiliary/NumberGenerator.hpp>
@@ -25,6 +26,8 @@ struct GameLevel : public BaseLevel {
 	uint32_t exampleVariable = 0;
 
 	std::vector<EntityId> entitiesDrawable;
+
+	AStarGrid aStarGrid;
 
 	PathGenerator pathGenerator;
 

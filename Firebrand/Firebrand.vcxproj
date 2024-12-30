@@ -142,7 +142,12 @@
     <ClCompile Include="ACECS\Panels.cpp" />
     <ClCompile Include="ACECS\SaveFunctions.cpp" />
     <ClCompile Include="ACECS\SaveOperations.cpp" />
+    <ClCompile Include="Include\Common\DataCache.cpp" />
     <ClCompile Include="Include\Game\GameData.cpp" />
+    <ClCompile Include="Include\Game\Pathfinding\AStar\Grid\AStarCell.cpp" />
+    <ClCompile Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.cpp" />
+    <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.cpp" />
+    <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
@@ -172,7 +177,13 @@
     <ClInclude Include="ACECS\GameStates.hpp" />
     <ClInclude Include="ACECS\Panels.hpp" />
     <ClInclude Include="ACECS\SaveOperations.hpp" />
+    <ClInclude Include="Include\Common\DataCache.hpp" />
+    <ClInclude Include="Include\Common\Grid.hpp" />
     <ClInclude Include="Include\Game\GameData.hpp" />
+    <ClInclude Include="Include\Game\Pathfinding\AStar\Grid\AStarCell.hpp" />
+    <ClInclude Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.hpp" />
+    <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.hpp" />
+    <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

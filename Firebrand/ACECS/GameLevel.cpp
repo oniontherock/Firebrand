@@ -2,6 +2,7 @@
 
 GameLevel::GameLevel() :
 	levelSize(sf::Vector2u(4096, 4096)),
+	aStarGrid(AStarGrid(levelSize.x / 16, levelSize.y / 16, 16.f, 16.f)),
 	pathGenerator(PathGenerator())
 {
 	entities = std::vector<EntityId>();

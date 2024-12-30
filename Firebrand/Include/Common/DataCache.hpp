@@ -1,0 +1,41 @@
+#ifndef __DATA_CACHE_H__
+#define __DATA_CACHE_H__
+
+#include <any>
+#include <string>
+#include <unordered_map>
+
+// variant of data types that can be contained in an DataUMap.
+typedef std::any DataType;
+// key of an BlackboardDataType, used in DataUMap.
+typedef const char* DataKey;
+// map of names and data.
+typedef std::unordered_map<DataKey, DataType> DataUMap;
+
+struct DataCache {
+	// removes the element from the dataUMap whose key is dataKey
+	void dataRemove(DataKey dataKey);
+	// gets the data associated with dataKey, T is the type of the data that is being obtained.
+	template <typename T>
+	T dataGet(DataKey dataKey) const {
+		return std::any_cast<T>(dataUMap.at(dataKey));
+	}
+	// sets the value of dataKey to value.
+	template <typename T>
+	void dataSet(DataKey dataKey, T value) {
+		dataUMap[dataKey] = value;
+	}
+	// returns whether the specified dataKey exists in the dataUMap.
+	bool dataHas(DataKey dataKey) const;
+	// clears all data from the dataUMap
+	void dataClear();
+
+	friend std::ofstream& operator<<(std::ofstream& str, DataCache& item);
+	friend std::ifstream& operator>>(std::ifstream& str, DataCache& item);
+private:
+
+	// map of all data contained in the cache
+	DataUMap dataUMap;
+};
+
+#endif
