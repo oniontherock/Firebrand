@@ -47,7 +47,7 @@ void PanelStaticView::panelApplyGrayscale() {
 void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	// draw background base color
 	sf::RectangleShape backgroundRectangle;
-	backgroundRectangle.setSize(sf::Vector2f(levelActive->levelSize));
+	backgroundRectangle.setSize(viewRect.getSize());
 	backgroundRectangle.setFillColor(sf::Color(10, 75, 0, 255));
 	backgroundRectangle.setTextureRect(sf::IntRect(viewRect));
 	backgroundRectangle.setPosition(viewRect.left, viewRect.top);
@@ -108,15 +108,13 @@ sf::ConvexShape PanelDynamicView::viewMaskShapeCreate(float radius, float coneSi
 		sf::Vector2f pointPosition = sf::Vector2f(cos(pointAngle), sin(pointAngle)) * radius;
 
 		viewMaskShape.setPoint(i, pointPosition);
-	}
-
+	}  
 	return viewMaskShape;
 }
 
 void PanelDynamicView::viewMaskCreate() {
 
 	sf::Vector2u viewMaskSize = sf::Vector2u(2000, 2000);
-
 
 	sf::ConvexShape viewConeShape = viewMaskShapeCreate(1280.f, Mathf::PI / 2.f, 64);
 	// set view mask position to center of the screen rect
@@ -129,7 +127,7 @@ void PanelDynamicView::viewMaskCreate() {
 	viewSurroundingsShape.setFillColor(sf::Color::White);
 
 
-	viewMaskTexture.create(viewMaskSize.x, viewMaskSize.x);
+	viewMaskTexture.create(viewMaskSize.x, viewMaskSize.y);
 	viewMaskTexture.clear(sf::Color::Transparent);
 
 	viewMaskTexture.draw(viewConeShape);
@@ -179,8 +177,8 @@ void PanelDynamicView::viewMaskApply() {
 	// get player rotation
 	float playerRotation = player.entityComponentGet<EntityComponents::ComponentRotation>()->rotation;
 
-	// set position to that of the player
-	viewMaskSprite.setPosition(playerPosition);
+	// set position to the player's position relative to the viewRect
+	viewMaskSprite.setPosition(playerPosition - viewRect.getPosition());
 	// set rotation to that of the player
 	viewMaskSprite.setRotation(playerRotation * 180.f / Mathf::PI);
 
@@ -189,6 +187,9 @@ void PanelDynamicView::viewMaskApply() {
 
 	sf::Sprite viewSprite;
 	viewSprite.setTexture(viewRenderTexture.getTexture());
+	// set viewSprite position to align with the viewRect
+	viewSprite.setPosition(viewRect.getPosition());
+
 
 	texture.draw(viewSprite, sf::BlendMultiply);
 }
