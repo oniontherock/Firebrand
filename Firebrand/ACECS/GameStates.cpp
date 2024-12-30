@@ -2,7 +2,9 @@
 #include "ECSRegistry.hpp"
 #include "GameLevel.hpp"
 #include "GameStates.hpp"
+#include <Auxiliary/TimeHandler.hpp>
 #include <ECS/Entities/EntityManager.hpp>
+#include <Graphics/WindowHolder.hpp>
 #include <World/LevelUpdater.hpp>
 
 void GameStatePlay::gameStateUpdate() {
@@ -13,6 +15,8 @@ void GameStatePlay::gameStateUpdate() {
 		isFirstRun = false;
 		gameStateStart();
 	}
+	
+	worldClockUpdate();
 
 	EntityManager::entitiesIntangibleUpdate();
 	EntityManager::entitiesQueuedUpdate();
@@ -31,6 +35,26 @@ void GameStatePlay::gameStateStart() {
 	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(100, 100);
 }
 
+void GameStatePlay::worldClockUpdate() {
+	GameData::worldClock.update(TimeHandler::timeSimulatedGet());
+
+	if (GameData::worldClock.dayCurrentGet() >= GameData::worldClock.dayCountMax) {
+		GameStateHandler::gameStateForceSet(GameStateType::Lose);
+	}
+}
+
 void GameStatePause::gameStateUpdate() {
+	WindowHolder::windowGet().close();
+}
+
+
+void GameStateWin::gameStateUpdate() {
+
+}
+
+void GameStateLose::gameStateUpdate() {
+	if (exitCooldown.updateAutoReset(float(TimeHandler::deltaSimulatedGet()))) {
+		WindowHolder::windowGet().close();
+	}
 }
 

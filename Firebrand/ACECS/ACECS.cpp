@@ -32,6 +32,17 @@ void Engine::panelsRegister() {
 		PanelRect(0, 0, 1280, 720), // world coordinates
 		sf::Color::Transparent
 	)));
+
+	panelAdd(PanelTypes::WinScreen, PanelPtr(new PanelWinScreen(
+		PanelRect(0, 0, 1280, 720), // screen coordinates
+		PanelRect(0, 0, 1280, 720), // world coordinates
+		sf::Color::Black
+	)));
+	panelAdd(PanelTypes::LoseScreen, PanelPtr(new PanelLoseScreen(
+		PanelRect(0, 0, 1280, 720), // screen coordinates
+		PanelRect(0, 0, 1280, 720), // world coordinates
+		sf::Color::Black
+	)));
 }
 
 // game states are registered here
@@ -78,6 +89,31 @@ void Engine::gameStatesRegister() {
 		{
 			PanelTypes::StaticView,
 			PanelTypes::DynamicView,
+		}
+		)));
+
+	GameStateHandler::gameStateAdd(GameStateUniquePtr(new GameStateWin(
+		/// transitions
+		// vector of GameStateTransitions, and their inputs
+		{
+		},
+		/// panels
+		// the panels belonging to this GameState,
+		// note the commas after every panel name, without commas every name will become a single string
+		{
+			PanelTypes::WinScreen,
+		}
+		)));
+	GameStateHandler::gameStateAdd(GameStateUniquePtr(new GameStateLose(
+		/// transitions
+		// vector of GameStateTransitions, and their inputs
+		{
+		},
+		/// panels
+		// the panels belonging to this GameState,
+		// note the commas after every panel name, without commas every name will become a single string
+		{
+			PanelTypes::LoseScreen,
 		}
 		)));
 

@@ -193,5 +193,49 @@ void PanelDynamicView::viewMaskApply() {
 
 	texture.draw(viewSprite, sf::BlendMultiply);
 }
-void PanelDynamicView::hudDraw(GameLevel* levelActive) {
+
+void PanelWinScreen::panelUpdate() {
+
+	checkModeChange();
+
+	backgroundDraw();
+	textDraw();
 }
+void PanelWinScreen::checkModeChange() {
+}
+void PanelWinScreen::backgroundDraw() {
+}
+void PanelWinScreen::textDraw() {
+	sf::Text text;
+	sf::Font font;
+	font.loadFromFile("Art/Basic bitmap.ttf");
+	text.setFont(font);
+	text.setString("You Win!");
+
+	text.setPosition(500, 500);
+	objectDraw(text);
+}
+
+void PanelLoseScreen::panelUpdate() {
+
+	checkModeChange();
+
+	backgroundDraw();
+	textDraw();
+}
+void PanelLoseScreen::checkModeChange() {
+}
+void PanelLoseScreen::backgroundDraw() {
+}
+void PanelLoseScreen::textDraw() {
+	sf::Text text;
+	sf::Font font;
+	font.loadFromFile("Art/Basic bitmap.ttf");
+	text.setFont(font);
+	text.setString("You Lose!");
+
+	text.setPosition(500, 500);
+	objectDraw(text);
+}
+
+
