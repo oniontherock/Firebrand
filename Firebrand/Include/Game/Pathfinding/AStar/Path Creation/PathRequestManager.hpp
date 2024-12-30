@@ -27,7 +27,7 @@ class PathRequestManager {
 	// processes next path request
 	static void queueProcessNext();
 	// sends an event to the current path requester, containing the path and whether or not the pathfinding was successful
-	static void pathProcessFinished(AStarPath path, bool success);
+	static void pathProcessFinished(AStarPath path);
 
 public:
 	// request a path to be made

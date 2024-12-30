@@ -40,18 +40,18 @@ void EntityComponents::ComponentRotateToMouse::save(std::ofstream& str) {
 void EntityComponents::ComponentRotateToMouse::load(std::ifstream& str) {
 	str >> turnSpeed;
 }
-void EntityComponents::ComponentMoveByInput::save(std::ofstream& str) {}
-void EntityComponents::ComponentMoveByInput::load(std::ifstream& str) {}
+void EntityComponents::ComponentMoveByInput::save(std::ofstream&) {}
+void EntityComponents::ComponentMoveByInput::load(std::ifstream&) {}
 
-void EntityComponents::ComponentSprite::save(std::ofstream& str) {}
-void EntityComponents::ComponentSprite::load(std::ifstream& str) {}
+void EntityComponents::ComponentSprite::save(std::ofstream&) {}
+void EntityComponents::ComponentSprite::load(std::ifstream&) {}
 
-void EntityComponents::ComponentPosition::save(std::ofstream& str) {}
-void EntityComponents::ComponentPosition::load(std::ifstream& str) {}
+void EntityComponents::ComponentPosition::save(std::ofstream&) {}
+void EntityComponents::ComponentPosition::load(std::ifstream&) {}
 
-void EntityComponents::ComponentRotation::save(std::ofstream& str) {}
-void EntityComponents::ComponentRotation::load(std::ifstream& str) {}
+void EntityComponents::ComponentRotation::save(std::ofstream&) {}
+void EntityComponents::ComponentRotation::load(std::ifstream&) {}
 
-void EntityComponents::ComponentViewFollow::save(std::ofstream& str) {}
-void EntityComponents::ComponentViewFollow::load(std::ifstream& str) {}
+void EntityComponents::ComponentViewFollow::save(std::ofstream&) {}
+void EntityComponents::ComponentViewFollow::load(std::ifstream&) {}
 #pragma endregion

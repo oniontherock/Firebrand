@@ -34,11 +34,11 @@ void GameLevel::grassDraw() {
 
 	for (uint32_t i = 0; i < grassBladeCount; i++) {
 
-		sf::Color color = sf::Color(RNGf::getRange(50, 125), RNGf::getRange(100, 255), RNGf::getRange(0, 25), 85);
+		sf::Color color = sf::Color(RNGu8::getRange(50, 125), RNGu8::getRange(100, 255), RNGu8::getRange(0, 25), 85);
 
 		sf::Vertex lineStart;
 		lineStart.color = color;
-		lineStart.position = sf::Vector2f(RNGf::getRange(0.f, levelSize.x), RNGf::getRange(0, levelSize.y));
+		lineStart.position = sf::Vector2f(RNGf::getRange(0.f, float(levelSize.x)), RNGf::getRange(0, float(levelSize.y)));
 
 		sf::Vertex lineEnd;
 		lineEnd.color = color;
@@ -76,7 +76,7 @@ void GameLevel::grassDraw() {
 
 }
 void GameLevel::pathsGenerate() {
-	pathGenerator.pathGenerate(sf::Vector2f(256, levelSize.y / 2), sf::Vector2f(levelSize.x - 256, levelSize.y / 2));
+	pathGenerator.pathGenerate(sf::Vector2f(256.f, float(levelSize.y) / 2.f), sf::Vector2f(float(levelSize.x )- 256.f, float(levelSize.y) / 2.f));
 }
 void GameLevel::pathsDraw() {
 	pathsTexture.create(levelSize.x, levelSize.y);

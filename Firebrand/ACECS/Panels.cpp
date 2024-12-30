@@ -98,8 +98,6 @@ sf::ConvexShape PanelDynamicView::viewMaskShapeCreate(float radius, float coneSi
 	// the angular distance between two points
 	const float pointsAngleDistanceBetween = coneSize / pointsCount;
 
-	// bool for whether the previous angle that was iterated was in the view cone
-	bool previousWasInCone = false;
 	for (uint16_t i = 0; i < pointsCount; i++) {
 
 		// get the angle of this point in the view shape
@@ -154,7 +152,6 @@ void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
 		Entity& entityCur = EntityManager::entityGet(i);
 
 		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
-		auto* componentPosition = entityCur.entityComponentGet<EntityComponents::ComponentPosition>();
 
 		objectDraw(componentSprite->sprite);
 	}
@@ -162,7 +159,7 @@ void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
 void PanelDynamicView::viewMaskApply() {
 	// render texture used for drawing a clipped section of the panel that works as a "view"
 	sf::RenderTexture viewRenderTexture;
-	viewRenderTexture.create(screenRect.getSize().x, screenRect.getSize().y);
+	viewRenderTexture.create(uint16_t(screenRect.getSize().x), uint16_t(screenRect.getSize().y));
 
 	// sprite using the view mask's texture
 	sf::Sprite viewMaskSprite;

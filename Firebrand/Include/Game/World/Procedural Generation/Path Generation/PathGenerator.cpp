@@ -16,11 +16,13 @@ PointIndex PathGenerator::pointGetFromPosition(sf::Vector2f position) {
 			return i;
 		}
 	}
+	// failsafe to ensure something is returned
+	return 0;
 }
 PointIndex PathGenerator::pointGetClosest(sf::Vector2f position) {
 
 	PointIndex lowestInd = 0;
-	float lowestDistSqrd = 9999999999999999999;
+	float lowestDistSqrd = 9999999999999999999.f;
 
 	for (PointIndex i = 0; i < points.size(); i++) {
 		
@@ -44,7 +46,7 @@ void PathGenerator::pointsConnect(const PathPoint& a, const PathPoint& b) {
 
 PointIndex PathGenerator::pointCreate(sf::Vector2f position) {
 
-	PointIndex index = points.size();
+	PointIndex index = PointIndex(points.size());
 
 	points.push_back(PathPoint(position, index));
 
@@ -76,7 +78,7 @@ bool PathGenerator::lineIntersectsPath(const PathPoint& lineStart, const PathPoi
 }
 float PathGenerator::pointGetDistSqrdToClosest(const PathPoint& point) {
 
-	float closestDistSqrd = 999999999999999;
+	float closestDistSqrd = 999999999999999.f;
 
 	for (uint16_t i = 0; i < points.size(); i++) {
 		if (i == point.index) continue;

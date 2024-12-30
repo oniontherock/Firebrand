@@ -9,8 +9,6 @@
 
 void GameStatePlay::gameStateUpdate() {
 
-	GameLevel* level = GameLevelGrid::levelGet(0, 0, 0);
-
 	if (isFirstRun) {
 		isFirstRun = false;
 		gameStateStart();

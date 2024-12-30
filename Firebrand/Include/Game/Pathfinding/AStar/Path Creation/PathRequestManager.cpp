@@ -33,9 +33,9 @@ void PathRequestManager::queueProcessNext() {
 	}
 }
 
-void PathRequestManager::pathProcessFinished(AStarPath path, bool success) {
-	EntityId pathRequesterCurrentId = pathRequestCurrent.pathRequester;
-	Entity& pathRequesterCurrent = EntityManager::entityGet(pathRequesterCurrentId);
+void PathRequestManager::pathProcessFinished(AStarPath path) {
+	//EntityId pathRequesterCurrentId = pathRequestCurrent.pathRequester;
+	//Entity& pathRequesterCurrent = EntityManager::entityGet(pathRequesterCurrentId);
 
 	//auto* eventPath = pathRequesterCurrent.entityEventAddAndGet<EntityEvents::EventPath>();
 	//eventPath->path = path;
