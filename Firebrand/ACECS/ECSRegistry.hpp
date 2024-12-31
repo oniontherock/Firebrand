@@ -211,6 +211,58 @@ namespace EntityComponents {
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	};
+	// assigns the ObjectType in the ObjectRegistry for the entity to be the specified objectType
+	struct ComponentObjectTypeAssigner final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentObjectTypeAssigner() {
+			hasSystem = true;
+			objectType = ObjectType::Null;
+		};
+		ComponentObjectTypeAssigner(ObjectType _objectType) :
+			ComponentObjectTypeAssigner()
+		{
+			objectType = _objectType;
+		};
+		// ObjectType to assign to the entity
+		ObjectType objectType;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentObjectTypeAssigner(objectType));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	// populates the ObjectGrid with the specified type every update,
+	// NOTE: this component should be ordered AFTER any movement components.
+	struct ComponentObjectGridInhabiterRadius final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentObjectGridInhabiterRadius() {
+			hasSystem = true;
+			radius = 0;
+			WorldPosition{};
+		};
+		ComponentObjectGridInhabiterRadius(float _radius) :
+			ComponentObjectGridInhabiterRadius()
+		{
+			radius = _radius;
+		};
+
+		float radius;
+		// previous position of population, used for depopulation.
+		sf::Vector2f positionPrev;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentObjectGridInhabiterRadius(radius));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
 }
 
 #endif

@@ -17,6 +17,10 @@ void Engine::inputsRegister() {
 	InputInterface::inputRegister("Move Up", KeySet{ KeyEvent("W", Held), KeyEvent("Up", Held) }, InputKeyLogic::Or);
 	InputInterface::inputRegister("Move Left", KeySet{ KeyEvent("A", Held), KeyEvent("Left", Held) }, InputKeyLogic::Or);
 	InputInterface::inputRegister("Move Down", KeySet{ KeyEvent("S", Held), KeyEvent("Down", Held) }, InputKeyLogic::Or);
+
+	InputInterface::inputRegister("Toggle ObjectGrid Rendering", KeySet{ KeyEvent("Numpad1", Pressed) }, InputKeyLogic::Or);
+	InputInterface::inputRegister("Toggle Paths Rendering", KeySet{ KeyEvent("Numpad2", Pressed) }, InputKeyLogic::Or);
+	InputInterface::inputRegister("Toggle Timescale", KeySet{ KeyEvent("Numpad3", Pressed) }, InputKeyLogic::Or);
 }
 
 // game states are registered here
@@ -32,7 +36,11 @@ void Engine::panelsRegister() {
 		PanelRect(0, 0, 1280, 720), // world coordinates
 		sf::Color::Transparent
 	)));
-
+	panelAdd(PanelTypes::Hud, PanelPtr(new PanelHud(
+		PanelRect(0, 0, 1280, 720), // screen coordinates
+		PanelRect(0, 0, 1280, 720), // world coordinates
+		sf::Color::Transparent
+	)));
 	panelAdd(PanelTypes::WinScreen, PanelPtr(new PanelWinScreen(
 		PanelRect(0, 0, 1280, 720), // screen coordinates
 		PanelRect(0, 0, 1280, 720), // world coordinates
@@ -67,6 +75,7 @@ void Engine::gameStatesRegister() {
 		{
 			PanelTypes::StaticView,
 			PanelTypes::DynamicView,
+			PanelTypes::Hud,
 		}
 		)));
 
@@ -89,6 +98,7 @@ void Engine::gameStatesRegister() {
 		{
 			PanelTypes::StaticView,
 			PanelTypes::DynamicView,
+			PanelTypes::Hud,
 		}
 		)));
 

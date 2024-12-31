@@ -65,6 +65,25 @@ std::ofstream& operator<< (std::ofstream& str, GameLevel& item);
 // BaseLevelPtr / GameLevel in
 std::ifstream& operator>> (std::ifstream& str, GameLevel& item);
 
+// AStarCell out
+std::ofstream& operator<< (std::ofstream& str, AStarCell& item);
+// AStarCell in
+std::ifstream& operator>> (std::ifstream& str, AStarCell& item);
+
+// AStarGrid out
+std::ofstream& operator<< (std::ofstream& str, AStarGrid& item);
+// AStarGrid in
+std::ifstream& operator>> (std::ifstream& str, AStarGrid& item);
+
+// ObjectCell out
+std::ofstream& operator<< (std::ofstream& str, ObjectCell& item);
+// ObjectCell in
+std::ifstream& operator>> (std::ifstream& str, ObjectCell& item);
+
+// ObjectGrid out
+std::ofstream& operator<< (std::ofstream& str, ObjectGrid& item);
+// ObjectGrid in
+std::ifstream& operator>> (std::ifstream& str, ObjectGrid& item);
 
 
 #endif

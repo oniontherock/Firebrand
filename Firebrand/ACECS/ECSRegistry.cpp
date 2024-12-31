@@ -7,7 +7,7 @@
 
 uint32_t MAX_ENTITIES = 100;
 uint16_t MAX_EVENT_TYPES = 3;
-uint16_t MAX_COMPONENT_TYPES = 5;
+uint16_t MAX_COMPONENT_TYPES = 7;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -69,16 +69,21 @@ but if the order were swapped, ComponentB would never receive it
 void EntityComponents::componentIDsInitialize() {
 	using ComponentRegistry = TypeIDAllocator<Component>;
 
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectTypeAssigner>>();
+
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMoveByInput>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotateToMouse>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentPosition>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotation>>();
 
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRadius>>();
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentViewFollow>>();
+
+	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 }
@@ -121,11 +126,13 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Player),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),
 			createComponentPairFromType<ComponentPosition>(sf::Vector2f(256.f, 256.f)),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member"),
-			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView } ),
+			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud } ),
 
 		}
 	);
@@ -140,6 +147,7 @@ using namespace EntityEvents;
 
 // if you need to include a certain file for a system, include it here.
 #include <iostream>
+#include "../Include/Game/World/Objects/ObjectRegistry.hpp"
 
 // if the system is not using the entity parameter, remove it's name to avoid a C4100 error
 
@@ -261,6 +269,67 @@ void ComponentViewFollow::system(Entity& entity) {
 			panel.viewUpdate();
 		}
 	}
+}
+void ComponentObjectTypeAssigner::system(Entity& entity) {
+	if (!entity.entityEventHas<EventInitialize>()) return;
+
+	ObjectRegistry::entityObjectTypeAssign(entity.Id, objectType);
+}
+void ComponentObjectGridInhabiterRadius::system(Entity& entity) {
+	// check that entity has ComponentPosition
+	if (!entity.entityComponentHas<ComponentPosition>()) {
+		ConsoleHandler::consolePrintErr("ComponentObjectGridInhabiterRadius assigned to an entity without a ComponentPosition!");
+
+		entity.entityComponentTerminate<ComponentObjectGridInhabiterRadius>();
+		return;
+	}
+
+	// check that entity has ObjectType
+	if (ObjectRegistry::entityObjectTypeGet(entity.Id) == ObjectType::Null) {
+		ConsoleHandler::consolePrintErr("ComponentObjectGridInhabiterRadius assigned to an entity without an ObjectType!");
+
+		entity.entityComponentTerminate<ComponentObjectGridInhabiterRadius>();
+		return;
+	}
+
+	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+
+	// check if positionPrev has been set yet
+	if (positionPrev == sf::Vector2f(0, 0)) {
+		positionPrev = positionComponent->position;
+	}
+
+	// note that two separate objectGrid references are used because an entity could travel to a different level.
+
+	auto& objectGridDepopulation = GameLevelGrid::levelGet(entity.levelId)->objectGrid;
+
+	for (float offsetX = -radius / 2.f; offsetX <= +radius / 2.f; offsetX += 1.f) {
+		for (float offsetY = -radius / 2.f; offsetY <= +radius / 2.f; offsetY += 1.f) {
+
+			// ensure the offset is normalized (I.E. in the circle that the radius represents)
+			if (Vector2fMath::lengthSqrd(offsetX, offsetY) > (radius * radius) / (2.f * 2.f)) continue;
+			// ensure positionPrev is in the grid, skip if not
+			if (!objectGridDepopulation.worldPosIsInGridFull(positionPrev.x + offsetX, positionPrev.y + offsetY)) continue;
+			// remove entity's id from grid at the offset
+			objectGridDepopulation.cellGetFromWorld(positionPrev.x + offsetX, positionPrev.y + offsetY).idRemove(entity.Id);
+		}
+	};
+
+	auto& objectGridPopulation = GameLevelGrid::levelGet(entity.levelId)->objectGrid;
+
+	for (float offsetX = -radius / 2.f; offsetX <= +radius / 2.f; offsetX += 1.f) {
+		for (float offsetY = -radius / 2.f; offsetY <= +radius / 2.f; offsetY += 1.f) {
+
+			// ensure the offset is normalized (I.E. in the circle that the radius represents)
+			if (Vector2fMath::lengthSqrd(offsetX, offsetY) > (radius * radius) / (2.f * 2.f)) continue;
+			// ensure position is in the grid, skip if not
+			if (!objectGridPopulation.worldPosIsInGridFull(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY)) continue;
+			// add entity's id to grid at the offset
+			objectGridPopulation.cellGetFromWorld(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY).idAdd(entity.Id);
+		}
+	};
+
+	positionPrev = positionComponent->position;
 }
 
 #pragma endregion Systems

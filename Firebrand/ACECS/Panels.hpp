@@ -7,6 +7,7 @@
 enum PanelTypes : uint16_t {
 	StaticView,
 	DynamicView,
+	Hud,
 	WinScreen,
 	LoseScreen,
 };
@@ -57,6 +58,22 @@ private:
 	void staticDraw();
 	void charactersDraw(GameLevel* levelActive);
 	void viewMaskApply();
+};
+struct PanelHud : public Panel {
+	using Panel::Panel;
+
+	enum Modes {
+		Normal,
+		PathsRender,
+		ObjectsRender,
+	};
+
+	Modes mode = Normal;
+
+	void panelUpdate() final;
+
+private:
+	void checkModeChange();
 };
 
 struct PanelWinScreen : public Panel {

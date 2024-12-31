@@ -9,6 +9,23 @@
 
 void GameStatePlay::gameStateUpdate() {
 
+	static int timeState = 1;
+	if (InputInterface::inputGetActive("Toggle Timescale")) {
+
+		timeState = (timeState + 1) % 3;
+	}
+	switch (timeState) {
+	case 0:
+		TimeHandler::timescale = 0.5f;
+		break;
+	case 1:
+		TimeHandler::timescale = 1.f;
+		break;
+	case 2:
+		TimeHandler::timescale = 10.f;
+		break;
+	}
+
 	if (isFirstRun) {
 		isFirstRun = false;
 		gameStateStart();

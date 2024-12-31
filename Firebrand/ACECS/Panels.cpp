@@ -1,7 +1,10 @@
+#include "../Include/Debugging/AStarPathDrawer.hpp"
+#include "../Include/Debugging/ObjectGridRenderer.hpp"
 #include "../Include/Game/GameData.hpp"
 #include "ECSRegistry.hpp"
 #include "Panels.hpp"
 #include <Graphics/PanelManager.hpp>
+#include <Input/InputInterface.hpp>
 
 void PanelStaticView::panelUpdate() {
 
@@ -190,6 +193,61 @@ void PanelDynamicView::viewMaskApply() {
 
 	texture.draw(viewSprite, sf::BlendMultiply);
 }
+
+void PanelHud::panelUpdate() {
+
+	checkModeChange();
+
+	GameLevel* level = GameLevelGrid::levelGet(EntityManager::entityGet(GameData::playerId).levelId);
+
+	if (mode == Normal || mode == ObjectsRender || mode == PathsRender) {
+	}
+	if (mode == ObjectsRender) {
+		ObjectGrid& objectGrid = level->objectGrid;
+
+		static ObjectGridRenderer objectGridRenderer = ObjectGridRenderer(viewRect.getSize());
+
+		objectGridRenderer.objectGridRender(objectGrid, viewRect);
+
+		sf::Texture objectGridTexture = objectGridRenderer.objectGridTextureGet();
+
+		sf::Sprite objectGridSprite(objectGridTexture);
+		//objectGridSprite.setScale(objectGrid.cellsGetSize());
+		objectGridSprite.setPosition(viewRect.getPosition());
+
+		objectDraw(objectGridSprite);
+	}
+	if (mode == PathsRender) {
+		AStarPathDrawer::cellsInvalidDraw(level->aStarGrid);
+		AStarPathDrawer::pathsTexture.display();
+
+		sf::Texture pathsTexture = AStarPathDrawer::pathsTexture.getTexture();
+
+		sf::Sprite pathsSprite(pathsTexture);
+
+		objectDraw(pathsSprite);
+		AStarPathDrawer::pathsTextureReset();
+	}
+}
+void PanelHud::checkModeChange() {
+	if (InputInterface::inputGetActive("Toggle ObjectGrid Rendering")) {
+		if (mode != ObjectsRender) {
+			mode = ObjectsRender;
+		}
+		else {
+			mode = Normal;
+		}
+	}
+	if (InputInterface::inputGetActive("Toggle Paths Rendering")) {
+		if (mode != PathsRender) {
+			mode = PathsRender;
+		}
+		else {
+			mode = Normal;
+		}
+	}
+}
+
 
 void PanelWinScreen::panelUpdate() {
 
