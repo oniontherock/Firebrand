@@ -190,7 +190,6 @@ void PanelDynamicView::viewMaskApply() {
 	// set viewSprite position to align with the viewRect
 	viewSprite.setPosition(viewRect.getPosition());
 
-
 	texture.draw(viewSprite, sf::BlendMultiply);
 }
 

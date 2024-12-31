@@ -6,8 +6,8 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100;
-uint16_t MAX_EVENT_TYPES = 3;
-uint16_t MAX_COMPONENT_TYPES = 7;
+uint16_t MAX_EVENT_TYPES = 4;
+uint16_t MAX_COMPONENT_TYPES = 9;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -42,6 +42,7 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventInitialize>>();
 	EventRegistry::typeRegister<EventIDs<EventMove>>();
 	EventRegistry::typeRegister<EventIDs<EventRotate>>();
+	EventRegistry::typeRegister<EventIDs<EventObjectSeen>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -82,6 +83,9 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentViewFollow>>();
+
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
 
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
@@ -126,17 +130,32 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
+			createComponentPairFromType<ComponentObjectVision>(0.1f),
+			createComponentPairFromType<ComponentObjectVisionDebug>(),
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Player),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),
-			createComponentPairFromType<ComponentPosition>(sf::Vector2f(256.f, 256.f)),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member"),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud } ),
 
 		}
 	);
+	ComponentTemplateManager::componentTemplateAdd(
 
+		/// template name
+		"Test Object",
+		{
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Door),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentPosition>(sf::Vector2f(512.f, 256.f)),
+			createComponentPairFromType<ComponentSprite>("Art/Circle"),
+
+		}
+		);
 }
 
 #pragma endregion Component Templates
@@ -330,6 +349,81 @@ void ComponentObjectGridInhabiterRadius::system(Entity& entity) {
 	};
 
 	positionPrev = positionComponent->position;
+}
+void ComponentObjectVision::system(Entity& entity) {
+
+
+	try {
+		if (!entity.entityComponentHas<ComponentRotation>()) {
+			throw "Does not have ComponentRotation";
+		}
+		if (!entity.entityComponentHas<ComponentPosition>()) {
+			throw "Does not have ComponentPosition";
+		}
+	}
+	catch (const char* e) {
+		ConsoleHandler::consolePrintErr("ComponentObjectVision system failed: Exception: " + std::string(e));
+		return;
+	}
+
+	if (cooldownVisionUpdate.updateAutoReset(float(TimeHandler::deltaSimulatedGet()))) {
+		auto* rotationComponent = entity.entityComponentGet<ComponentRotation>();
+		auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+
+		float coneSize = 90.f * Mathf::PI / 180.f;
+
+		float angle = rotationComponent->rotation;
+
+		// set the objectVision's objectGrid to the entity's level's ObjectGrid
+		objectVision.objectGridSet(&GameLevelGrid::levelGet(entity.levelId)->objectGrid);
+
+		objectVision.update(positionComponent->position, angle, coneSize, 640, 64);
+
+		ObjectIdVector& objectsSeenSet = objectVision.objectsSeenGet();
+
+		if (objectsSeenSet.size() <= 0) return;
+
+		auto* eventObjectSeen = entity.entityEventAddAndGet<EventObjectSeen>();
+		eventObjectSeen->objectsSeen = &objectsSeenSet;
+	}
+}
+void ComponentObjectVisionDebug::system(Entity& entity) {
+
+	cooldownPrint.update(float(TimeHandler::deltaRealGet()));
+
+	if (cooldownPrint.ready()) {
+
+		constexpr const char* objectTypesNames[] = {
+		   "Null",
+		   "Player",
+		   "SquadMember",
+		   "Door",
+		   "Skipper",
+		   "Wall",
+		   "SIZE",
+		};
+
+		std::string string;
+
+		if (entity.entityEventHas<EventObjectSeen>()) {
+			cooldownPrint.reset();
+
+			auto* eventObjectSeen = entity.entityEventGet<EventObjectSeen>();
+
+			const ObjectIdVector* objectsSeenVector = eventObjectSeen->objectsSeen;
+
+			string += "[";
+			for (uint16_t i = 0; i < objectsSeenVector->size(); i++) {
+
+				for (uint16_t j = 0; j < objectsSeenVector->at(i).size(); j++) {
+					string += objectTypesNames[i];
+					string += ", ";
+				}
+			}
+			string += "]";
+			ConsoleHandler::consolePrintColor(string, 6);
+		}
+	}
 }
 
 #pragma endregion Systems

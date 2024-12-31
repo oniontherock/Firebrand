@@ -196,4 +196,12 @@ void EntityComponents::ComponentObjectTypeAssigner::load(std::ifstream& str) {
 	str >> objectType;
 }
 
+void EntityComponents::ComponentObjectVision::save(std::ofstream& str) {
+	str << cooldownVisionUpdate;
+}
+void EntityComponents::ComponentObjectVision::load(std::ifstream& str) {
+	str >> cooldownVisionUpdate;
+}
+
+
 #pragma endregion

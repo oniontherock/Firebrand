@@ -2,6 +2,7 @@
 #define __ECS_REGISTRY_H__
 
 #include "../ACECS/Panels.hpp"
+#include "../Include/Game/RayCasting/Object Vision/ObjectVision.hpp"
 #include "ECS.hpp"
 #include "SFML/Graphics.hpp"
 #include <Audio/AudioStore.hpp>
@@ -44,6 +45,23 @@ namespace EntityEvents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new EventRotate());
+		};
+	};
+	// contains a list of EntityIds and ObjectTypes that were seen this update.
+	struct EventObjectSeen final : public Event {
+
+		EventObjectSeen() {
+			clear();
+		};
+
+		ObjectIdVector* objectsSeen;
+
+		void clear() final {
+			objectsSeen = nullptr;
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventObjectSeen());
 		};
 	};
 }
@@ -262,6 +280,47 @@ namespace EntityComponents {
 
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
+	};
+	// gets a list of seen objects using an ObjectVision and creates an EventObjectSeen with them.
+	struct ComponentObjectVision final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentObjectVision() {
+			hasSystem = true;
+			objectVision = ObjectVision();
+		};
+		ComponentObjectVision(Cooldown _updateCooldown) :
+			ComponentObjectVision()
+		{
+			cooldownVisionUpdate = _updateCooldown;
+		};
+
+		ObjectVision objectVision;
+
+		// cooldown for when the finish updates
+		Cooldown cooldownVisionUpdate;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentObjectVision(cooldownVisionUpdate));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	struct ComponentObjectVisionDebug final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentObjectVisionDebug() {
+			hasSystem = true;
+		};
+
+		Cooldown cooldownPrint = Cooldown(0.1f);
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentObjectVisionDebug());
+		};
 	};
 }
 

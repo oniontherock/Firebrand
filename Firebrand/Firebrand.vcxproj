@@ -150,6 +150,8 @@
     <ClCompile Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.cpp" />
     <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.cpp" />
     <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.cpp" />
+    <ClCompile Include="Include\Game\Raycasting\Object Vision\ObjectVision.cpp" />
+    <ClCompile Include="Include\Game\Raycasting\RayCaster.cpp" />
     <ClCompile Include="Include\Game\World\Objects\Object Grid\ObjectCell.cpp" />
     <ClCompile Include="Include\Game\World\Objects\Object Grid\ObjectGrid.cpp" />
     <ClCompile Include="Include\Game\World\Objects\ObjectRegistry.cpp" />
@@ -192,6 +194,8 @@
     <ClInclude Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.hpp" />
     <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.hpp" />
     <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.hpp" />
+    <ClInclude Include="Include\Game\Raycasting\Object Vision\ObjectVision.hpp" />
+    <ClInclude Include="Include\Game\Raycasting\RayCaster.hpp" />
     <ClInclude Include="Include\Game\World\Objects\Object Grid\ObjectCell.hpp" />
     <ClInclude Include="Include\Game\World\Objects\Object Grid\ObjectGrid.hpp" />
     <ClInclude Include="Include\Game\World\Objects\ObjectRegistry.hpp" />
