@@ -3,6 +3,7 @@
 #include "GameLevel.hpp"
 #include "GameStates.hpp"
 #include "Panels.hpp"
+#include <Audio.hpp>
 #include <Auxiliary/NumberGenerator.hpp>
 #include <GameState.hpp>
 #include <Graphics.hpp>
@@ -131,10 +132,25 @@ void Engine::gameStatesRegister() {
 	GameStateHandler::gameStateForceSet(GameStateTypes::Play);
 }
 void Engine::audioRegister() {
+	// register human footsteps
+	for (uint16_t i = 1; i <= 8; i++) {
+
+		sf::Sound soundCur(AudioStore::soundBufferStore.fileGetOrLoadFromName("SFX/Footstep" + std::to_string(i)));
+
+		soundCur.setMinDistance(256);
+		soundCur.setAttenuation(12);
+		soundCur.setVolume(25);
+
+		SoundHandler::soundAdd("HumanFootstep", soundCur);
+	}
 }
 void Engine::imagesRegister() {
+	GraphicsStore::imageStore.fileLoadFromName("Art/Circle");
 }
 void Engine::texturesRegister() {
+	sf::Texture circleTexture;
+	circleTexture.loadFromImage(GraphicsStore::imageStore.objectGet("Art/Circle"));
+	GraphicsStore::textureStore.objectAddFromInstance("Circle", circleTexture);
 }
 
 // initialize the ACECS engine by registering all inputs, initializing the ECS module, and registering game states.

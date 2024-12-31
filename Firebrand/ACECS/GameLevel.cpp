@@ -125,7 +125,7 @@ void GameLevel::pathsDraw() {
 		}
 	}
 
-	const uint32_t dirtCount = 500 * points.size();
+	const uint32_t dirtCount = 50 * points.size();
 
 	for (uint32_t i = 0; i < dirtCount; i++) {
 
@@ -188,7 +188,7 @@ void GameLevel::pathsDraw() {
 		quads.append(cornerBottomLeft);
 	}
 
-	const uint32_t lineCount = 25 * points.size();
+	const uint32_t lineCount = 5 * points.size();
 
 	for (uint32_t i = 0; i < lineCount; i++) {
 
