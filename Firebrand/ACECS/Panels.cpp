@@ -60,14 +60,14 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	backgroundSprite.setTextureRect(sf::IntRect(viewRect));
 	backgroundSprite.setPosition(viewRect.left, viewRect.top);
 
-	//// draw paths
-	//sf::Sprite pathsSprite(levelActive->pathsTexture.getTexture());
-	//pathsSprite.setTextureRect(sf::IntRect(viewRect));
-	//pathsSprite.setPosition(viewRect.left, viewRect.top);
+	// draw paths
+	sf::Sprite pathsSprite(levelActive->pathsTexture.getTexture());
+	pathsSprite.setTextureRect(sf::IntRect(viewRect));
+	pathsSprite.setPosition(viewRect.left, viewRect.top);
 
 	objectDraw(backgroundRectangle);
 	objectDraw(backgroundSprite);
-	//objectDraw(pathsSprite);
+	objectDraw(pathsSprite);
 }
 
 void PanelDynamicView::panelUpdate() {

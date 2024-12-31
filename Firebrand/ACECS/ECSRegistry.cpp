@@ -130,8 +130,6 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentObjectVision>(0.1f),
-			createComponentPairFromType<ComponentObjectVisionDebug>(),
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Player),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),

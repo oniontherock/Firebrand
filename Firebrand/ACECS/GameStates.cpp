@@ -41,7 +41,7 @@ void GameStatePlay::gameStateUpdate() {
 void GameStatePlay::gameStateStart() {
 
 	GameLevel* level = GameLevelGrid::levelGet(0, 0, 0);
-	//level->pathsGenerate();
+	level->pathsGenerate();
 	level->backgroundDraw();
 
 	// create player and assign the level's playerId to the id of the newly created player

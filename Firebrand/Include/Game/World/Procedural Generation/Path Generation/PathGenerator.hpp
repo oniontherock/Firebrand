@@ -20,16 +20,13 @@ struct PathPoint {
 	sf::Vector2f position;
 	// index of this point
 	PointIndex index;
-
-	// vector of PointIndexes who originate from this point.
-	std::vector<PointIndex> children;
 };
 
 // generates the large paths that make up the world
 class PathGenerator {
 
 	// vector of points in the path.
-	std::vector<PathPoint> points;
+	std::vector<PathPoint*> points;
 	// vector of PointConnections between points in the path
 	std::vector<PointConnection> connections;
 
@@ -42,17 +39,16 @@ class PathGenerator {
 	// connects two points, takes the point's indexes
 	void pointsConnect(PointIndex indA, PointIndex indB);
 	// connects two points
-	void pointsConnect(const PathPoint& a, const PathPoint& b);
+	void pointsConnect(const PathPoint* a, const PathPoint* b);
 
 	// creates a point, adds it to the points vector, and returns it
-	PointIndex pointCreate(sf::Vector2f position);
-	PathPoint& pointGet(PointIndex index);
+	PathPoint* pointCreate(sf::Vector2f position);
 
 
 	// returns whether the given line intersects any of the point connections (I.E. if the line crosses the path.
-	bool lineIntersectsPath(const PathPoint& lineStart, const PathPoint& lineEnd);
+	bool lineIntersectsPath(const PathPoint* lineStart, const PathPoint* lineEnd);
 	// returns the squared distance to the point closest to the given point
-	float pointGetDistSqrdToClosest(const PathPoint& point);
+	float pointGetDistSqrdToClosest(const PathPoint* point);
 
 	// generates a point, this includes children and connections.
 	// this function recursively calls itself with it's children points,
@@ -61,12 +57,13 @@ class PathGenerator {
 	// @param pointEnd: the end point of the generation.
 	// @param generation: the current generation of points created.
 	// @param generationMax: the maximum number of generations, if the generation reaches the max generation, the point is connected to pointEnd.
-	void pointGenerate(PathPoint& point, const PathPoint& pointEnd, uint16_t generation, const uint16_t generationMax);
+	void pointGenerate(PathPoint* point, const PathPoint* pointEnd, uint16_t generation, const uint16_t generationMax);
 
 public:
+	~PathGenerator();
 	void pathGenerate(sf::Vector2f pointStartPosition, sf::Vector2f pointEndPosition);
 
-	const std::vector<PathPoint>& pathGet();
+	const std::vector<PathPoint*>& pathGet();
 	const std::vector<PointConnection>& connectionsGet();
 };
 
