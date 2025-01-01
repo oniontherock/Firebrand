@@ -6,16 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
-
-// render texture containing a position in the world
-struct GridTexture : sf::RenderTexture {
-
-	friend struct TextureGrid;
-
-	sf::Vector2f positionGet();
-private:
-	sf::Vector2f position;
-};
+#include "GridTexture.hpp"
 
 typedef std::vector<GridTexture> TextureGrid1D;
 typedef std::vector<TextureGrid1D> TextureGrid2D;
@@ -23,7 +14,10 @@ typedef std::vector<TextureGrid1D> TextureGrid2D;
 struct TextureGrid : Grid<GridTexture> {
 	TextureGrid(uint32_t gridSizeX, uint32_t gridSizeY, float cellSizeX, float cellSizeY);
 	
-	// draws the specified rectangle to the specified texture
+	// returns pointers to any textures in the given rect
+	std::vector<GridTexture*> texturesGetInRectangle(sf::FloatRect rect);
+
+	// draws the specified rectangle to the specified texture, note that the renderTexture's view should be set to avoid only the top left most texture('s) being drawn
 	void drawRectangleToTexture(sf::FloatRect rect, sf::RenderTexture& renderTexture);
 };
 

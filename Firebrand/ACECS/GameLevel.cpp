@@ -6,8 +6,8 @@ GameLevel::GameLevel() :
 	aStarGrid(AStarGrid(levelSize.x / 16, levelSize.y / 16, 16.f, 16.f)),
 	objectGrid(levelSize.x / 4, levelSize.y / 4, 4.f, 4.f),
 	pathGenerator(PathGenerator()),
-	backgroundTexture(TextureGrid(levelSize.x / 1280, levelSize.y / 720, 1280, 720)),
-	pathsTexture(TextureGrid(levelSize.x / 1280, levelSize.y / 720, 1280, 720))
+	backgroundTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
+	pathsTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720))
 {
 	entities = std::vector<EntityId>();
 }
@@ -28,12 +28,43 @@ void GameLevel::backgroundDraw() {
 	pathsDraw();
 }
 
+void GameLevel::pathsGenerate() {
+	ConsoleHandler::consolePrintLoadingGame("Path Generation Started");
+
+	constexpr float levelSizeDivider = 1.1f;
+
+	sf::Vector2f startPoint;
+	sf::Vector2f endPoint;
+
+	// squared distance between startPoint and endPoint
+	float pointDistSqrd = 0;
+
+	uint32_t printer = 0;
+
+	// loop if the distance between the start and end points is less than the length of the level size divided by levelSizeDivider
+	do {
+		startPoint = sf::Vector2f(RNGf::getRange(0, levelSize.x), RNGf::getRange(0, levelSize.y));
+		endPoint = sf::Vector2f(RNGf::getRange(0, levelSize.x), RNGf::getRange(0, levelSize.y));
+
+		pointDistSqrd = Vector2fMath::distSqrd(startPoint, endPoint);
+		
+		if (((printer++) % 1000) == 0) ConsoleHandler::consolePrintLoadingGame("Path Start And End Points Generating...");
+
+	} while (pointDistSqrd < (Vector2fMath::lengthSqrd(float(levelSize.x), float(levelSize.y)) / levelSizeDivider));
+
+	ConsoleHandler::consolePrintLoadingGame("Path Start And End Points Generated");
+
+	pathGenerator.pathGenerate(startPoint, endPoint);
+	ConsoleHandler::consolePrintLoadingGame("Path Generation Finished");
+}
 void GameLevel::grassDraw() {
+
+	ConsoleHandler::consolePrintLoadingGame("Grass Drawing Started");
 
 	sf::VertexArray lines;
 	lines.setPrimitiveType(sf::Lines);
 
-	uint32_t grassBladeCount = (levelSize.x * levelSize.y) / 3;
+	uint32_t grassBladeCount = (levelSize.x * levelSize.y) / 30;
 
 	for (uint32_t i = 0; i < grassBladeCount; i++) {
 
@@ -80,11 +111,11 @@ void GameLevel::grassDraw() {
 			backgroundTexture.cellGet(x, y).display();
 		}
 	}
-}
-void GameLevel::pathsGenerate() {
-	pathGenerator.pathGenerate(sf::Vector2f(256.f, float(levelSize.y) / 2.f), sf::Vector2f(float(levelSize.x) - 256.f, float(levelSize.y) / 2.f));
+
+	ConsoleHandler::consolePrintLoadingGame("Grass Drawing Completed");
 }
 void GameLevel::pathsDraw() {
+	ConsoleHandler::consolePrintLoadingGame("Path Dirt Drawing Started");
 
 	sf::VertexArray lines;
 	lines.setPrimitiveType(sf::Lines);
@@ -191,7 +222,10 @@ void GameLevel::pathsDraw() {
 		quads.append(cornerBottomLeft);
 	}
 
-	const uint32_t lineCount = 5 * points.size();
+	ConsoleHandler::consolePrintLoadingGame("Path Dirt Drawing Completed");
+	ConsoleHandler::consolePrintLoadingGame("Path Line Drawing Started");
+
+	const uint32_t lineCount = 2 * points.size();
 
 	for (uint32_t i = 0; i < lineCount; i++) {
 
@@ -262,4 +296,6 @@ void GameLevel::pathsDraw() {
 			pathsTexture.cellGet(x, y).display();
 		}
 	}
+
+	ConsoleHandler::consolePrintLoadingGame("Path Line Drawing Finished");
 }

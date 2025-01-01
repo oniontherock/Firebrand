@@ -143,6 +143,7 @@
     <ClCompile Include="ACECS\SaveFunctions.cpp" />
     <ClCompile Include="ACECS\SaveOperations.cpp" />
     <ClCompile Include="Include\Common\DataCache.cpp" />
+    <ClCompile Include="Include\Common\GridTexture.cpp" />
     <ClCompile Include="Include\Common\TextureGrid.cpp" />
     <ClCompile Include="Include\Debugging\AStarPathDrawer.cpp" />
     <ClCompile Include="Include\Debugging\ObjectGridRenderer.cpp" />
@@ -188,6 +189,7 @@
     <ClInclude Include="ACECS\SaveOperations.hpp" />
     <ClInclude Include="Include\Common\DataCache.hpp" />
     <ClInclude Include="Include\Common\Grid.hpp" />
+    <ClInclude Include="Include\Common\GridTexture.hpp" />
     <ClInclude Include="Include\Common\TextureGrid.hpp" />
     <ClInclude Include="Include\Debugging\AStarPathDrawer.hpp" />
     <ClInclude Include="Include\Debugging\ObjectGridRenderer.hpp" />
