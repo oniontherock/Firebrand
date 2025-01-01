@@ -5,7 +5,9 @@ GameLevel::GameLevel() :
 	levelSize(sf::Vector2u(4096, 4096)),
 	aStarGrid(AStarGrid(levelSize.x / 16, levelSize.y / 16, 16.f, 16.f)),
 	objectGrid(levelSize.x / 4, levelSize.y / 4, 4.f, 4.f),
-	pathGenerator(PathGenerator())
+	pathGenerator(PathGenerator()),
+	backgroundTexture(TextureGrid(levelSize.x / 1280, levelSize.y / 720, 1280, 720)),
+	pathsTexture(TextureGrid(levelSize.x / 1280, levelSize.y / 720, 1280, 720))
 {
 	entities = std::vector<EntityId>();
 }
@@ -27,12 +29,11 @@ void GameLevel::backgroundDraw() {
 }
 
 void GameLevel::grassDraw() {
-	backgroundTexture.create(levelSize.x, levelSize.y);
 
 	sf::VertexArray lines;
 	lines.setPrimitiveType(sf::Lines);
 
-	uint32_t grassBladeCount = (levelSize.x * levelSize.y) / 30;
+	uint32_t grassBladeCount = (levelSize.x * levelSize.y) / 3;
 
 	for (uint32_t i = 0; i < grassBladeCount; i++) {
 
@@ -73,15 +74,17 @@ void GameLevel::grassDraw() {
 		lines.append(lineEndOffsetted);
 	}
 
-	backgroundTexture.draw(lines);
-	backgroundTexture.display();
-
+	for (uint16_t x = 0; x < backgroundTexture.gridGetSizeX(); x++) {
+		for (uint16_t y = 0; y < backgroundTexture.gridGetSizeY(); y++) {
+			backgroundTexture.cellGet(x, y).draw(lines);
+			backgroundTexture.cellGet(x, y).display();
+		}
+	}
 }
 void GameLevel::pathsGenerate() {
 	pathGenerator.pathGenerate(sf::Vector2f(256.f, float(levelSize.y) / 2.f), sf::Vector2f(float(levelSize.x) - 256.f, float(levelSize.y) / 2.f));
 }
 void GameLevel::pathsDraw() {
-	pathsTexture.create(levelSize.x, levelSize.y);
 
 	sf::VertexArray lines;
 	lines.setPrimitiveType(sf::Lines);
@@ -252,7 +255,11 @@ void GameLevel::pathsDraw() {
 		lines.append(lineEndOffsetted);
 	}
 
-	pathsTexture.draw(quads, &circleTexture);
-	pathsTexture.draw(lines);
-	pathsTexture.display();
+	for (uint16_t x = 0; x < backgroundTexture.gridGetSizeX(); x++) {
+		for (uint16_t y = 0; y < backgroundTexture.gridGetSizeY(); y++) {
+			pathsTexture.cellGet(x, y).draw(quads, &circleTexture);
+			pathsTexture.cellGet(x, y).draw(lines);
+			pathsTexture.cellGet(x, y).display();
+		}
+	}
 }

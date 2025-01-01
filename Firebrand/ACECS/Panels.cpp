@@ -51,23 +51,30 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	// draw background base color
 	sf::RectangleShape backgroundRectangle;
 	backgroundRectangle.setSize(viewRect.getSize());
-	backgroundRectangle.setFillColor(sf::Color(10, 75, 0, 255));
+	backgroundRectangle.setFillColor(sf::Color(255, 0, 0, 255));
 	backgroundRectangle.setTextureRect(sf::IntRect(viewRect));
 	backgroundRectangle.setPosition(viewRect.left, viewRect.top);
 
+	sf::RenderTexture backgroundRenderTexture;
+	backgroundRenderTexture.create(viewRect.getSize().x, viewRect.getSize().y);
+
+	levelActive->backgroundTexture.drawRectangleToTexture(viewRect, backgroundRenderTexture);
+
+	backgroundRenderTexture.display();
+
 	// draw background texture
-	sf::Sprite backgroundSprite(levelActive->backgroundTexture.getTexture());
-	backgroundSprite.setTextureRect(sf::IntRect(viewRect));
+	sf::Sprite backgroundSprite;
+	backgroundSprite.setTexture(backgroundRenderTexture.getTexture());
 	backgroundSprite.setPosition(viewRect.left, viewRect.top);
 
-	// draw paths
-	sf::Sprite pathsSprite(levelActive->pathsTexture.getTexture());
-	pathsSprite.setTextureRect(sf::IntRect(viewRect));
-	pathsSprite.setPosition(viewRect.left, viewRect.top);
+	//// draw paths
+	//sf::Sprite pathsSprite(levelActive->pathsTexture.getTexture());
+	//pathsSprite.setTextureRect(sf::IntRect(viewRect));
+	//pathsSprite.setPosition(viewRect.left, viewRect.top);
 
 	objectDraw(backgroundRectangle);
 	objectDraw(backgroundSprite);
-	objectDraw(pathsSprite);
+	//objectDraw(pathsSprite);
 }
 
 void PanelDynamicView::panelUpdate() {

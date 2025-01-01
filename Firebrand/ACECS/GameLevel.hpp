@@ -1,6 +1,7 @@
 #ifndef __GAME_LEVEL_H__
 #define __GAME_LEVEL_H__
 
+#include "../Include/Common/TextureGrid.hpp"
 #include "../Include/Game/Pathfinding/AStar/Grid/AStarGrid.hpp"
 #include "../Include/Game/World/Objects/Object Grid/ObjectGrid.hpp"
 #include "../Include/Game/World/Procedural Generation/Path Generation/PathGenerator.hpp"
@@ -34,9 +35,9 @@ struct GameLevel : public BaseLevel {
 	PathGenerator pathGenerator;
 
 	// texture for the background
-	sf::RenderTexture backgroundTexture;
+	TextureGrid backgroundTexture;
 	// texture for the paths
-	sf::RenderTexture pathsTexture;
+	TextureGrid pathsTexture;
 
 	void pathsGenerate();
 	void backgroundDraw();
