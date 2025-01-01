@@ -40,11 +40,12 @@ struct GameLevel : public BaseLevel {
 	TextureGrid pathsTexture;
 
 	void pathsGenerate();
-	void backgroundDraw();
+	void backgroundDraw(sf::FloatRect rect, uint32_t drawIterationsMax);
 
 private:
-	void grassDraw();
-	void pathsDraw();
+	// draws the grass on the backgroundTexture's cells that fall in the rect and haven't been drawn
+	void grassDraw(sf::FloatRect rect, uint32_t drawIterationsMax);
+	void pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax);
 };
 
 using GameLevelGrid = LevelGrid<GameLevel>;

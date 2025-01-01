@@ -12,8 +12,10 @@ TextureGrid::TextureGrid(uint32_t gridSizeX, uint32_t gridSizeY, float cellSizeX
 		for (uint32_t y = 0; y < gridSize.y; y++) {
 			columns[y].create(cellSize.x, cellSize.y);
 
+			
 			sf::Vector2f cellPosition = sf::Vector2f(float(x) * cellSizeX, float(y) * cellSizeY);
 
+			columns[y].gridPosition = sf::Vector2u(x, y);
 			columns[y].position = cellPosition;
 
 			columns[y].setView(sf::View(sf::FloatRect(cellPosition.x, cellPosition.y, cellSizeX, cellSizeY)));
