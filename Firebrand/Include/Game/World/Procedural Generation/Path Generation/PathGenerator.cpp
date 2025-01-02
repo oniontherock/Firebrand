@@ -11,13 +11,13 @@ PathPoint::PathPoint(sf::Vector2f _position, PointIndex _index) {
 }
 
 PathGenerator::~PathGenerator() {
-	for (uint16_t i = 0; i < points.size(); i++) {
-		delete points[i];
+	for (uint16_t i = 0; i < pathPoints.size(); i++) {
+		delete pathPoints[i];
 	}
 }
 PointIndex PathGenerator::pointGetFromPosition(sf::Vector2f position) {
-	for (PointIndex i = 0; i < points.size(); i++) {
-		if (Vector2fMath::distSqrd(points[i]->position, position) < 16.f * 16.f) {
+	for (PointIndex i = 0; i < pathPoints.size(); i++) {
+		if (Vector2fMath::distSqrd(pathPoints[i]->position, position) < 16.f * 16.f) {
 			return i;
 		}
 	}
@@ -29,9 +29,9 @@ PointIndex PathGenerator::pointGetClosest(sf::Vector2f position) {
 	PointIndex lowestInd = 0;
 	float lowestDistSqrd = 9999999999999999999.f;
 
-	for (PointIndex i = 0; i < points.size(); i++) {
+	for (PointIndex i = 0; i < pathPoints.size(); i++) {
 
-		float distSqrd = Vector2fMath::distSqrd(points[i]->position, position);
+		float distSqrd = Vector2fMath::distSqrd(pathPoints[i]->position, position);
 
 		if (distSqrd < lowestDistSqrd) {
 			lowestInd = i;
@@ -41,6 +41,31 @@ PointIndex PathGenerator::pointGetClosest(sf::Vector2f position) {
 
 	return lowestInd;
 }
+
+std::vector<PointIndex> PathGenerator::pointsGetByDistance(sf::Vector2f position, float threshold) {
+	
+	// multimap of distances and indexes of points, we have the distance as the key so that the map is sorted based off distance,
+	// later we just extract the indexes and put them in a vector, we never actually use the key for anything other than having it sorted
+	std::multimap<float, PointIndex> pointsInThresholdMultiMap;
+	
+	// get all points within threshold
+	for (PointIndex i = 0; i < pathPoints.size(); i++) {
+		float distSqrd = Vector2fMath::distSqrd(pathPoints[i]->position, position);
+
+		if (distSqrd < threshold * threshold) {
+			pointsInThresholdMultiMap.insert({ distSqrd, i });
+		}
+	}
+
+	// convert pointsInThresholdMap to a vector where
+	std::vector<PointIndex> pointsInThresholdVector;
+	for (const std::pair<float, PointIndex>& pair : pointsInThresholdMultiMap) {
+		pointsInThresholdVector.push_back(pair.second);
+	}
+
+	return pointsInThresholdVector;
+}
+
 void PathGenerator::pointsConnect(PointIndex indA, PointIndex indB) {
 	connections.push_back(PointConnection(indA, indB));
 }
@@ -50,18 +75,18 @@ void PathGenerator::pointsConnect(const PathPoint* a, const PathPoint* b) {
 
 PathPoint* PathGenerator::pointCreate(sf::Vector2f position) {
 
-	PointIndex index = points.size();
+	PointIndex index = pathPoints.size();
 
-	points.push_back(new PathPoint(position, index));
+	pathPoints.push_back(new PathPoint(position, index));
 
-	return points[index];
+	return pathPoints[index];
 }
 
 bool PathGenerator::lineIntersectsPath(const PathPoint* lineStart, const PathPoint* lineEnd) {
 	for (uint32_t i = 0; i < connections.size(); i++) {
 
-		const PathPoint* lineOtherStart = points[connections[i].first];
-		const PathPoint* lineOtherEnd = points[connections[i].second];
+		const PathPoint* lineOtherStart = pathPoints[connections[i].first];
+		const PathPoint* lineOtherEnd = pathPoints[connections[i].second];
 
 		// make sure other line isn't the connected to the main line directly (I.E. share a point)
 		if (lineStart->index == lineOtherStart->index) continue;
@@ -80,10 +105,10 @@ float PathGenerator::pointGetDistSqrdToClosest(const PathPoint* point) {
 
 	float closestDistSqrd = 999999999999999.f;
 
-	for (uint16_t i = 0; i < points.size(); i++) {
+	for (uint16_t i = 0; i < pathPoints.size(); i++) {
 		if (i == point->index) continue;
 
-		float distSqrd = Vector2fMath::distSqrd(point->position, points[i]->position);
+		float distSqrd = Vector2fMath::distSqrd(point->position, pathPoints[i]->position);
 
 		if (distSqrd < closestDistSqrd) {
 			closestDistSqrd = distSqrd;
@@ -91,6 +116,28 @@ float PathGenerator::pointGetDistSqrdToClosest(const PathPoint* point) {
 	}
 
 	return closestDistSqrd;
+}
+
+bool PathGenerator::pointMergeWithClosestToPosition(PointIndex pointInd, sf::Vector2f position, float angle, float angleThreshold) {
+
+	PathPoint* point = pathPoints[pointInd];
+
+	std::vector<PointIndex> points = pointsGetByDistance(position);
+
+	for (uint16_t i = 0; i < points.size(); i++) {
+		if (pointInd != points[i]) {
+
+			float angleToMergePoint = Vector2fMath::angle(point->position, pathPoints[points[i]]->position);
+
+			// merge if the angle to the merge point isn't too off course to the end target
+			if (abs(angleToMergePoint - angle) < Mathf::PI / 1.25) {
+				pointsConnect(pointInd, points[i]);
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void PathGenerator::pointGenerate(PathPoint* point, const PathPoint* pointEnd, uint16_t generation, const uint16_t generationMax) {
@@ -104,58 +151,64 @@ void PathGenerator::pointGenerate(PathPoint* point, const PathPoint* pointEnd, u
 	if (generation < generationMax) {
 
 		// the minimum distance a child can be from any neighbors
-		constexpr float childrenMinDist = 256.f;
+		constexpr float childrenMinDist = 4096.f;
 		// distance that children can offset themselves from the "optimal" distance
-		constexpr float childrenDistOffsetMin = -256.f;
-		constexpr float childrenDistOffsetMax = 128.f;
+		constexpr float childrenDistOffsetMin = -4096.f;
+		constexpr float childrenDistOffsetMax = 4096.f;
 
 		uint16_t childrenCount = RNGf::probability(generationValue) ? 1 : (RNGf::probability(generationValue) ? 2 : 3);
 
 		float angleToTarget = atan2(axisToEnd.y, axisToEnd.x);
 		float distFromParent = Vector2fMath::length(axisToEnd) / float((generationMax - generation) + 1.f);
 
+		float childAngleOffset = RNGf::getRange(Mathf::PI);
+		float childDistanceOffset = RNGf::getRange(childrenDistOffsetMin, childrenDistOffsetMax);
+
+		sf::Vector2f childOffset = sf::Vector2f(cos(angleToTarget + childAngleOffset), sin(angleToTarget + childAngleOffset)) * (distFromParent + childDistanceOffset);
+
 		// the "best" position for the child, which is a step directly towards the target
 		sf::Vector2f childBestPosition = point->position + (axisToEnd / float((generationMax - generation) + 1.f));
 
 		for (uint16_t i = 0; i < childrenCount; i++) {
 
+			bool didMerge = false;
+
 			// random chance to merge with neighbor, higher generations are more likely to merge
 			if (RNGf::probability(generationValue)) {
-				PointIndex pointInd = pointGetClosest(childBestPosition);
-				if (point->index != pointInd) {
-					pointsConnect(point->index, pointInd);
-					continue;
-				}
+				didMerge = pointMergeWithClosestToPosition(point->index, childBestPosition + childOffset, angleToTarget, Mathf::PI / 1.25f);
 			}
 
-			PathPoint* childPoint = pointCreate(childBestPosition);
+			if (didMerge) continue;
 
-			uint16_t breaker = 10000;
+			PathPoint* childPoint = pointCreate(childBestPosition + childOffset);
+
+			uint16_t breaker = 100000;
 			while ((lineIntersectsPath(point, childPoint) || (pointGetDistSqrdToClosest(childPoint) < childrenMinDist * childrenMinDist)) && ((--breaker) > 0)) {
 
-				float childAngleOffset = RNGf::getRange(Mathf::PI);
-				float childDistanceOffset = RNGf::getRange(childrenDistOffsetMin, childrenDistOffsetMax);
+				childAngleOffset = RNGf::getRange(Mathf::PI);
+				childDistanceOffset = RNGf::getRange(childrenDistOffsetMin, childrenDistOffsetMax);
 
-				sf::Vector2f childOffset = sf::Vector2f(cos(angleToTarget + childAngleOffset), sin(angleToTarget + childAngleOffset)) * (distFromParent + childDistanceOffset);
+				childOffset = sf::Vector2f(cos(angleToTarget + childAngleOffset), sin(angleToTarget + childAngleOffset)) * (distFromParent + childDistanceOffset);
 
-				childPoint->position = childBestPosition + childOffset;
-			}
-			if (breaker <= 0) {
-				// erase if a point that didn't intersect the path could not be found
-				points.erase(points.begin() + childPoint->index);
-
-				// connect parent point to closest point to avoid dead ends
-				PointIndex pointInd = pointGetClosest(childBestPosition);
-				if (point->index != pointInd) {
-					pointsConnect(point, points[pointInd]);
-					continue;
+				if (generationBounds.contains(childBestPosition + childOffset)) {
+					childPoint->position = childBestPosition + childOffset;
 				}
 			}
-			else {
+
+			if (breaker > 0) {
+	/*			if (pointGetDistSqrdToClosest(childPoint) < (childrenMinDist * 1.25f) * (childrenMinDist * 1.25f)) {
+					pointMergeWithClosestToPosition(childPoint->index, childBestPosition + childOffset, angleToTarget, Mathf::TAU);
+				}*/
 				pointsConnect(point, childPoint);
 
 				pointGenerate(childPoint, pointEnd, generation + 1, generationMax);
 
+			}
+			else {
+				// erase child if a point that didn't intersect the path could not be found
+				pathPoints.erase(pathPoints.begin() + childPoint->index);
+
+				pointMergeWithClosestToPosition(point->index, childBestPosition + childOffset, angleToTarget, Mathf::PI);
 			}
 		}
 	}
@@ -165,22 +218,20 @@ void PathGenerator::pointGenerate(PathPoint* point, const PathPoint* pointEnd, u
 	}
 }
 void PathGenerator::pathGenerate(sf::Vector2f pointStartPosition, sf::Vector2f pointEndPosition) {
-
-	PathPoint* pointStart = pointCreate(pointStartPosition);
-	PathPoint* pointEnd = pointCreate(pointEndPosition);
-
-
 	int16_t breaker = 1000;
-	while (points.size() < 15 && (--breaker > 0)) {
-		points.clear();
+	while (pathPoints.size() < 15 && (--breaker > 0)) {
+		pathPoints.clear();
 		connections.clear();
 
-		pointGenerate(pointStart, pointEnd, 0, 10);
+		PathPoint* pointStart = pointCreate(pointStartPosition);
+		PathPoint* pointEnd = pointCreate(pointEndPosition);
+
+		pointGenerate(pointStart, pointEnd, 0, 12);
 	}
 }
 
 const std::vector<PathPoint*>& PathGenerator::pathGet() {
-	return points;
+	return pathPoints;
 }
 const std::vector<PointConnection>& PathGenerator::connectionsGet() {
 	return connections;

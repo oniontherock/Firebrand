@@ -3,9 +3,10 @@
 
 #include <cstdint>
 #include <set>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
 #include <map>
 #include <vector>
+#include <map>
 
 // index of a point in the PathGenerator's points vector
 typedef uint16_t PointIndex;
@@ -26,7 +27,7 @@ struct PathPoint {
 class PathGenerator {
 
 	// vector of points in the path.
-	std::vector<PathPoint*> points;
+	std::vector<PathPoint*> pathPoints;
 	// vector of PointConnections between points in the path
 	std::vector<PointConnection> connections;
 
@@ -35,6 +36,8 @@ class PathGenerator {
 	PointIndex pointGetFromPosition(sf::Vector2f position);
 	// returns the closest point to the position, more expensive than pointGetFromPosition when the point is within 16 pixels
 	PointIndex pointGetClosest(sf::Vector2f position);
+	// returns  a vector of any pairs of point indexes and squared distances to position that are closer than threshold
+	std::vector<PointIndex> pointsGetByDistance(sf::Vector2f position, float threshold = 999999);
 
 	// connects two points, takes the point's indexes
 	void pointsConnect(PointIndex indA, PointIndex indB);
@@ -44,6 +47,8 @@ class PathGenerator {
 	// creates a point, adds it to the points vector, and returns it
 	PathPoint* pointCreate(sf::Vector2f position);
 
+	// merges the point with the point closest to position if the angle to that merge point isn't more than angleThreshold, returns whether or not it merged
+	bool pointMergeWithClosestToPosition(PointIndex pointInd, sf::Vector2f position, float angle, float angleThreshold);
 
 	// returns whether the given line intersects any of the point connections (I.E. if the line crosses the path.
 	bool lineIntersectsPath(const PathPoint* lineStart, const PathPoint* lineEnd);
@@ -62,6 +67,8 @@ class PathGenerator {
 public:
 	~PathGenerator();
 	void pathGenerate(sf::Vector2f pointStartPosition, sf::Vector2f pointEndPosition);
+
+	sf::FloatRect generationBounds;
 
 	const std::vector<PathPoint*>& pathGet();
 	const std::vector<PointConnection>& connectionsGet();

@@ -18,11 +18,19 @@ void GridTexture::draw(const sf::VertexBuffer& vertexBuffer, std::size_t firstVe
 	drawRegister();
 }
 
+void GridTexture::display() {
+	sf::RenderTexture::display();
+	displayRegister();
+}
+void GridTexture::displayInvisible() {
+	sf::RenderTexture::display();
+}
 
-sf::Vector2f GridTexture::positionGet() {
+
+sf::Vector2f GridTexture::positionGet() const {
 	return position;
 }
-sf::Vector2u GridTexture::gridPositionGet() {
+sf::Vector2u GridTexture::gridPositionGet() const {
 	return gridPosition;
 }
 
@@ -33,8 +41,20 @@ uint32_t GridTexture::drawCountGet() const {
 	return drawCount;
 }
 
+bool GridTexture::hasEverDisplayedGet() const {
+	return hasEverDisplayed;
+}
+uint32_t GridTexture::displayCountGet() const {
+	return displayCount;
+}
+
 void GridTexture::drawRegister() {
 	hasEverDrawn = true;
 	drawCount++;
 }
+void GridTexture::displayRegister() {
+	hasEverDisplayed = true;
+	displayCount++;
+}
+
 

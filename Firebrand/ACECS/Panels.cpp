@@ -57,7 +57,7 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 
 
 
-	levelActive->backgroundDraw(sf::FloatRect(viewRect.left - (viewRect.width / 2.f), viewRect.top - (viewRect.height / 2.f), viewRect.width * 2.f, viewRect.height * 2.f), 512);
+	levelActive->backgroundDraw(sf::FloatRect(viewRect.getPosition() - (viewRect.getSize() / 2.f), viewRect.getSize() * 2.f), 256);
 
 
 	// draw base background color

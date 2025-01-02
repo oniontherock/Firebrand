@@ -47,6 +47,8 @@ private:
 	sf::FloatRect backgroundRect;
 	sf::FloatRect backgroundRectPrev;
 
+	std::vector<sf::Vector2f> pathPoints;
+
 	void textureUpdateValidity(sf::FloatRect rect, TextureGrid& texture) const;
 	void textureGridsUpdateValidity(sf::FloatRect rect);
 

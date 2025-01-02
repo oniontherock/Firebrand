@@ -43,15 +43,17 @@ void GameStatePlay::gameStateStart() {
 	GameLevel* level = GameLevelGrid::levelGet(0, 0, 0);
 	level->pathsGenerate();
 
+	const std::vector<PathPoint*>& path = level->pathGenerator.pathGet();
+
 	// create player and assign the level's playerId to the id of the newly created player
 	GameData::playerId = EntityManager::entityCreate(level->levelPosition, "Player");
 	Entity& player = EntityManager::entityGet(GameData::playerId);
-	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(100, 100);
+	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(path[0]->position);
 
 	// create player and assign the level's playerId to the id of the newly created player
 	EntityId testId = EntityManager::entityCreate(level->levelPosition, "Test Object");
 	Entity& test = EntityManager::entityGet(testId);
-	test.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(256, 100);
+	test.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(path[1]->position);
 }
 
 void GameStatePlay::worldClockUpdate() {
