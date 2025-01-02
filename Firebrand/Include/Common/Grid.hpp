@@ -125,8 +125,15 @@ public:
 		cells[cellPos.x][cellPos.y] = cell;
 	}
 
-	bool cellPosIsInGrid(CellCoordinate cellX, CellCoordinate cellY) {
+	// uses ints instead of uints because the cells may go negative
+	bool cellPosIsInGrid(int32_t cellX, int32_t cellY) {
 		return !(cellX < 0 || cellX >= gridSize.x || cellY < 0 || cellY >= gridSize.y);
+	}
+	bool cellPosIsInGrid(sf::Vector2i cellPos) {
+		return cellPosIsInGrid(cellPos.x, cellPos.y);
+	}
+	bool cellPosIsInGrid(CellCoordinate cellX, CellCoordinate cellY) {
+		return cellPosIsInGrid(int32_t(cellX), int32_t(cellY));
 	}
 	bool cellPosIsInGrid(CellVector cellPos) {
 		return cellPosIsInGrid(cellPos.x, cellPos.y);

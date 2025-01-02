@@ -43,6 +43,13 @@ struct GameLevel : public BaseLevel {
 	void backgroundDraw(sf::FloatRect rect, uint32_t drawIterationsMax);
 
 private:
+
+	sf::FloatRect backgroundRect;
+	sf::FloatRect backgroundRectPrev;
+
+	void textureUpdateValidity(sf::FloatRect rect, TextureGrid& texture) const;
+	void textureGridsUpdateValidity(sf::FloatRect rect);
+
 	// draws the grass on the backgroundTexture's cells that fall in the rect and haven't been drawn
 	void grassDraw(sf::FloatRect rect, uint32_t drawIterationsMax);
 	void pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax);

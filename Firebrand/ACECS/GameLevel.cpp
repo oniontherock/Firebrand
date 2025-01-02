@@ -2,7 +2,7 @@
 #include <Graphics/Stores/GraphicsStore.hpp>
 
 GameLevel::GameLevel() :
-	levelSize(sf::Vector2u(4096, 4096)),
+	levelSize(sf::Vector2u(4096 * 8, 4096 * 8)),
 	aStarGrid(AStarGrid(levelSize.x / 16, levelSize.y / 16, 16.f, 16.f)),
 	objectGrid(levelSize.x / 4, levelSize.y / 4, 4.f, 4.f),
 	pathGenerator(PathGenerator()),
@@ -24,11 +24,45 @@ GameLevel::GameLevel(LevelPosition _id) :
 }
 
 void GameLevel::backgroundDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
+
+	textureGridsUpdateValidity(rect);
+
 	grassDraw(rect, drawIterationsMax);
 	pathsDraw(rect, drawIterationsMax);
 }
 
+void GameLevel::textureUpdateValidity(sf::FloatRect rect, TextureGrid& texture) const {
+	std::vector<sf::Vector2u> texturesInBackgroundRect = texture.texturePositionsGetInRectangle(backgroundRect);
+
+	// iterate over texturesInRect and initialize any invalid textures
+	for (uint32_t i = 0; i < texturesInBackgroundRect.size(); i++) {
+		if (!texture.cellValidate(texturesInBackgroundRect[i])) {
+			texture.cellInitialize(texturesInBackgroundRect[i]);
+		}
+	}
+
+	std::vector<sf::Vector2u> validTexturesPrev = texture.texturePositionsGetInRectangle(backgroundRectPrev, true);
+
+	// iterate over previous rect's valid textures and terminate them if they are no longer in rect
+	for (uint32_t i = 0; i < validTexturesPrev.size(); i++) {
+		if (std::find(texturesInBackgroundRect.begin(), texturesInBackgroundRect.end(), validTexturesPrev[i]) == texturesInBackgroundRect.end()) {
+			texture.cellTerminate(validTexturesPrev[i]);
+		}
+	}
+}
+
+void GameLevel::textureGridsUpdateValidity(sf::FloatRect rect) {
+
+	backgroundRect = sf::FloatRect(rect.left - (rect.width / 2.f), rect.top - (rect.height / 2.f), rect.width * 2.f, rect.height * 2.f);
+
+	textureUpdateValidity(rect, backgroundTexture);
+	textureUpdateValidity(rect, pathsTexture);
+
+	backgroundRectPrev = backgroundRect;
+}
+
 void GameLevel::pathsGenerate() {
+
 	ConsoleHandler::consolePrintLoadingGame("Path Generation Started");
 
 	constexpr float levelSizeDivider = 1.1f;
@@ -327,18 +361,19 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 				
 				sf::Vector2i posOffsetted = sf::Vector2i(textureGridPosition) + sf::Vector2i(xOffset, yOffset);
 
-				// check if position is in grid
-				if (posOffsetted.x >= 0 && posOffsetted.x < pathsTexture.gridGetSizeX() && posOffsetted.y >= 0 && posOffsetted.y < pathsTexture.gridGetSizeY()) {
+				// skip if position is not in grid
+				if (!pathsTexture.cellPosIsInGrid(posOffsetted.x, posOffsetted.y)) continue;
 
-					GridTexture& gridTexture = pathsTexture.cellGet(sf::Vector2u(posOffsetted));
+				// skip if cell not valid
+				if (!pathsTexture.cellValidate(posOffsetted.x, posOffsetted.y)) continue;
 
-					gridTexture.draw(quads, &circleTexture);
-					gridTexture.draw(lines);
-		gridTexture.display();
-				}
+				GridTextureUniquePtr& gridTexture = pathsTexture.cellGet(posOffsetted.x, posOffsetted.y);
 
+				gridTexture->draw(quads, &circleTexture);
+				gridTexture->draw(lines);
+				gridTexture->display();
+			
 			}
 		}
-		// we only have to display the main texture because the others may not be in the view
 	}
 }
