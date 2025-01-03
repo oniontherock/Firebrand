@@ -1,8 +1,8 @@
 #include "StructureGenerator.hpp"
 
-StructureGrid StructureGenerator::structureGenerate(StructureType structureType, sf::Vector2f position, sf::Vector2i structureSize) {
+StructureGrid StructureGenerator::structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2i structureSize) {
 
-	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType, position);
+	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType, structurePosition);
 
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {

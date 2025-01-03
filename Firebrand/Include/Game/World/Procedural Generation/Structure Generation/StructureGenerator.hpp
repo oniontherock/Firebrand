@@ -7,7 +7,7 @@
 #include <SFML/Graphics/Rect.hpp>
 
 namespace StructureGenerator {
-	StructureGrid structureGenerate(StructureType structureType, sf::Vector2f position, sf::Vector2i structureSize);
+	StructureGrid structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2i structureSize);
 };
 
 #endif

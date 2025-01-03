@@ -15,10 +15,14 @@ typedef std::vector<StructureGrid1D> StructureGrid2D;
 constexpr static float structureGridCellSize = 128.f;
 
 struct StructureGrid : Grid<StructureCell> {
-	StructureGrid(uint32_t gridSizeX, uint32_t gridSizeY, StructureType _structureType, sf::Vector2f _position);
+	StructureGrid(uint32_t gridSizeX, uint32_t gridSizeY, StructureType _structureType, sf::Vector2f _position, float _rotation);
 
+	// type of structure this is
 	StructureType structureType;
+	// structure's position in the world
 	sf::Vector2f position;
+	// structure's global rotation
+	float rotation;
 };
 
 #endif
