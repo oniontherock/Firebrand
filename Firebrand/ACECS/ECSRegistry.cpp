@@ -142,6 +142,21 @@ void EntityComponents::componentTemplatesInitialize() {
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
+		"Wall",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Main"),
+
+		}
+	);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
 		"Test Object",
 		{
 		},

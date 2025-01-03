@@ -207,6 +207,15 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
     <ClInclude Include="Include\Game\World\World Clock\WorldClock.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="Art\Basic bitmap.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Art\Circle.png" />
+    <Image Include="Art\Squad Member.png" />
+    <Image Include="Art\Structures\Walls\Wall Wooden Corner.png" />
+    <Image Include="Art\Structures\Walls\Wall Wooden Main.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.220531.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.220531.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
