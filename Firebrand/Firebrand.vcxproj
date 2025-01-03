@@ -158,6 +158,8 @@
     <ClCompile Include="Include\Game\World\Objects\Object Grid\ObjectGrid.cpp" />
     <ClCompile Include="Include\Game\World\Objects\ObjectRegistry.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGenerator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGrid.cpp" />
     <ClCompile Include="Include\Game\World\World Clock\WorldClock.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
@@ -205,6 +207,9 @@
     <ClInclude Include="Include\Game\World\Objects\ObjectRegistry.hpp" />
     <ClInclude Include="Include\Game\World\Objects\ObjectTypes.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGenerator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\StructureTypes.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGrid.hpp" />
     <ClInclude Include="Include\Game\World\World Clock\WorldClock.hpp" />
   </ItemGroup>
   <ItemGroup>
