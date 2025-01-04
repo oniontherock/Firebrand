@@ -19,13 +19,20 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			// cell's position local to the structure's origin
 			sf::Vector2f cellPositionLocal = sf::Vector2f(float(x) * structureGridCellSize, float(y) * structureGridCellSize) - (structure.gridGetSizeFull() / 2.f);
 
+			EntityUpdateType updateType = EntityUpdateType::Never;
+
+			//// if cell.type is a , set it's update type to frame
+			//if (std::strstr(cell.type, "Door")) {
+			//	updateType = EntityUpdateType::Frame;
+			//}
+
 			// cellPositionLocal with the transform of the structure applied
 			sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);
 
 			// cell's global position
 			cellPosition = structure.position + cellPositionLocalTransformed;
 
-			Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, cell.type);
+			Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, cell.type, updateType);
 
 			auto* entityComponentPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>();
 
