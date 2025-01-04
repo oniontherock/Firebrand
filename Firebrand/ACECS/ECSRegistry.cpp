@@ -166,7 +166,6 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false),
-
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -180,7 +179,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, sf::Vector2f(64.f, 64.f)),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, sf::Vector2f(8.f, 8.f)),
 
 		}
 		);
@@ -299,7 +298,13 @@ void ComponentSprite::system(Entity& entity) {
 	sf::Texture& texture = GraphicsStore::textureStore.objectGet(fileName);
 
 	sprite.setTexture(texture);
-	sprite.setOrigin(origin);
+
+	if (origin.x < -9999999 && origin.y < -9999999) {
+		sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
+	}
+	else {
+		sprite.setOrigin(origin);
+	}
 	sprite.setPosition(positionComponent->position);
 
 	if (entity.entityComponentHas<ComponentRotation>()) {

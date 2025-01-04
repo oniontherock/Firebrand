@@ -24,7 +24,6 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 
 			// cell's global position
 			cellPosition = structure.position + cellPositionLocalTransformed;
-			std::cout << cell.type << std::endl;
 
 			Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, cell.type);
 

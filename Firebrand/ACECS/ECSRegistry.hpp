@@ -139,10 +139,6 @@ namespace EntityComponents {
 				texture.loadFromImage(image);
 
 				GraphicsStore::textureStore.objectAddFromInstance(fileName, texture);
-
-				if (origin.x < -99999999999 && origin.y < -99999999999) {
-					origin = sf::Vector2f(texture.getSize()) / 2.f;
-				}
 			}
 		}
 	};
