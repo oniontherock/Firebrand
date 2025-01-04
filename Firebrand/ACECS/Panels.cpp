@@ -13,6 +13,7 @@ void PanelStaticView::panelUpdate() {
 	GameLevel* level = GameLevelGrid::levelGet(0, 0, 0);
 
 	backgroundDraw(level);
+	charactersDraw(level);
 	panelApplyGrayscale();
 }
 
@@ -66,6 +67,15 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	levelActive->backgroundTexture.drawRectangleToTexture(viewRect, texture);
 	// draw paths
 	levelActive->pathsTexture.drawRectangleToTexture(viewRect, texture);
+}
+void PanelStaticView::charactersDraw(GameLevel* levelActive) {
+	for (const EntityId& i : levelActive->entitiesDrawableStatic) {
+		Entity& entityCur = EntityManager::entityGet(i);
+
+		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
+
+		objectDraw(componentSprite->sprite);
+	}
 }
 
 void PanelDynamicView::panelUpdate() {
@@ -148,8 +158,7 @@ void PanelDynamicView::staticDraw() {
 	objectDraw(staticSprite);
 }
 void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
-
-	for (const EntityId& i : levelActive->entities) {
+	for (const EntityId& i : levelActive->entitiesDrawableDynamic) {
 		Entity& entityCur = EntityManager::entityGet(i);
 
 		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();

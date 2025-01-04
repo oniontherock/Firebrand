@@ -145,10 +145,12 @@ void EntityComponents::ComponentPosition::load(std::ifstream& str) {
 void EntityComponents::ComponentSprite::save(std::ofstream& str) {
 	str << fileName;
 	str << fileExtension;
+	str << isDynamic;
 }
 void EntityComponents::ComponentSprite::load(std::ifstream& str) {
 	str >> fileName;
 	str >> fileExtension;
+	str >> isDynamic;
 	textureInitialize();
 }
 

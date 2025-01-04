@@ -8,9 +8,6 @@ StructureGrid::StructureGrid(uint32_t gridSizeX, uint32_t gridSizeY, StructureTy
 	for (uint32_t x = 0; x < gridSize.x; x++) {
 
 		StructureGrid1D columns(gridSize.y);
-		for (uint32_t y = 0; y < gridSize.y; y++) {
-			columns[y] = "Null";
-		}
 
 		rows[x] = std::move(columns);
 	}

@@ -42,6 +42,7 @@ void GameStatePlay::gameStateStart() {
 
 	GameLevel* level = GameLevelGrid::levelGet(0, 0, 0);
 	level->pathsGenerate();
+	level->structuresGenerate();
 
 	const std::vector<PathPoint*>& path = level->pathGenerator.pathGet();
 
@@ -51,7 +52,7 @@ void GameStatePlay::gameStateStart() {
 	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(path[0]->position);
 
 	// create player and assign the level's playerId to the id of the newly created player
-	EntityId testId = EntityManager::entityCreate(level->levelPosition, "Wall");
+	EntityId testId = EntityManager::entityCreate(level->levelPosition, "Test Object");
 	Entity& test = EntityManager::entityGet(testId);
 	test.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(path[0]->position);
 }

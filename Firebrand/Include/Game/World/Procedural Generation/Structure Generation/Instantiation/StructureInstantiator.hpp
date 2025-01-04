@@ -1,7 +1,7 @@
 #ifndef __STRUCTURE_INSTANTIATOR_H__
 #define __STRUCTURE_INSTANTIATOR_H__
 
-#include "../StructureGrid.hpp"
+#include "../Grid/StructureGrid.hpp"
 #include <World/LevelTypeDefinitions.hpp>
 
 namespace StructureInstantiator {

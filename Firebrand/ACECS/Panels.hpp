@@ -30,6 +30,7 @@ private:
 	void checkModeChange();
 
 	void backgroundDraw(GameLevel* levelActive);
+	void charactersDraw(GameLevel* levelActive);
 	// applies a grayscale to this texture, saves the ungrayscaled version to textureUngrayscaled
 	void panelApplyGrayscale();
 };

@@ -1,8 +1,10 @@
+#include "../Include/Game/World/Procedural Generation/Structure Generation/Instantiation/StructureInstantiator.hpp"
+#include "../Include/Game/World/Procedural Generation/Structure Generation/StructureGenerator.hpp"
 #include "GameLevel.hpp"
 #include <Graphics/Stores/GraphicsStore.hpp>
 
 GameLevel::GameLevel() :
-	levelSize(sf::Vector2u(4096 * 16, 4096 * 16)),
+	levelSize(sf::Vector2u(4096 * 1, 4096 * 1)),
 	aStarGrid(AStarGrid(levelSize.x / 64, levelSize.y / 64, 64.f, 64.f)),
 	objectGrid(levelSize.x / 16, levelSize.y / 16, 16.f, 16.f),
 	pathGenerator(PathGenerator()),
@@ -130,6 +132,11 @@ void GameLevel::pathsGenerate() {
 
 	ConsoleHandler::consolePrintLoadingGame("Path Point Plotting Completed");
 }
+void GameLevel::structuresGenerate() {
+	StructureGrid structure = StructureGenerator::structureGenerate(StructureType::Home, sf::Vector2f(512, 512), 0, sf::Vector2i(4, 4));
+	StructureInstantiator::structureInstantiate(levelPosition, structure);
+}
+
 void GameLevel::grassDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 	const uint32_t grassBladePerTextureCount = 250000 / drawIterationsMax;

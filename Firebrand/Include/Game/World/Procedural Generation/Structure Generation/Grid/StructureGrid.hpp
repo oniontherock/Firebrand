@@ -1,12 +1,11 @@
 #ifndef __STRUCTURE_GRID_H__
 #define __STRUCTURE_GRID_H__
 
-#include "../../../../Common/Grid.hpp"
-#include "StructureTypes.hpp"
+#include "../include/Common/Grid.hpp"
+#include "../StructureTypes.hpp"
+#include "StructureCell.hpp"
 #include <string>
 #include <vector>
-
-typedef std::string StructureCell;
 
 typedef std::vector<StructureCell> StructureGrid1D;
 typedef std::vector<StructureGrid1D> StructureGrid2D;

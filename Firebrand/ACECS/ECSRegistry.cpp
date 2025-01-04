@@ -134,7 +134,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
-			createComponentPairFromType<ComponentSprite>("Art/Squad Member"),
+			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud } ),
 
 		}
@@ -142,7 +142,7 @@ void EntityComponents::componentTemplatesInitialize() {
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
-		"Wall",
+		"Wall Single",
 		{
 			"Transform",
 		},
@@ -150,10 +150,40 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Main"),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false),
 
 		}
 	);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Wall Straight",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false),
+
+		}
+	);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Wall Corner",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, sf::Vector2f(64.f, 64.f)),
+
+		}
+		);
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
@@ -165,7 +195,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Door),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentPosition>(sf::Vector2f(512.f, 256.f)),
-			createComponentPairFromType<ComponentSprite>("Art/Circle"),
+			createComponentPairFromType<ComponentSprite>("Art/Circle", true),
 
 		}
 		);
@@ -255,12 +285,21 @@ void ComponentSprite::system(Entity& entity) {
 
 	if (!entity.entityComponentHas<ComponentPosition>()) return;
 
+	if (entity.entityEventHas<EventInitialize>()) {
+		if (isDynamic) {
+			GameLevelGrid::levelGet(entity.levelId)->entitiesDrawableDynamic.insert(entity.Id);
+		}
+		else {
+			GameLevelGrid::levelGet(entity.levelId)->entitiesDrawableStatic.insert(entity.Id);
+		}
+	}
+
 	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
 
 	sf::Texture& texture = GraphicsStore::textureStore.objectGet(fileName);
 
 	sprite.setTexture(texture);
-	sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
+	sprite.setOrigin(origin);
 	sprite.setPosition(positionComponent->position);
 
 	if (entity.entityComponentHas<ComponentRotation>()) {
