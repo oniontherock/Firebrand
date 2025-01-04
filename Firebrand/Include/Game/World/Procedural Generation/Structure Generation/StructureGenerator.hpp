@@ -5,22 +5,11 @@
 #include "StructureTypes.hpp"
 #include <cstdint>
 #include <SFML/Graphics/Rect.hpp>
+#include "Wall Generation/WallGenerator.hpp"
 
 typedef std::vector<bool> SurroundingWallsVector;
 
 class StructureGenerator {
-
-	enum WallType {
-		None,
-		Single,
-		Straight,
-		Corner,
-		JunctionT,
-		JunctionPlus,
-	};
-
-	static std::pair<WallType, float> wallDataGetFromSurroundings(SurroundingWallsVector wallStates);
-	static const char* cellTypeGetFromWallType(WallType wallType);
 
 public:
 	// generates a building of type structureType and size, and assigns it the specified position and rotation.

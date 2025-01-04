@@ -162,6 +162,7 @@
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Instantiation\StructureInstantiator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\StructureGrid.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.cpp" />
     <ClCompile Include="Include\Game\World\World Clock\WorldClock.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
@@ -214,6 +215,7 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\StructureTypes.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\StructureGrid.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.hpp" />
     <ClInclude Include="Include\Game\World\World Clock\WorldClock.hpp" />
   </ItemGroup>
   <ItemGroup>
