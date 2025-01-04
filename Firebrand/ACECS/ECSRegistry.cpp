@@ -5,7 +5,7 @@
 #include <Graphics/PanelManager.hpp>
 #include <Input.hpp>
 
-uint32_t MAX_ENTITIES = 100;
+uint32_t MAX_ENTITIES = 1000;
 uint16_t MAX_EVENT_TYPES = 4;
 uint16_t MAX_COMPONENT_TYPES = 9;
 
@@ -139,6 +139,7 @@ void EntityComponents::componentTemplatesInitialize() {
 
 		}
 	);
+#pragma region Wall Templates
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
@@ -150,10 +151,9 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false),
-
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Single", false),
 		}
-	);
+		);
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
@@ -179,10 +179,38 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, sf::Vector2f(8.f, 8.f)),
-
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, sf::Vector2f(13.f, 13.f)),
 		}
 		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Wall Junction T",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Wall Junction Plus",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false),
+		}
+		);
+#pragma endregion Wall Templates
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name

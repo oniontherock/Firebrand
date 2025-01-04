@@ -29,7 +29,7 @@ void GameLevel::backgroundDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 	textureGridsUpdateValidity(rect);
 
-	grassDraw(rect, drawIterationsMax);
+	//grassDraw(rect, drawIterationsMax);
 	pathsDraw(rect, drawIterationsMax);
 }
 
@@ -133,7 +133,7 @@ void GameLevel::pathsGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Path Point Plotting Completed");
 }
 void GameLevel::structuresGenerate() {
-	StructureGrid structure = StructureGenerator::structureGenerate(StructureType::Home, sf::Vector2f(512, 512), 0, sf::Vector2i(4, 4));
+	StructureGrid structure = StructureGenerator::structureGenerate(StructureType::Home, sf::Vector2f(2048, 2048), 0, sf::Vector2u(24, 24));
 	StructureInstantiator::structureInstantiate(levelPosition, structure);
 }
 

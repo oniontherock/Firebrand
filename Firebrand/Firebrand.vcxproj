@@ -225,6 +225,9 @@
     <Image Include="Art\Circle.png" />
     <Image Include="Art\Squad Member.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Corner.png" />
+    <Image Include="Art\Structures\Walls\Wall Wooden Junction Plus.png" />
+    <Image Include="Art\Structures\Walls\Wall Wooden Junction T.png" />
+    <Image Include="Art\Structures\Walls\Wall Wooden Single.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Straight.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

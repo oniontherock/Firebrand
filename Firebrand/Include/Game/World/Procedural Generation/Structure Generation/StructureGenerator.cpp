@@ -4,17 +4,9 @@
 
 
 
-StructureGrid StructureGenerator::structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2i structureSize) {
+StructureGrid StructureGenerator::structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
 
-	std::vector<std::vector<bool>> wallGrid = std::vector<std::vector<bool>>(structureSize.x, std::vector<bool>(structureSize.y, false));
-
-	for (uint16_t x = 0; x < structureSize.x; x++) {
-		for (uint16_t y = 0; y < structureSize.y; y++) {
-			if ((x == 0 || x == structureSize.x - 1) || (y == 0 || y == structureSize.y - 1)) {
-				wallGrid[x][y] = true;
-			}
-		}
-	}
+	WallGenerator::WallGrid2D wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
 
 	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType, structurePosition, structureRotation);
 

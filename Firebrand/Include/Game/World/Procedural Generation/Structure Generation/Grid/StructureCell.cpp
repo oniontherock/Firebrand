@@ -1,11 +1,12 @@
 #include "StructureCell.hpp"
 
 StructureCell::StructureCell() :
-	type("Null")
+	type("Null"),
+	rotation(0.f)
 {
 }
 
-StructureCell::StructureCell(const char* _type, float _rotation) :
+StructureCell::StructureCell(StructureCellType _type, float _rotation) :
 	type(_type),
 	rotation(_rotation)
 {
