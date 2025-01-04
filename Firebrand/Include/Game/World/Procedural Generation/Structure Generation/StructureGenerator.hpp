@@ -6,9 +6,25 @@
 #include <cstdint>
 #include <SFML/Graphics/Rect.hpp>
 
-namespace StructureGenerator {
+typedef std::vector<bool> SurroundingWallsVector;
+
+class StructureGenerator {
+
+	enum WallType {
+		None,
+		Single,
+		Straight,
+		Corner,
+		JunctionT,
+		JunctionPlus,
+	};
+
+	static std::pair<WallType, float> wallDataGetFromSurroundings(SurroundingWallsVector wallStates);
+	static const char* cellTypeGetFromWallType(WallType wallType);
+
+public:
 	// generates a building of type structureType and size, and assigns it the specified position and rotation.
-	StructureGrid structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2i structureSize);
+	static StructureGrid structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2i structureSize);
 };
 
 #endif
