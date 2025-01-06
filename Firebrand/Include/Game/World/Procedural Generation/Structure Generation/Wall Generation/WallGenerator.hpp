@@ -54,8 +54,16 @@ class WallGenerator {
 	// returns a random count of rooms that a room must contact to be valid depending on the type
 	static uint16_t roomContactCountGetFromType(StructureType structureType);
 
-	// adjusts a RoomRect's dimensions to ensure no wall doubling occurs
-	static RoomRect roomRectFixDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect);
+	// returns a vector of bools, where each bool represents whether a face of the roomRect has a double wall.
+	// the order is: right, top, left, bottom.
+	static std::vector<bool> roomRectGetDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect);
+	// returns whether a RoomRect has any double walls
+	static bool roomRectHasDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect);
+	// adjusts a RoomRect's dimensions to ensure no wall doubling occurs,
+	// the roomRect's size may be adjusted to avoid doubling, the amount it can be resized can be controlled with resizeTolerance
+	static RoomRect roomRectFixDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect, const sf::Vector2u roomDesiredSize, const uint16_t resizeTolerance);
+
+	static void roomWallsApplyToWallGrid(WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect, const bool solid = false);
 
 	// generates a room in the specified wallGrid,
 	// 
