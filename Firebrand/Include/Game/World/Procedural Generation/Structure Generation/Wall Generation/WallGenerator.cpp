@@ -140,7 +140,7 @@ WallGenerator::RoomCountPair WallGenerator::roomMinMaxCountGetFromType(Structure
 WallGenerator::RoomContactCountPair WallGenerator::roomMinMaxContactCountGetFromType(StructureType structureType) {
 	switch (structureType) {
 	case StructureType::Home:
-		return RoomContactCountPair(1, 4);
+		return RoomContactCountPair(2, 4);
 	case StructureType::Barn:
 		return RoomContactCountPair(3, 3);
 	case StructureType::Shed:
@@ -172,6 +172,123 @@ uint16_t WallGenerator::roomContactCountGetFromType(StructureType structureType)
 	return RNGu16::getRange(roomContactCountMinMax.first, roomContactCountMinMax.second + 1);
 }
 
+WallGenerator::RoomRect WallGenerator::roomRectFixDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect) {
+	
+	//// vector of 4 booleans for which faces have wall doubling, order is: right, top, left, bottom.
+	//std::vector<bool> doubleFaces(4, false);
+
+	//// check right face
+	//if (roomRect.left + roomRect.width < structureSize.x) {
+	//	for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
+	//		sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + (roomRect.width - 1), roomRect.top + offsetY);
+
+	//		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+
+	//		bool isWall = wallGrid[uint16_t(cellPosition.x + 1)][cellPosition.y];
+
+	//		if (isWall) {
+	//			doubleFaces[0] = true;
+	//			break;
+	//		}
+	//	}
+	//}
+	//// check top face
+	//if (roomRect.top > 0) {
+	//	for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
+	//		sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top);
+
+	//		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+
+	//		bool isWall = wallGrid[cellPosition.x][uint16_t(cellPosition.y - 1)];
+
+	//		if (isWall) {
+	//			doubleFaces[1] = true;
+	//			break;
+	//		}
+	//	}
+	//}
+	//// check left face
+	//if (roomRect.left > 0) {
+	//	for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
+	//		sf::Vector2u cellPosition = sf::Vector2u(roomRect.left, roomRect.top + offsetY);
+
+	//		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+
+	//		bool isWall = wallGrid[uint16_t(cellPosition.x - 1)][cellPosition.y];
+
+	//		if (isWall) {
+	//			doubleFaces[2] = true;
+	//			break;
+	//		}
+	//	}
+	//}
+	//// check bottom face
+	//if (roomRect.top + roomRect.height < structureSize.y) {
+	//	for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
+	//		sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1));
+
+	//		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+
+	//		bool isWall = wallGrid[cellPosition.x][uint16_t(cellPosition.y + 1)];
+
+	//		if (isWall) {
+	//			doubleFaces[3] = true;
+	//			break;
+	//		}
+	//	}
+	//}
+
+	//RoomRect roomRectAdjusted = roomRect;
+
+	//// the probability of whether a roomRect will move resize towards a double wall, thus merging, or resize away, dodging, a higher value means more merges
+	//float mergeVsDodgeProbability = 0.5f;
+
+	//// check right
+	//if (doubleFaces[0]) {
+	//	if (RNGf::probability(mergeVsDodgeProbability)) {
+	//		roomRectAdjusted.width++;
+	//	}
+	//	else {
+	//		roomRectAdjusted.width--;
+	//	}
+	//}
+	//// check top
+	//if (doubleFaces[1]) {
+	//	if (RNGf::probability(mergeVsDodgeProbability)) {
+	//		roomRectAdjusted.top--;
+	//		roomRectAdjusted.height++;
+	//	}
+	//	else {
+	//		roomRectAdjusted.top++;
+	//		roomRectAdjusted.height--;
+	//	}
+
+	//}
+	//// check left
+	//if (doubleFaces[2]) {
+	//	if (RNGf::probability(mergeVsDodgeProbability)) {
+	//		roomRectAdjusted.left--;
+	//		roomRectAdjusted.width++;
+	//	}
+	//	else {
+	//		roomRectAdjusted.left++;
+	//		roomRectAdjusted.width--;
+	//	}
+	//}
+	//// check bottom
+	//if (doubleFaces[3]) {
+	//	if (RNGf::probability(mergeVsDodgeProbability)) {
+	//		roomRectAdjusted.height++;
+	//	}
+	//	else {
+	//		roomRectAdjusted.height--;
+	//	}
+	//}
+
+
+	return roomRect;
+}
+
 sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact) {
 
 	// rectangle of the room inside the wallGrid
@@ -187,7 +304,7 @@ sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u struc
 		roomRect.top = RNGu16::getRange(0, structureSize.y - (roomSize.y - 1));
 
 		// the way we calculate contact depends on the fullContact variable, basically, true means we calculate by subtraction, false means we calculate by addition.
-		// so fullContact means we start assuming we are fully contacted on every side of the room, and we subtract by 1 everytime we find a side which isn't contacted.
+		// so fullContact means we start assuming we are fully contacted on every side of the room, and we subtract by 1 every time we find a side which isn't contacted.
 		// and no fullContact assumes we are touching no walls, and adds by 1 every time it finds a wall on a side of the room
 		contactCount = fullContact ? 4 : 0;
 
@@ -276,7 +393,13 @@ void WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType structureT
 				}
 			}
 
+			// adjust roomRect to avoid doubles, we do this several times because it may not fix doubles completely the first try
+			for (uint16_t i = 0; i < 32; i++) {
+				roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect);
+			}
+
 			if (!roomIntersectsOtherRooms) {
+
 				for (uint32_t offsetX = 0; offsetX < roomRect.width; offsetX++) {
 					for (uint32_t offsetY = 0; offsetY < roomRect.height; offsetY++) {
 						if ((offsetX == 0 || offsetX == roomRect.width - 1) || (offsetY == 0 || offsetY == roomRect.height - 1)) {

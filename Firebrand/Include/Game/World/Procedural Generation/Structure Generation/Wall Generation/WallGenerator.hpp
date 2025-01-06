@@ -30,6 +30,7 @@ class WallGenerator {
 	// returns a wall
 	static StructureCellType cellTypeGetFromWallType(WallType wallType);
 
+	typedef sf::IntRect RoomRect;
 
 	typedef std::vector<bool> WallGrid1D;
 	typedef std::vector<std::vector<bool>> WallGrid2D;
@@ -52,6 +53,9 @@ class WallGenerator {
 	static uint16_t roomCountGetFromType(StructureType structureType);
 	// returns a random count of rooms that a room must contact to be valid depending on the type
 	static uint16_t roomContactCountGetFromType(StructureType structureType);
+
+	// adjusts a RoomRect's dimensions to ensure no wall doubling occurs
+	static RoomRect roomRectFixDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect);
 
 	// generates a room in the specified wallGrid,
 	// 
