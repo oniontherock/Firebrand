@@ -120,7 +120,7 @@ WallGenerator::RoomSizePair WallGenerator::roomMinMaxSizeGetFromType(StructureTy
 	case StructureType::Home:
 		return RoomSizePair(sf::Vector2u(6, 6), sf::Vector2u(8, 8));
 	case StructureType::Barn:
-		return RoomSizePair(sf::Vector2u(8, 6), sf::Vector2u(12, 8));
+		return RoomSizePair(sf::Vector2u(UINT16_MAX, 6), sf::Vector2u(UINT16_MAX, 8));
 	case StructureType::Shed:
 		return RoomSizePair(sf::Vector2u(0, 0), sf::Vector2u(0, 0));
 	default:
@@ -132,7 +132,7 @@ WallGenerator::RoomCountPair WallGenerator::roomMinMaxCountGetFromType(Structure
 	case StructureType::Home:
 		return RoomCountPair(16, 24);
 	case StructureType::Barn:
-		return RoomCountPair(0, 2);
+		return RoomCountPair(2, 2);
 	case StructureType::Shed:
 		return RoomCountPair(0, 0);
 	default:
@@ -318,6 +318,15 @@ WallGenerator::RoomRect WallGenerator::roomRectFixDoubleWalls(const WallGrid2D& 
 	return roomRectAdjusted;
 }
 sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact) {
+
+	// clamp room width to structure width
+	if (roomSize.x >= structureSize.x) {
+		roomSize.x = structureSize.x - 1;
+	}
+	// clamp room height to structure height
+	if (roomSize.y >= structureSize.y) {
+		roomSize.y = structureSize.y - 1;
+	}
 
 	// rectangle of the room inside the wallGrid
 	RoomRect roomRect = RoomRect(0, 0, roomSize.x, roomSize.y);

@@ -133,7 +133,7 @@ void GameLevel::pathsGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Path Point Plotting Completed");
 }
 void GameLevel::structuresGenerate() {
-	StructureGrid structure = StructureGenerator::structureGenerate(StructureType::Home, sf::Vector2f(2048, 2048), 0, sf::Vector2u(24, 24));
+	StructureGrid structure = StructureGenerator::structureGenerate(StructureType::Home, sf::Vector2f(2048, 2048), 0.f, sf::Vector2u(24, 24));
 	StructureInstantiator::structureInstantiate(levelPosition, structure);
 }
 
