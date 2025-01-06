@@ -243,7 +243,7 @@ void WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType structureT
 
 	for (uint16_t roomIndCur = 0; roomIndCur < roomsCount; roomIndCur++) {
 
-		uint16_t breaker = 10000;
+		uint16_t breaker = 1000;
 
 		sf::Vector2u roomSize;
 		uint16_t roomContactCount;
