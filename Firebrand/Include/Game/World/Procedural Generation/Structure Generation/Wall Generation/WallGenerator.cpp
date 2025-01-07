@@ -317,6 +317,12 @@ WallGenerator::RoomRect WallGenerator::roomRectFixDoubleWalls(const WallGrid2D& 
 
 	return roomRectAdjusted;
 }
+WallGenerator::RoomRectVector WallGenerator::roomRectVectorLast{};
+
+WallGenerator::RoomRectVector WallGenerator::roomsGetFromGeneration() {
+	return roomRectVectorLast;
+}
+
 sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact) {
 
 	// clamp room width to structure width
@@ -413,11 +419,8 @@ sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u struc
 	return roomRect;
 }
 
-void WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType structureType, sf::Vector2u structureSize) {
+std::vector<WallGenerator::RoomRect> WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType structureType, sf::Vector2u structureSize) {
 	uint16_t roomsCount = roomCountGetFromType(structureType);
-
-	std::cout << roomsCount << std::endl;
-
 
 	std::vector<RoomRect> roomRectsVector;
 	for (uint16_t roomIndCur = 0; roomIndCur < roomsCount; roomIndCur++) {
@@ -449,6 +452,8 @@ void WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType structureT
 			}
 		} while ((--breaker) > 0);
 	}
+
+	return roomRectsVector;
 }
 
 WallGenerator::WallGrid2D WallGenerator::wallsGenerate(StructureType structureType, sf::Vector2u structureSize) {
@@ -459,7 +464,7 @@ WallGenerator::WallGrid2D WallGenerator::wallsGenerate(StructureType structureTy
 	// solidify edges of wallGrid
 	roomWallsApplyToWallGrid(wallGrid, structureSize, RoomRect(0, 0, structureSize.x, structureSize.y));
 
-	roomsGenerate(wallGrid, structureType, structureSize);
+	roomRectVectorLast = roomsGenerate(wallGrid, structureType, structureSize);
 
 	return wallGrid;
 }

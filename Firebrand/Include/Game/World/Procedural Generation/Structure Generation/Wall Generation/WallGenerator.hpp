@@ -31,6 +31,7 @@ class WallGenerator {
 	static StructureCellType cellTypeGetFromWallType(WallType wallType);
 
 	typedef sf::IntRect RoomRect;
+	typedef std::vector<RoomRect> RoomRectVector;
 
 	typedef std::vector<bool> WallGrid1D;
 	typedef std::vector<std::vector<bool>> WallGrid2D;
@@ -71,9 +72,14 @@ class WallGenerator {
 	// @param roomSize: the size of the room that will be generated.
 	// @param roomContactCount: the amount of faces of the room that need to be touching / on other walls.
 	// @param fullContact: bool for how the contactCount is calculated, if true, a side of the room must have complete contact with other walls for it to count, if false, any contact on a side of the room counts
-	static sf::IntRect roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact);
+	static RoomRect roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact);
 	// generates the rooms in a wallGrid depending on the structure type
-	static void roomsGenerate(WallGrid2D& wallGrid, StructureType structureType, sf::Vector2u structureSize);
+	static RoomRectVector roomsGenerate(WallGrid2D& wallGrid, StructureType structureType, sf::Vector2u structureSize);
+
+	// the RoomRectVector from the last call to wallsGenerate
+	static RoomRectVector roomRectVectorLast;
+	// returns the RoomRectVector from the last call to wallsGenerate
+	static RoomRectVector roomsGetFromGeneration();
 
 	static WallGrid2D wallsGenerate(StructureType structureType, sf::Vector2u structureSize);
 
