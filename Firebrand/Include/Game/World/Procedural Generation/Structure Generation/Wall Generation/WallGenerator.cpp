@@ -132,7 +132,7 @@ WallGenerator::RoomCountPair WallGenerator::roomMinMaxCountGetFromType(Structure
 	case StructureType::Home:
 		return RoomCountPair(16, 24);
 	case StructureType::Barn:
-		return RoomCountPair(2, 2);
+		return RoomCountPair(0, 2);
 	case StructureType::Shed:
 		return RoomCountPair(0, 0);
 	default:
