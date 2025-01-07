@@ -6,7 +6,7 @@
 
 StructureGrid StructureGenerator::structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
 
-	WallGenerator::WallGrid2D wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
+	WallGrid2D wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
 
 	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType, structurePosition, structureRotation);
 

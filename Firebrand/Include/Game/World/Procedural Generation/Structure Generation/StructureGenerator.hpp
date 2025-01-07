@@ -1,7 +1,7 @@
 #ifndef __STRUCTURE_GENERATOR_H__
 #define __STRUCTURE_GENERATOR_H__
 
-#include "Grid/StructureGrid.hpp"
+#include "Grid/Structure Grid/StructureGrid.hpp"
 #include "StructureTypes.hpp"
 #include <cstdint>
 #include <SFML/Graphics/Rect.hpp>

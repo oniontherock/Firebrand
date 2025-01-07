@@ -1,7 +1,7 @@
 #ifndef __WALL_GENERATOR_H__
 #define __WALL_GENERATOR_H__
 
-#include "../Grid/StructureCell.hpp"
+#include "../Grid/Structure Grid/StructureGrid.hpp"
 #include "../StructureTypes.hpp"
 #include <cstdint>
 #include <SFML/Graphics/Rect.hpp>
@@ -10,6 +10,13 @@
 typedef std::vector<bool> SurroundingWallsVector;
 
 class StructureGenerator;
+
+
+typedef sf::IntRect RoomRect;
+typedef std::vector<RoomRect> RoomRectVector;
+
+typedef std::vector<bool> WallGrid1D;
+typedef std::vector<std::vector<bool>> WallGrid2D;
 
 // class specialized in generating wall grids, used by the StructureGrid.
 // this class really only exists so we don't have a ridiculous amount of wall related stuff in StructureGrid.
@@ -29,12 +36,6 @@ class WallGenerator {
 	static std::pair<WallType, float> wallDataGetFromSurroundings(SurroundingWallsVector wallStates);
 	// returns a wall
 	static StructureCellType cellTypeGetFromWallType(WallType wallType);
-
-	typedef sf::IntRect RoomRect;
-	typedef std::vector<RoomRect> RoomRectVector;
-
-	typedef std::vector<bool> WallGrid1D;
-	typedef std::vector<std::vector<bool>> WallGrid2D;
 
 	typedef std::pair<sf::Vector2u, sf::Vector2u> RoomSizePair;
 	typedef std::pair<uint16_t, uint16_t> RoomCountPair;
