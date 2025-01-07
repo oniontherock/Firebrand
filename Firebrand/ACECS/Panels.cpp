@@ -145,7 +145,10 @@ void PanelDynamicView::viewMaskCreate() {
 }
 
 void PanelDynamicView::checkModeChange() {
-
+	//if (InputInterface::inputGetActive("Toggle Room Type Drawing")) {
+	//	if (mode == Normal) mode = DebugDrawRoomTypes;
+	//	else mode = Normal;
+	//}
 }
 void PanelDynamicView::staticDraw() {
 

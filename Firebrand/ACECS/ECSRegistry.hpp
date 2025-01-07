@@ -95,18 +95,20 @@ namespace EntityComponents {
 			hasSystem = true;
 		};
 		// constructor that takes file name and extension, then loads/gets an image from the imageStore, and loads the texture with that image
-		ComponentSprite(std::string _fileName, std::string _fileExtension, bool _isDynamic, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY)) :
+		ComponentSprite(std::string _fileName, std::string _fileExtension, bool _isDynamic, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
 			ComponentSprite()
 		{
 			fileName = _fileName;
 			fileExtension = _fileExtension;
 			isDynamic = _isDynamic;
 			origin = _origin;
+			color = _color;
 
 			textureInitialize();
+
 		};
-		ComponentSprite(std::string _fileName, bool _isDynamic, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY)) :
-			ComponentSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet(), _isDynamic, _origin)
+		ComponentSprite(std::string _fileName, bool _isDynamic, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
+			ComponentSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet(), _isDynamic, _origin, _color)
 		{};
 
 		// the name of the file for the texture
@@ -118,11 +120,13 @@ namespace EntityComponents {
 		bool isDynamic = false;
 		// origin of the sprite, note that this is relative to the center of the sprite, note the top left corner.
 		sf::Vector2f origin;
+		// color of the sprite
+		sf::Color color;
 
 		sf::Sprite sprite;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentSprite(fileName, fileExtension, isDynamic, origin));
+			return std::unique_ptr<Duplicatable>(new ComponentSprite(fileName, fileExtension, isDynamic, origin, color));
 		};
 
 		void save(std::ofstream& str) override;

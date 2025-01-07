@@ -226,6 +226,51 @@ void EntityComponents::componentTemplatesInitialize() {
 
 		}
 		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Hallway Marker",
+		{
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentPosition>(),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", true, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(255, 255, 255, 255)),
+
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Bathroom Marker",
+		{
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentPosition>(),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", true, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(0, 255, 255, 255)),
+
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Bedroom Marker",
+		{
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentPosition>(),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", true, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(175, 25, 0, 255)),
+
+		}
+		);
 }
 
 #pragma endregion Component Templates
@@ -326,6 +371,7 @@ void ComponentSprite::system(Entity& entity) {
 	sf::Texture& texture = GraphicsStore::textureStore.objectGet(fileName);
 
 	sprite.setTexture(texture);
+	sprite.setColor(color);
 
 	if (origin.x < -9999999 && origin.y < -9999999) {
 		sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);

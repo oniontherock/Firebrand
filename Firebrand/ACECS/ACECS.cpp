@@ -22,6 +22,7 @@ void Engine::inputsRegister() {
 	InputInterface::inputRegister("Toggle ObjectGrid Rendering", KeySet{ KeyEvent("Numpad1", Pressed) }, InputKeyLogic::Or);
 	InputInterface::inputRegister("Toggle Paths Rendering", KeySet{ KeyEvent("Numpad2", Pressed) }, InputKeyLogic::Or);
 	InputInterface::inputRegister("Toggle Timescale", KeySet{ KeyEvent("Numpad3", Pressed) }, InputKeyLogic::Or);
+	InputInterface::inputRegister("Toggle Room Type Drawing", KeySet{ KeyEvent("Numpad4", Pressed) }, InputKeyLogic::Or);
 }
 
 // game states are registered here

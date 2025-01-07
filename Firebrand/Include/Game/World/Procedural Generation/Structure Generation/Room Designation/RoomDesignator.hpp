@@ -9,7 +9,7 @@ namespace RoomDesignator {
 
 	void roomFillWithType(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect, const RoomType roomType);
 
-	RoomTypeGrid structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRectVector roomRectsVector);
+	RoomTypeGrid structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector);
 };
 
 #endif

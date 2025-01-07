@@ -38,9 +38,10 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 
 			entityComponentPosition->position = cellPosition;
 
-			auto* entityComponentRotation = entity.entityComponentGet<EntityComponents::ComponentRotation>();
-			entityComponentRotation->rotation = structure.rotation + structure.cellGet(x, y).rotation;
-
+			if (entity.entityComponentHas<EntityComponents::ComponentRotation>()) {
+				auto* entityComponentRotation = entity.entityComponentGet<EntityComponents::ComponentRotation>();
+				entityComponentRotation->rotation = structure.rotation + structure.cellGet(x, y).rotation;
+			}
 		}
 	}
 }

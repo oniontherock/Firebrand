@@ -50,20 +50,28 @@ void RoomDesignator::roomFillWithType(const WallGrid2D& wallGrid, const sf::Vect
 
                 // skip if offsetted point is out of bounds
                 if ((offsettedX < 0 || offsettedX >= structureSize.x) || (offsettedY < 0 || offsettedY >= structureSize.y)) continue;
+                // skip if cell is a wall
+                if (wallGrid[offsettedX][offsettedY]) continue;
+
+                sf::Vector2u offsettedPoint = sf::Vector2u(uint16_t(offsettedX), uint16_t(offsettedY));
 
                 // if the point isn't queued for checking / already checked, queue it for checking
-                if (!pointsToCheckIds.contains(pointCur)) {
-                    pointsToCheckQueue.push(pointCur);
-                    pointsToCheckIds.insert(pointCur);
+                if (!pointsToCheckIds.contains(offsettedPoint)) {
+                    pointsToCheckQueue.push(offsettedPoint);
+                    pointsToCheckIds.insert(offsettedPoint);
                 }
             }
         }
     }
 }
 
-RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRectVector roomRectsVector) {
+RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector) {
+    RoomTypeGrid roomTypeGrid = RoomTypeGrid(structureSize.x, structureSize.y);
+    
     for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
         roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomRectsVector[i], RNGf::probability(0.5f) ? RoomType::Bathroom : RoomType::Hallway);
     }
+
+    return roomTypeGrid;
 }
 

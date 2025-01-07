@@ -237,6 +237,7 @@
     <Image Include="Art\Structures\Walls\Wall Wooden Junction T.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Single.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Straight.png" />
+    <Image Include="Art\White Square.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
