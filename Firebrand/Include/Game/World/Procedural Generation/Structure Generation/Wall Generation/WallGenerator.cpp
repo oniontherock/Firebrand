@@ -97,6 +97,7 @@ std::pair<WallGenerator::WallType, float> WallGenerator::wallDataGetFromSurround
 	return std::pair(wallType, wallRotation);
 }
 StructureCellType WallGenerator::cellTypeGetFromWallType(WallType wallType) {
+	// note that, although we could use a vector that we access by WallType, we use a switch statement because reorder the WallType enum wouldn't mess up anything
 	switch (wallType) {
 	case None:
 		return "Null";

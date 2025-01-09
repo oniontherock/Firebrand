@@ -237,7 +237,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", true, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(255, 255, 255, 255)),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(255, 255, 255, 255)),
 
 		}
 		);
@@ -252,7 +252,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", true, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(0, 255, 255, 255)),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(0, 0, 255, 255)),
 
 		}
 		);
@@ -267,7 +267,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", true, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(175, 25, 0, 255)),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(255, 0, 0, 255)),
 
 		}
 		);
