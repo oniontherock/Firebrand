@@ -163,6 +163,8 @@
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureCell.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Instantiation\StructureInstantiator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Room Designation\RoomDesignator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Structure Types\StructureTypeRegistry.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Structure Types\StructureTypes.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.cpp" />
@@ -220,8 +222,9 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\StructureGridTypes.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Instantiation\StructureInstantiator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Room Designation\RoomDesignator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Structure Types\StructureTypeRegistry.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGenerator.hpp" />
-    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\StructureTypes.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Structure Types\StructureTypes.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.hpp" />
     <ClInclude Include="Include\Game\World\World Clock\WorldClock.hpp" />

@@ -1,7 +1,7 @@
 #ifndef __STRUCTURE_GRID_H__
 #define __STRUCTURE_GRID_H__
 
-#include "../../StructureTypes.hpp"
+#include "../../Structure Types/StructureTypes.hpp"
 #include "../include/Common/Grid.hpp"
 #include "../StructureGridTypes.hpp"
 #include "StructureCell.hpp"

@@ -55,7 +55,7 @@ RoomDesignator::RoomTypeVector RoomDesignator::roomTypeConnectionsGetFromRoomTyp
     return roomTypeVector;
 }
 RoomDesignator::RoomTypeConnectionCountPair RoomDesignator::roomTypeConnectionCountMinMaxGetFromRoomType(const RoomType roomType) {
-    switch (roomType) {/ 
+    switch (roomType) {
     case RoomType::Null:
         return RoomTypeConnectionCountPair(0, 1);
     case RoomType::Hallway:

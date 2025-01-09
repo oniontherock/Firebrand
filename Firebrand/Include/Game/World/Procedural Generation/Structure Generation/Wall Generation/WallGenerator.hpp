@@ -2,7 +2,7 @@
 #define __WALL_GENERATOR_H__
 
 #include "../Grid/Structure Grid/StructureGrid.hpp"
-#include "../StructureTypes.hpp"
+#include "../Structure Types/StructureTypes.hpp"
 #include <cstdint>
 #include <SFML/Graphics/Rect.hpp>
 #include <vector>
@@ -37,25 +37,6 @@ class WallGenerator {
 	// returns a wall
 	static StructureCellType cellTypeGetFromWallType(WallType wallType);
 
-	typedef std::pair<sf::Vector2u, sf::Vector2u> RoomSizePair;
-	typedef std::pair<uint16_t, uint16_t> RoomCountPair;
-	typedef std::pair<uint16_t, uint16_t> RoomContactCountPair;
-
-	// returns the minimum and maximum size for rooms depending on a structure's type
-	static RoomSizePair roomMinMaxSizeGetFromType(StructureType structureType);
-	// returns the minimum and maximum amount of possible rooms in a structure depending on a structure's type
-	static RoomCountPair roomMinMaxCountGetFromType(StructureType structureType);
-	// returns the minimum and maximum amount of possible rooms a room must be contacting to be placed at a position depending on a structure's type
-	static RoomContactCountPair roomMinMaxContactCountGetFromType(StructureType structureType);
-
-
-	// returns a random size for a room in a building depending on the type
-	static sf::Vector2u roomSizeGetFromType(StructureType structureType);
-	// returns a random count of rooms in a building depending on the type
-	static uint16_t roomCountGetFromType(StructureType structureType);
-	// returns a random count of rooms that a room must contact to be valid depending on the type
-	static uint16_t roomContactCountGetFromType(StructureType structureType);
-
 	// returns a vector of bools, where each bool represents whether a face of the roomRect has a double wall.
 	// the order is: right, top, left, bottom.
 	static std::vector<bool> roomRectGetDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect);
@@ -75,14 +56,14 @@ class WallGenerator {
 	// @param fullContact: bool for how the contactCount is calculated, if true, a side of the room must have complete contact with other walls for it to count, if false, any contact on a side of the room counts
 	static RoomRect roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact);
 	// generates the rooms in a wallGrid depending on the structure type
-	static RoomRectVector roomsGenerate(WallGrid2D& wallGrid, StructureType structureType, sf::Vector2u structureSize);
+	static RoomRectVector roomsGenerate(WallGrid2D& wallGrid, StructureTypeBase* structureType, sf::Vector2u structureSize);
 
 	// the RoomRectVector from the last call to wallsGenerate
 	static RoomRectVector roomRectVectorLast;
 	// returns the RoomRectVector from the last call to wallsGenerate
 	static RoomRectVector roomsGetFromGeneration();
 
-	static WallGrid2D wallsGenerate(StructureType structureType, sf::Vector2u structureSize);
+	static WallGrid2D wallsGenerate(StructureTypeBase* structuretype, sf::Vector2u structureSize);
 
 	friend class StructureGenerator;
 };

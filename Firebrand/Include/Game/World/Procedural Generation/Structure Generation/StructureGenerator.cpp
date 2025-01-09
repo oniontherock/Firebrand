@@ -4,13 +4,13 @@
 
 
 
-StructureGrid StructureGenerator::structureGenerate(StructureType structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
+StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
 
 	WallGrid2D wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
 
 	RoomTypeGrid roomTypeGrid = RoomDesignator::structureRoomTypesDesignate(wallGrid, structureSize, WallGenerator::roomsGetFromGeneration());
 
-	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType, structurePosition, structureRotation);
+	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType->structureType, structurePosition, structureRotation);
 
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {

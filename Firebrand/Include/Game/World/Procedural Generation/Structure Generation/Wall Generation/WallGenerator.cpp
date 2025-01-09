@@ -116,65 +116,6 @@ StructureCellType WallGenerator::cellTypeGetFromWallType(WallType wallType) {
 	}
 }
 
-WallGenerator::RoomSizePair WallGenerator::roomMinMaxSizeGetFromType(StructureType structureType) {
-	switch (structureType) {
-	case StructureType::Home:
-		return RoomSizePair(sf::Vector2u(6, 6), sf::Vector2u(8, 8));
-	case StructureType::Barn:
-		return RoomSizePair(sf::Vector2u(UINT16_MAX, 6), sf::Vector2u(UINT16_MAX, 8));
-	case StructureType::Shed:
-		return RoomSizePair(sf::Vector2u(0, 0), sf::Vector2u(0, 0));
-	default:
-		return RoomSizePair(sf::Vector2u(3, 3), sf::Vector2u(8, 8));
-	}
-}
-WallGenerator::RoomCountPair WallGenerator::roomMinMaxCountGetFromType(StructureType structureType) {
-	switch (structureType) {
-	case StructureType::Home:
-		return RoomCountPair(16, 24);
-	case StructureType::Barn:
-		return RoomCountPair(0, 2);
-	case StructureType::Shed:
-		return RoomCountPair(0, 0);
-	default:
-		return RoomCountPair(2, 6);
-	}
-}
-WallGenerator::RoomContactCountPair WallGenerator::roomMinMaxContactCountGetFromType(StructureType structureType) {
-	switch (structureType) {
-	case StructureType::Home:
-		return RoomContactCountPair(2, 4);
-	case StructureType::Barn:
-		return RoomContactCountPair(3, 3);
-	case StructureType::Shed:
-		return RoomContactCountPair(0, 0);
-	default:
-		return RoomContactCountPair(1, 4);
-	}
-}
-
-sf::Vector2u WallGenerator::roomSizeGetFromType(StructureType structureType) {
-	RoomSizePair roomSizeMinMax = roomMinMaxSizeGetFromType(structureType);
-
-	// get room dimensions in the roomSizeMinMax range, we do plus one because getRange returns a value in the range of A to B-1.
-	uint16_t sizeX = RNGu16::getRange(roomSizeMinMax.first.x, roomSizeMinMax.second.x + 1);
-	uint16_t sizeY = RNGu16::getRange(roomSizeMinMax.first.y, roomSizeMinMax.second.y + 1);
-
-	return sf::Vector2u(sizeX, sizeY);
-}
-uint16_t WallGenerator::roomCountGetFromType(StructureType structureType) {
-	RoomCountPair roomCountMinMax = roomMinMaxCountGetFromType(structureType);
-
-	// get room count in range, we do plus one because getRange returns a value in the range of A to B-1.
-	return RNGu16::getRange(roomCountMinMax.first, roomCountMinMax.second + 1);
-}
-uint16_t WallGenerator::roomContactCountGetFromType(StructureType structureType) {
-	RoomContactCountPair roomContactCountMinMax = roomMinMaxContactCountGetFromType(structureType);
-
-	// get room contact count in range, we do plus one because getRange returns a value in the range of A to B-1.
-	return RNGu16::getRange(roomContactCountMinMax.first, roomContactCountMinMax.second + 1);
-}
-
 void WallGenerator::roomWallsApplyToWallGrid(WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect, const bool solid) {
 	for (uint32_t x = 0; x < roomRect.width; x++) {
 		for (uint32_t y = 0; y < roomRect.height; y++) {
@@ -420,8 +361,8 @@ sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u struc
 	return roomRect;
 }
 
-RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType structureType, sf::Vector2u structureSize) {
-	uint16_t roomsCount = roomCountGetFromType(structureType);
+RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeBase* structureType, sf::Vector2u structureSize) {
+	uint16_t roomsCount = structureType->roomCountInstanceGet();
 
 	std::vector<RoomRect> roomRectsVector;
 	for (uint16_t roomIndCur = 0; roomIndCur < roomsCount; roomIndCur++) {
@@ -431,8 +372,8 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType 
 		sf::Vector2u roomSize;
 		uint16_t roomContactCount;
 		do {
-			roomSize = roomSizeGetFromType(structureType);
-			roomContactCount = roomContactCountGetFromType(structureType);
+			roomSize = structureType->roomSizeInstanceGet();
+			roomContactCount = structureType->roomContactCountInstanceGet();
 
 			RoomRect roomRect = roomGenerate(wallGrid, structureSize, roomSize, roomContactCount, true);
 
@@ -457,7 +398,7 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureType 
 	return roomRectsVector;
 }
 
-WallGrid2D WallGenerator::wallsGenerate(StructureType structureType, sf::Vector2u structureSize) {
+WallGrid2D WallGenerator::wallsGenerate(StructureTypeBase* structureType, sf::Vector2u structureSize) {
 
 	// initialize wall grid
 	WallGrid2D wallGrid = WallGrid2D(structureSize.x, WallGrid1D(structureSize.y, false));
