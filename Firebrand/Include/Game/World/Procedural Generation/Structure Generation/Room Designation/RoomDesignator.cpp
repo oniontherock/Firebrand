@@ -19,62 +19,6 @@ struct Vector2uLessThan
     }
 };
 
-RoomDesignator::RoomTypeVector RoomDesignator::roomTypeConnectionsGetFromRoomType(const RoomType roomType) {
-    RoomTypeVector roomTypeVector;
-
-    switch (roomType) {
-    case RoomType::Null:
-        break;
-    case RoomType::Hallway:
-        // hallways can connect to anything, so we just iterate over all the RoomTypes and add them all
-        for (uint16_t i = 0; i < uint16_t(RoomType::RoomTypeSize); i++) {
-            roomTypeVector.push_back(RoomType(i));
-        }
-        break;
-    case RoomType::Bedroom:
-        roomTypeVector.push_back(RoomType::Hallway);
-        break;
-    case RoomType::Bathroom:
-        roomTypeVector.push_back(RoomType::Bathroom);
-        roomTypeVector.push_back(RoomType::Hallway);
-        roomTypeVector.push_back(RoomType::LivingRoom);
-        roomTypeVector.push_back(RoomType::Laboratory);
-        roomTypeVector.push_back(RoomType::Misc);
-        break;
-    case RoomType::LivingRoom:
-        roomTypeVector.push_back(RoomType::Hallway);
-        break;
-    case RoomType::Laboratory:
-        roomTypeVector.push_back(RoomType::Hallway);
-        roomTypeVector.push_back(RoomType::Misc);
-        break;
-    default:
-        break;
-    }
-
-    return roomTypeVector;
-}
-RoomDesignator::RoomTypeConnectionCountPair RoomDesignator::roomTypeConnectionCountMinMaxGetFromRoomType(const RoomType roomType) {
-    switch (roomType) {
-    case RoomType::Null:
-        return RoomTypeConnectionCountPair(0, 1);
-    case RoomType::Hallway:
-        return RoomTypeConnectionCountPair(1, 8);
-    case RoomType::Bedroom:
-        return RoomTypeConnectionCountPair(1, 3);
-    case RoomType::Bathroom:
-        return RoomTypeConnectionCountPair(1, 2);
-    case RoomType::LivingRoom:
-        return RoomTypeConnectionCountPair(2, 3);
-    case RoomType::Laboratory:
-        return RoomTypeConnectionCountPair(2, 4);
-    case RoomType::Misc:
-        return RoomTypeConnectionCountPair(1, 8);
-    default:
-        return RoomTypeConnectionCountPair(1, 8);
-    }
-}
-
 void RoomDesignator::areaFillWithType(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const sf::Vector2u pointStart, const RoomType roomType) {
 
     std::queue<sf::Vector2u> pointsToCheckQueue;
@@ -123,12 +67,33 @@ void RoomDesignator::roomFillWithType(const WallGrid2D& wallGrid, const sf::Vect
     areaFillWithType(wallGrid, structureSize, roomTypeGrid, sf::Vector2u(roomRect.getPosition() + (roomRect.getSize() / 2)), roomType);
 }
 
+std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect) {
+    std::set<RoomType> neighborTypes;
+
+    // roomRect with each face expanded by 1
+    RoomRect roomRectExpanded = RoomRect(roomRect.left - 1, roomRect.top - 1, roomRect.width + 2, roomRect.height + 2);
+
+    for (uint16_t x = 0; x < roomRectExpanded.width; x++) {
+        for (uint16_t y = 0; y < roomRectExpanded.height; y++) {
+            if ((x == 0 || x == roomRectExpanded.width - 1) || (y == 0 || y == roomRectExpanded.height - 1)) {
+                RoomType neighborRoomType = roomTypeGrid.cellGet(roomRectExpanded.left + x, roomRectExpanded.top + y).type;
+
+                if (neighborRoomType != RoomType::Null) {
+                    neighborTypes.insert(neighborRoomType);
+                }
+            }
+        }
+    }
+
+    return neighborTypes;
+}
+
 RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector) {
     RoomTypeGrid roomTypeGrid = RoomTypeGrid(structureSize.x, structureSize.y);
     
     // fill rooms
     for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
-        roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomRectsVector[i], RNGf::probability(0.5f) ? RoomType::Bathroom : RoomType::Bedroom);
+        roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomRectsVector[i], RoomType::Misc);
     }
     for (uint16_t x = 0; x < structureSize.x; x++) {
         for (uint16_t y = 0; y < structureSize.y; y++) {
@@ -138,7 +103,6 @@ RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallG
             }
         }
     }
-
 
     return roomTypeGrid;
 }

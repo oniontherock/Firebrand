@@ -11,7 +11,7 @@ enum class StructureType : uint16_t {
 	Shed,
 };
 
-typedef sf::Vector2u RoomSize;
+using RoomSize = sf::Vector2u;
 typedef uint16_t RoomCount;
 typedef uint16_t RoomContactCount;
 

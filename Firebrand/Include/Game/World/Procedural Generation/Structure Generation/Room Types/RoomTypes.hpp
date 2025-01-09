@@ -1,0 +1,44 @@
+#ifndef __ROOM_TYPES_H__
+#define __ROOM_TYPES_H__
+
+#include <any>
+#include <cstdint>
+#include <vector>
+#include <SFML/System.hpp>
+#include "../include/Common/DataCache.hpp"
+
+enum class RoomType {
+	// misc
+	Null, // walls are set as Null
+	Hallway,
+	Misc, // misc rooms are different from Null, Null isn't even counted as a room, whereas Misc basically counts as a blank room
+	// residential
+	Bedroom,
+	//Closet,
+	//FamilyRoom,
+	LivingRoom,
+	//Kitchen,
+	//LaundryRoom,
+	// lab/research
+	Laboratory,
+	// common
+	Bathroom,
+	// size of the RoomType enum
+	RoomTypeSize,
+};
+
+using RoomSize = sf::Vector2u;
+
+typedef DataCache RoomConstraints;
+
+struct RoomTypeBase {
+	RoomTypeBase() = default;
+
+	// the type of room this is
+	RoomType type = RoomType::Null;
+
+	// constraints for this room
+	RoomConstraints constraints;
+};
+
+#endif

@@ -271,6 +271,36 @@ void EntityComponents::componentTemplatesInitialize() {
 
 		}
 		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"LivingRoom Marker",
+		{
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentPosition>(),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(150, 150, 150, 255)),
+
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Laboratory Marker",
+		{
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentPosition>(),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(0, 150, 150, 255)),
+
+		}
+		);
 }
 
 #pragma endregion Component Templates
