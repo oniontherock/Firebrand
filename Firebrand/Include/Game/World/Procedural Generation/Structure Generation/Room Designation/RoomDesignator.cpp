@@ -160,13 +160,15 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
 
     for (uint16_t i = 0; i < 8; i++) {
 
-        // designate rooms
-        for (uint16_t roomTypeCur = 3; roomTypeCur < uint16_t(RoomType::RoomTypeSize); roomTypeCur++) {
-            const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(RoomType(roomTypeCur));
+        for (const auto& roomCur : roomRectsVector) {
+            //if (roomTypeGet(roomTypeGrid, roomCur) != RoomType::Misc) continue;
+            
+            std::vector<RoomType> roomTypesValid;
 
+            // designate rooms
+            for (uint16_t roomTypeCur = 3; roomTypeCur < uint16_t(RoomType::RoomTypeSize); roomTypeCur++) {
+                const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(RoomType(roomTypeCur));
 
-            for (const auto& roomCur : roomRectsVector) {
-                if (roomTypeGet(roomTypeGrid, roomCur) != RoomType::Misc) continue;
 
                 std::set<RoomType> roomNeighbors = roomNeighborTypesGet(wallGrid, structureSize, roomTypeGrid, roomCur);
 
@@ -264,10 +266,17 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
 #pragma endregion Constraint Checking
 
                 if (roomTypeConstraintsMet) {
-                    roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomCur, RoomType(roomTypeCur));
-                    addedTypes[roomTypeCur]++;
+                    roomTypesValid.push_back(RoomType(roomTypeCur));
                     break;
                 }
+            }
+
+            if (roomTypesValid.size() > 0) {
+                // get random valid type to choose
+                RoomType type = roomTypesValid[RNGu16::getUnder(roomTypesValid.size())];
+
+                roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomCur, type);
+                addedTypes[uint16_t(type)]++;
             }
         }
     }

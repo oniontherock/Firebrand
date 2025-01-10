@@ -1,7 +1,7 @@
 #include "Room Designation/RoomDesignator.hpp"
 #include "StructureGenerator.hpp"
 #include <Auxiliary/Math.hpp>
-
+#include <Auxiliary/NumberGenerator.hpp>
 
 
 StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
@@ -14,7 +14,20 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 
 		wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
 
-		bool generationSucceeded = RoomDesignator::structureRoomTypesDesignate(wallGrid, roomTypeGrid, structureSize, WallGenerator::roomsGetFromGeneration());
+		// get roomRects from wall generation
+		RoomRectVector roomRectsVector = WallGenerator::roomsGetFromGeneration();
+		// shuffle roomRectsVector
+		for (int16_t i = roomRectsVector.size() - 1; i >= 0; i--) {
+
+			// generate the random index 
+			uint16_t j = RNGu16::getUnder(i + 1);
+
+			RoomRect temp = roomRectsVector[i];
+			roomRectsVector[i] = roomRectsVector[j];
+			roomRectsVector[j] = temp;
+		}
+
+		bool generationSucceeded = RoomDesignator::structureRoomTypesDesignate(wallGrid, roomTypeGrid, structureSize, roomRectsVector);
 
 		if (generationSucceeded) {
 			break;
