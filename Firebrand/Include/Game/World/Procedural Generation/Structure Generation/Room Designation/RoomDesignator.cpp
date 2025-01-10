@@ -266,7 +266,6 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
                 if (roomTypeConstraintsMet) {
                     roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomCur, RoomType(roomTypeCur));
                     addedTypes[roomTypeCur]++;
-                    std::cout << roomTypeCur << "\n";
                     break;
                 }
             }

@@ -16,7 +16,6 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 
 		bool generationSucceeded = RoomDesignator::structureRoomTypesDesignate(wallGrid, roomTypeGrid, structureSize, WallGenerator::roomsGetFromGeneration());
 
-		std::cout << i << "\n";
 		if (generationSucceeded) {
 			break;
 		}
