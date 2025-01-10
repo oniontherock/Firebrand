@@ -16,7 +16,7 @@ enum class RoomType {
 	Bedroom,
 	///Closet,
 	///FamilyRoom,
-	//LivingRoom,
+	LivingRoom,
 	///Kitchen,
 	///LaundryRoom,
 	// lab/research

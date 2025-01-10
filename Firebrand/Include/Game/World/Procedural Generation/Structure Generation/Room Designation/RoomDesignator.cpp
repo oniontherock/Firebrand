@@ -156,6 +156,7 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
         }
     }
 
+    std::vector<uint16_t> addedTypes = std::vector<uint16_t>((uint16_t(RoomType::RoomTypeSize)));
 
     for (uint16_t i = 0; i < 8; i++) {
 
@@ -169,6 +170,7 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
 
                 std::set<RoomType> roomNeighbors = roomNeighborTypesGet(wallGrid, structureSize, roomTypeGrid, roomCur);
 
+#pragma region Constraint Checking
                 // bool for whether or not all of the roomType's constraints have been met
                 bool roomTypeConstraintsMet = true;
                 // check if the room has a RoomConnectionsAnd constraint
@@ -198,22 +200,74 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
                     bool neighborFound = false;
                     // iterate over neighbors
                     for (const auto& roomNeighborCur : roomNeighbors) {
-                        // erase the types of any neighbors from roomConnectionsAnd, effectively marking it as found
+                        // check if a neighbor was found, and mark neighborFound as true if a neighbor was found
                         if (roomConnections.contains(roomNeighborCur)) {
                             neighborFound = true;
                             break;
                         }
                     }
-                    // if roomConnectionsAnd still has elements, I.E. not all RoomConnections were found, mark the roomTypesAndValidate variable as false
+                    // if no neighbors were found, mark the roomTypesAndValidate variable as false
                     if (!neighborFound) {
                         roomTypeConstraintsMet = false;
                     }
                 }
+                // check if the room has a RoomConnectionsNand constraint
+                if (roomTypeInstance.constraints.dataHas("RoomConnectionsNand")) {
+
+                    // get RoomConnectionsNand constraint
+                    std::set<RoomType> roomConnections = roomTypeInstance.constraints.dataGet<std::set<RoomType>>("RoomConnectionsNand");
+
+                    // iterate over neighbors
+                    for (const auto& roomNeighborCur : roomNeighbors) {
+                        // if a neighbor that is not allowed in the Nand is found, mark roomTypeConstraintsMet as false
+                        if (roomConnections.contains(roomNeighborCur)) {
+                            roomTypeConstraintsMet = false;
+                            break;
+                        }
+                    }
+                }
+                // check if the room has a RoomDimensionsRange constraint
+                if (roomTypeInstance.constraints.dataHas("RoomDimensionsRange")) {
+
+                    // get RoomDimensionsRange constraint
+                    std::pair<RoomSize, RoomSize> roomDimensionsRange = roomTypeInstance.constraints.dataGet<std::pair<RoomSize, RoomSize>>("RoomDimensionsRange");
+
+                    // ensure room's dimensions are within the type's allowed range
+                    if ((roomCur.width < roomDimensionsRange.first.x || roomCur.width > roomDimensionsRange.second.x) ||
+                        (roomCur.height < roomDimensionsRange.first.y || roomCur.height> roomDimensionsRange.second.y)) {
+                        roomTypeConstraintsMet = false;
+                    }
+                }
+                // check if the room has a RoomSizeRange constraint
+                if (roomTypeInstance.constraints.dataHas("RoomSizeRange")) {
+
+                    // get RoomSizeRange constraint
+                    std::pair<uint16_t, uint16_t> roomSizeRange = roomTypeInstance.constraints.dataGet<std::pair<uint16_t, uint16_t>>("RoomSizeRange");
+
+                    // get the amount of cells in the room
+                    uint16_t roomSize = roomCur.width * roomCur.height;
+
+                    // ensure room's size is within the type's allowed range
+                    if (roomSize < roomSizeRange.first || roomSize > roomSizeRange.second) {
+                        roomTypeConstraintsMet = false;
+                    }
+                }
+                // check if room has a RoomTypeCount constraint
+                if (roomTypeInstance.constraints.dataHas("RoomTypeCount")) {
+
+                    uint16_t roomTypeCount = roomTypeInstance.constraints.dataGet<uint16_t>("RoomTypeCount");
+
+                    if (addedTypes[roomTypeCur] >= roomTypeCount) {
+                        roomTypeConstraintsMet = false;
+                    }
+                }
+#pragma endregion Constraint Checking
 
                 if (roomTypeConstraintsMet) {
                     roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomCur, RoomType(roomTypeCur));
+                    addedTypes[roomTypeCur]++;
                     std::cout << roomTypeCur << "\n";
-                    //break;
+                    break;
                 }
             }
         }

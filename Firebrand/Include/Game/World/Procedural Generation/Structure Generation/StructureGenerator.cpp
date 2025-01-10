@@ -65,7 +65,12 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 				case RoomType::Bedroom:
 					cell.type = "Bedroom Marker";
 					break;
-
+				case RoomType::LivingRoom:
+					cell.type = "LivingRoom Marker";
+					break;
+				//case RoomType::Laboratory:
+				//	cell.type = "Laboratory Marker";
+				//	break;
 				}
 			}
 
