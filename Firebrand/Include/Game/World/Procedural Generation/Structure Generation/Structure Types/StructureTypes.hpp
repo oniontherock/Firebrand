@@ -42,12 +42,14 @@ struct StructureTypeBase {
 	// in simple terms, lower numbers means a contact count is more likely
 	float contactProbability[5] = { 0.f, 0.f, 0.f, 0.f, 0.f };
 
-
 	// whether rooms in this structure need full contact or partial contact for something to contact as a contact.
 	// basically, true means that an entire face of a room must have contact with another for it to count as a contact,
 	// false means that any contact on one of the room's faces count.
 	// generally, true causes more sporadic, crazy buildings, and false makes more predictable buildings.
 	bool fullContact = true;
+
+	// amount of cells a room can be resized to avoid double walls
+	uint16_t doubleWallTolerance = 0;
 
 	// gets a RoomSize in this structure's room size min and max range
 	RoomSize roomSizeInstanceGet() const;

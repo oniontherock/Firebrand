@@ -265,7 +265,7 @@ RoomRectVector WallGenerator::roomsGetFromGeneration() {
 	return roomRectVectorLast;
 }
 
-sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact) {
+sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact, uint16_t doubleWallTolerance) {
 
 	// clamp room width to structure width
 	if (roomSize.x >= structureSize.x) {
@@ -295,7 +295,7 @@ sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u struc
 
 		bool doubleWallFixFailed = false;
 		for (uint16_t i = 0; i < 512; i++) {
-			roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect, roomSize, 2);
+			roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect, roomSize, doubleWallTolerance);
 
 			if (roomRect == RoomRect(0, 0, 0, 0)) {
 				doubleWallFixFailed = true;
@@ -380,7 +380,7 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 				roomContactCount = structureType->roomContactCountInstanceGet();
 			}
 
-			RoomRect roomRect = roomGenerate(wallGrid, structureSize, roomSize, roomContactCount, true);
+			RoomRect roomRect = roomGenerate(wallGrid, structureSize, roomSize, roomContactCount, true, structureType->doubleWallTolerance);
 
 			if (roomRect == RoomRect(0, 0, 0, 0)) continue;
 

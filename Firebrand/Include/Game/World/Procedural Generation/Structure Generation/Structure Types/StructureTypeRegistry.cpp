@@ -13,6 +13,8 @@ StructureTypeHome::StructureTypeHome() {
 	contactProbability[1] = 0.8f;
 	contactProbability[3] = 0.125f;
 	contactProbability[4] = 0.25f;
+	// double wall tolerance
+	doubleWallTolerance = 0;
 	// full contact
 	fullContact = true;
 }
@@ -26,6 +28,8 @@ StructureTypeBarn::StructureTypeBarn() {
 	roomCountMin = 0, roomCountMax = 2;
 	// room contact count
 	roomContactCountMin = 3, roomContactCountMax = 3;
+	// double wall tolerance
+	doubleWallTolerance = 1;
 	// full contact
 	fullContact = true;
 }
@@ -38,6 +42,8 @@ StructureTypeShed::StructureTypeShed() {
 	roomCountMin = 0, roomCountMax = 0;
 	// room contact count
 	roomContactCountMin = 0, roomContactCountMax = 0;
+	// double wall tolerance
+	doubleWallTolerance = 1;
 	// full contact
 	fullContact = true;
 }
