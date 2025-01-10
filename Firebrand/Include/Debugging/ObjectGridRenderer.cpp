@@ -21,8 +21,6 @@ void ObjectGridRenderer::objectGridRender(ObjectGrid& objectGrid, sf::FloatRect 
 	int16_t yStart =	int16_t(viewRect.top);
 	int16_t yEnd =	int16_t(viewRect.top + viewRect.height);
 
-	std::cout << xStart << " " << xEnd << " " << yStart << " " << yEnd << std::endl;
-
 	for (int16_t x = xStart; x < xEnd; x++) {
 		for (int16_t y = yStart; y < yEnd; y++) {
 

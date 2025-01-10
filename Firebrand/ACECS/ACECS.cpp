@@ -1,3 +1,4 @@
+#include "../Include/Game/World/Procedural Generation/Structure Generation/Room Types/RoomTypeRegistry.hpp"
 #include "ACECS.hpp"
 #include "ECSRegistry.hpp"
 #include "GameLevel.hpp"
@@ -159,6 +160,7 @@ void Engine::texturesRegister() {
 void Engine::engineInitialize() {
 
 	RNGf::initialize();
+	RoomTypeRegistry::roomTypesRegister();
 
 	GameLevelGrid::levelGridInitialize(1, 1, 1);
 	GameLevelGrid::levelAdd(new GameLevel(0, 0, 0), true);

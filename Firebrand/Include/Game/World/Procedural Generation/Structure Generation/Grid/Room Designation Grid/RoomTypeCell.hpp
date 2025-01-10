@@ -1,7 +1,7 @@
 #ifndef __ROOM_TYPE_CELL_H__
 #define __ROOM_TYPE_CELL_H__
 
-#include "../../Room Designation/RoomType.hpp"
+#include "../../Room Types/RoomTypes.hpp"
 #include <cstdint>
 
 struct RoomTypeCell {

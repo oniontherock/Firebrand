@@ -8,7 +8,7 @@ StructureTypeHome::StructureTypeHome() {
 	// room count
 	roomCountMin = 16, roomCountMax = 24;
 	// room contact count
-	roomContactCountMin = 2, roomContactCountMax = 4;
+	roomContactCountMin = 1, roomContactCountMax = 4;
 	// full contact
 	fullContact = true;
 }

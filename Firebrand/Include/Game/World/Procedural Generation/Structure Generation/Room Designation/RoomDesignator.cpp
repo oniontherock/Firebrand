@@ -19,6 +19,13 @@ struct Vector2uLessThan
     }
 };
 
+RoomType RoomDesignator::pointTypeGet(RoomTypeGrid& roomTypeGrid, const sf::Vector2u point) {
+    return roomTypeGrid.cellGet(point).type;
+}
+RoomType RoomDesignator::roomTypeGet(RoomTypeGrid& roomTypeGrid, const RoomRect roomRect) {
+    return pointTypeGet(roomTypeGrid, sf::Vector2u(roomRect.left + (roomRect.width / 2u), roomRect.top + (roomRect.height / 2u)));
+}
+
 void RoomDesignator::areaFillWithType(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const sf::Vector2u pointStart, const RoomType roomType) {
 
     std::queue<sf::Vector2u> pointsToCheckQueue;
@@ -70,19 +77,37 @@ void RoomDesignator::roomFillWithType(const WallGrid2D& wallGrid, const sf::Vect
 std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect) {
     std::set<RoomType> neighborTypes;
 
-    // roomRect with each face expanded by 1
-    RoomRect roomRectExpanded = RoomRect(roomRect.left - 1, roomRect.top - 1, roomRect.width + 2, roomRect.height + 2);
+    // iterate right face
+    for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
+        sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + (roomRect.width - 1) + 1, roomRect.top + offsetY);
 
-    for (uint16_t x = 0; x < roomRectExpanded.width; x++) {
-        for (uint16_t y = 0; y < roomRectExpanded.height; y++) {
-            if ((x == 0 || x == roomRectExpanded.width - 1) || (y == 0 || y == roomRectExpanded.height - 1)) {
-                RoomType neighborRoomType = roomTypeGrid.cellGet(roomRectExpanded.left + x, roomRectExpanded.top + y).type;
+        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+    
+        neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
+    }
+    // iterate top face
+    for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
+        sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top - 1);
 
-                if (neighborRoomType != RoomType::Null) {
-                    neighborTypes.insert(neighborRoomType);
-                }
-            }
-        }
+        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+       
+        neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
+    }
+    // iterate left face
+    for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
+        sf::Vector2i cellPosition = sf::Vector2i(roomRect.left - 1, roomRect.top + offsetY);
+
+        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+
+        neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
+    }
+    // iterate bottom face
+    for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
+        sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1) + 1);
+
+        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+        
+        neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
     }
 
     return neighborTypes;
@@ -91,15 +116,78 @@ std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGr
 RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector) {
     RoomTypeGrid roomTypeGrid = RoomTypeGrid(structureSize.x, structureSize.y);
     
-    // fill rooms
+    // fill rooms with misc
     for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
         roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomRectsVector[i], RoomType::Misc);
     }
+    // fill hallways
     for (uint16_t x = 0; x < structureSize.x; x++) {
         for (uint16_t y = 0; y < structureSize.y; y++) {
             // if cell is null and it's not a wall, it must be a hallway, so fill it with a hallway
             if ((roomTypeGrid.cellGet(x, y).type == RoomType::Null) && (!wallGrid[x][y])) {
                 areaFillWithType(wallGrid, structureSize, roomTypeGrid, sf::Vector2u(x, y), RoomType::Hallway);
+            }
+        }
+    }
+
+    for (uint16_t i = 0; i < 8; i++) {
+
+        // designate rooms
+        for (uint16_t roomTypeCur = 3; roomTypeCur < uint16_t(RoomType::RoomTypeSize); roomTypeCur++) {
+            const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(RoomType(roomTypeCur));
+
+
+            for (const auto& roomCur : roomRectsVector) {
+                if (roomTypeGet(roomTypeGrid, roomCur) != RoomType::Misc) continue;
+
+                std::set<RoomType> roomNeighbors = roomNeighborTypesGet(wallGrid, structureSize, roomTypeGrid, roomCur);
+
+                // bool for whether or not all of the roomType's constraints have been met
+                bool roomTypeConstraintsMet = true;
+                // check if the room has a RoomConnectionsAnd constraint
+                if (roomTypeInstance.constraints.dataHas("RoomConnectionsAnd")) {
+
+                    // get RoomConnectionsAnd constraint
+                    std::set<RoomType> roomConnections = roomTypeInstance.constraints.dataGet<std::set<RoomType>>("RoomConnectionsAnd");
+
+                    // iterate over neighbors
+                    for (const auto& roomNeighborCur : roomNeighbors) {
+                        // erase the types of any neighbors from roomConnectionsAnd, effectively marking it as found
+                        if (roomConnections.contains(roomNeighborCur)) {
+                            roomConnections.erase(roomNeighborCur);
+                        }
+                    }
+                    // if roomConnectionsAnd still has elements, I.E. not all RoomConnections were found, mark the roomTypesAndValidate variable as false
+                    if (roomConnections.size() > 0) {
+                        roomTypeConstraintsMet = false;
+                    }
+                }
+                // check if the room has a RoomConnectionsOr constraint
+                if (roomTypeInstance.constraints.dataHas("RoomConnectionsOr")) {
+
+                    // get RoomConnectionsAnd constraint
+                    std::set<RoomType> roomConnections = roomTypeInstance.constraints.dataGet<std::set<RoomType>>("RoomConnectionsOr");
+
+                    bool neighborFound = false;
+                    // iterate over neighbors
+                    for (const auto& roomNeighborCur : roomNeighbors) {
+                        // erase the types of any neighbors from roomConnectionsAnd, effectively marking it as found
+                        if (roomConnections.contains(roomNeighborCur)) {
+                            neighborFound = true;
+                            break;
+                        }
+                    }
+                    // if roomConnectionsAnd still has elements, I.E. not all RoomConnections were found, mark the roomTypesAndValidate variable as false
+                    if (!neighborFound) {
+                        roomTypeConstraintsMet = false;
+                    }
+                }
+
+                if (roomTypeConstraintsMet) {
+                    roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomCur, RoomType(roomTypeCur));
+                    std::cout << roomTypeCur << "\n";
+                    //break;
+                }
             }
         }
     }

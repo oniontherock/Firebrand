@@ -1,38 +1,54 @@
 #include "RoomTypeRegistry.hpp"
 #include <set>
+#include <iostream>
 
 using enum RoomType;
+//
+//RoomTypeNull::RoomTypeNull() {
 
-RoomTypeNull::RoomTypeNull() {
-	type = RoomType::Null;
-}
-RoomTypeHallway::RoomTypeHallway() {
-	type = RoomType::Hallway;
-}
-RoomTypeMisc::RoomTypeMisc() {
-	type = RoomType::Misc;
-}
-RoomTypeBedroom::RoomTypeBedroom() {
-	type = RoomType::Bedroom;
+//}
 
-	constraints.dataSet("RoomConnectionsAnd", std::set<RoomType>{ Hallway });
-	constraints.dataSet("RoomSizeRange", std::pair(RoomSize(4, 4), RoomSize(6, 6)));
-}
-RoomTypeLivingRoom::RoomTypeLivingRoom() {
-	type = RoomType::LivingRoom;
+std::vector<RoomTypeInstance> RoomTypeRegistry::roomTypeInstances{};
 
-	constraints.dataSet("RoomConnectionsAnd", std::set<RoomType>{ Hallway });
-	constraints.dataSet("RoomSizeRange", std::pair(RoomSize(5, 5), RoomSize(10, 10)));
-}
-RoomTypeLaboratory::RoomTypeLaboratory() {
-	type = RoomType::Laboratory;
+void RoomTypeRegistry::roomInstanceAdd(RoomTypeInstance roomTypeInstance) {
+	uint16_t index = static_cast<uint16_t>(roomTypeInstance.type);
 
-	constraints.dataSet("RoomConnectionsAnd", std::set<RoomType>{ Hallway });
-	constraints.dataSet("RoomSizeRange", std::pair(RoomSize(4, 4), RoomSize(10, 10)));
+	roomTypeInstances.insert(roomTypeInstances.begin() + index, roomTypeInstance);
 }
-RoomTypeBathroom::RoomTypeBathroom() {
-	type = RoomType::Bathroom;
+const RoomTypeInstance& RoomTypeRegistry::roomTypeInstanceGet(RoomType roomType) {
+	return roomTypeInstances[uint16_t(roomType)];
+}
+void RoomTypeRegistry::roomTypesRegister() {
+	
+	roomTypeInstances.resize(uint16_t(RoomType::RoomTypeSize));
 
-	constraints.dataSet("RoomConnectionsOr", std::set<RoomType>{ Hallway, Bedroom, Laboratory, LivingRoom });
-	constraints.dataSet("RoomSizeRange", std::pair(RoomSize(3, 3), RoomSize(6, 6)));
-}
+	RoomTypeInstance roomTypeInstance = RoomTypeInstance(RoomType::Null);
+	roomInstanceAdd(roomTypeInstance);
+
+	roomTypeInstance = RoomTypeInstance(RoomType::Hallway);
+	roomInstanceAdd(roomTypeInstance);
+
+	roomTypeInstance = RoomTypeInstance(RoomType::Misc);
+	roomInstanceAdd(roomTypeInstance);
+
+	roomTypeInstance = RoomTypeInstance(RoomType::Bedroom);
+	roomTypeInstance.constraints.dataSet("RoomConnectionsAnd", std::set<RoomType>{ Hallway });
+	roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair(RoomSize(4, 4), RoomSize(6, 6)));
+	roomInstanceAdd(roomTypeInstance);
+
+	//roomTypeInstance = RoomTypeInstance(RoomType::LivingRoom);
+	//roomTypeInstance.constraints.dataSet("RoomConnectionsAnd", std::set<RoomType>{ Hallway });
+	//roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair(RoomSize(5, 5), RoomSize(10, 10)));
+	//roomInstanceAdd(roomTypeInstance);
+
+	//roomTypeInstance = RoomTypeInstance(RoomType::Laboratory);
+	//roomTypeInstance.constraints.dataSet("RoomConnectionsAnd", std::set<RoomType>{ Hallway });
+	//roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair(RoomSize(4, 4), RoomSize(10, 10)));
+	//roomInstanceAdd(roomTypeInstance);
+
+	roomTypeInstance = RoomTypeInstance(RoomType::Bathroom);
+	roomTypeInstance.constraints.dataSet("RoomConnectionsOr", std::set<RoomType>{ Bedroom });
+	roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair(RoomSize(3, 3), RoomSize(6, 6)));
+	roomInstanceAdd(roomTypeInstance);
+};
+

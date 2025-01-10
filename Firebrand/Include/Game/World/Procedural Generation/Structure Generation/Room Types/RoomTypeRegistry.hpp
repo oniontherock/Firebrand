@@ -1,38 +1,26 @@
 #ifndef __STRUCTURE_TYPE_REGISTRY_H__
-#define __STRUCTURE_TYPE_REGISTRY_H__
+#define __ROOM_TYPE_REGISTRY_H__
 
 #include "RoomTypes.hpp"
+#include <cstdint>
 #include <SFML/System.hpp>
 
-//Null, // walls are set as Null
-//Base,
-//Hallway,
-//Misc, // misc rooms are different from Null, Null isn't even counted as a room, whereas Misc basically counts as a blank room
-//Bedroom,
-//LivingRoom,
-//Laboratory,
-//Bathroom,
+class RoomTypeRegistry {
 
-struct RoomTypeNull : RoomTypeBase {
-	RoomTypeNull();
-};
-struct RoomTypeHallway: RoomTypeBase {
-	RoomTypeHallway();
-};
-struct RoomTypeMisc : RoomTypeBase {
-	RoomTypeMisc();
-};
-struct RoomTypeBedroom : RoomTypeBase {
-	RoomTypeBedroom();
-};
-struct RoomTypeLivingRoom : RoomTypeBase {
-	RoomTypeLivingRoom();
-};
-struct RoomTypeLaboratory : RoomTypeBase {
-	RoomTypeLaboratory();
-};
-struct RoomTypeBathroom : RoomTypeBase {
-	RoomTypeBathroom();
+	static std::vector<RoomTypeInstance> roomTypeInstances;
+
+	static void roomInstanceAdd(RoomTypeInstance roomTypeInstance);
+
+	template <typename T>
+	static void roomConstraintAdd(RoomType roomType, DataKey key, T value) {
+		roomTypeInstances[static_cast<uint16_t>(roomType)].constraints.dataSet(key, value);
+	}
+
+public:
+
+	static const RoomTypeInstance& roomTypeInstanceGet(RoomType roomType);
+
+	static void roomTypesRegister();
 };
 
 #endif

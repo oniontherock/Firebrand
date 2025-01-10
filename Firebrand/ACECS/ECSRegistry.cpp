@@ -301,6 +301,21 @@ void EntityComponents::componentTemplatesInitialize() {
 
 		}
 		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Misc Marker",
+		{
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentPosition>(),
+			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(150, 50, 25, 255)),
+
+		}
+		);
 }
 
 #pragma endregion Component Templates
