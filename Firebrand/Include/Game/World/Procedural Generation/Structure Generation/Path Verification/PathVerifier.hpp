@@ -10,7 +10,7 @@ class PathVerifier {
 public:
 	static bool pointsConnect(const WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u pointA, sf::Vector2u pointB);
 
-}
+};
 
 
 

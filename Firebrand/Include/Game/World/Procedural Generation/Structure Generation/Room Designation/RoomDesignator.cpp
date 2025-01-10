@@ -1,3 +1,4 @@
+#include "../Path Verification/PathVerifier.hpp"
 #include "RoomDesignator.hpp"
 #include <Auxiliary/Math.hpp>
 #include <Auxiliary/NumberGenerator.hpp>
@@ -113,8 +114,8 @@ std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGr
     return neighborTypes;
 }
 
-RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector) {
-    RoomTypeGrid roomTypeGrid = RoomTypeGrid(structureSize.x, structureSize.y);
+bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector) {
+    roomTypeGrid = RoomTypeGrid(structureSize.x, structureSize.y);
     
     // fill rooms with misc
     for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
@@ -129,6 +130,32 @@ RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallG
             }
         }
     }
+    
+    // ensure all hallways can reach each other
+    for (uint16_t aX = 0; aX < structureSize.x; aX++) {
+        for (uint16_t aY = 0; aY < structureSize.y; aY++) {
+
+            // skip if room not a hallway
+            if (roomTypeGrid.cellGet(aX, aY).type != RoomType::Hallway) continue;
+
+            for (uint16_t bX = 0; bX < structureSize.x; bX++) {
+                for (uint16_t bY = 0; bY < structureSize.y; bY++) {
+
+                    // skip if same cell
+                    if ((aX == bX) && (aY == bY)) continue;
+
+                    // skip if room not a hallway
+                    if (roomTypeGrid.cellGet(bX, bY).type != RoomType::Hallway) continue;
+
+                    // if hallway doesn't connect, return a failed designation
+                    if (!PathVerifier::pointsConnect(wallGrid, structureSize, sf::Vector2u(aX, aY), sf::Vector2u(bX, bY))) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
 
     for (uint16_t i = 0; i < 8; i++) {
 
@@ -192,6 +219,6 @@ RoomTypeGrid RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallG
         }
     }
 
-    return roomTypeGrid;
+    return true;
 }
 

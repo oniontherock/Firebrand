@@ -9,6 +9,10 @@ StructureTypeHome::StructureTypeHome() {
 	roomCountMin = 16, roomCountMax = 24;
 	// room contact count
 	roomContactCountMin = 1, roomContactCountMax = 4;
+	// room contact count probability
+	contactProbability[1] = 0.8f;
+	contactProbability[3] = 0.125f;
+	contactProbability[4] = 0.25f;
 	// full contact
 	fullContact = true;
 }

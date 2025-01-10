@@ -17,7 +17,8 @@ namespace RoomDesignator {
 
 	std::set<RoomType> roomNeighborTypesGet(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect);
 
-	RoomTypeGrid structureRoomTypesDesignate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector);
+	// designates the types of rooms in a structure, returns a bool for whether the generation succeeded or not.
+	bool structureRoomTypesDesignate(const WallGrid2D& wallGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector);
 };
 
 #endif

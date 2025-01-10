@@ -6,9 +6,21 @@
 
 StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
 
-	WallGrid2D wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
+	WallGrid2D wallGrid;
 
-	RoomTypeGrid roomTypeGrid = RoomDesignator::structureRoomTypesDesignate(wallGrid, structureSize, WallGenerator::roomsGetFromGeneration());
+	RoomTypeGrid roomTypeGrid = RoomTypeGrid(structureSize.x, structureSize.y);
+
+	for (uint16_t i = 0; i < 64; i ++) {
+
+		wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
+
+		bool generationSucceeded = RoomDesignator::structureRoomTypesDesignate(wallGrid, roomTypeGrid, structureSize, WallGenerator::roomsGetFromGeneration());
+
+		std::cout << i << "\n";
+		if (generationSucceeded) {
+			break;
+		}
+	}
 
 	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType->structureType, structurePosition, structureRotation);
 

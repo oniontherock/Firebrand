@@ -36,6 +36,13 @@ struct StructureTypeBase {
 	// maximum possible amount of contacts that rooms in this structure require
 	RoomContactCount roomContactCountMax = 0;
 
+	// array where each element is a probability for a given room contact count to reroll.
+	// basically, every time a room's contact count is rolled, there is a chance (depending on the contact count) for it to reroll,
+	// so if contactProbability[0] == 0.f, then there is a 0% chance for it to reroll, but, if it is 0.25f, then there is a 25% chance for it to reroll.
+	// in simple terms, lower numbers means a contact count is more likely
+	float contactProbability[5] = { 0.f, 0.f, 0.f, 0.f, 0.f };
+
+
 	// whether rooms in this structure need full contact or partial contact for something to contact as a contact.
 	// basically, true means that an entire face of a room must have contact with another for it to count as a contact,
 	// false means that any contact on one of the room's faces count.

@@ -375,6 +375,11 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 			roomSize = structureType->roomSizeInstanceGet();
 			roomContactCount = structureType->roomContactCountInstanceGet();
 
+			// chance for roomContactCount to reroll depending on it's value
+			while (RNGf::probability(structureType->contactProbability[roomContactCount])) {
+				roomContactCount = structureType->roomContactCountInstanceGet();
+			}
+
 			RoomRect roomRect = roomGenerate(wallGrid, structureSize, roomSize, roomContactCount, true);
 
 			if (roomRect == RoomRect(0, 0, 0, 0)) continue;

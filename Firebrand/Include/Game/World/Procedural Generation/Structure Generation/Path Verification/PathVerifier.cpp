@@ -4,21 +4,17 @@
 
 bool PathVerifier::pointsConnect(const WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u pointA, sf::Vector2u pointB) {
 
-	AStarGrid aStarGrid = AStarGrid(structureSize.x, structureSize.y, structureGridCellSize, structureGridCellSize);
+	AStarGrid aStarGrid = AStarGrid(structureSize.x, structureSize.y, 1, 1);
 
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {
-			aStarGrid.cellGet(x, y).valid = wallGrid[x][y];
+			aStarGrid.cellGet(x, y).valid = !wallGrid[x][y];
 		}
 	}
 
-	AStarPath path = AStarPathfinder::pathGetFromCellCoordinates(pointA, pointB, aStarGrid);
+	AStarPath path = AStarPathfinder::pathGet(sf::Vector2f(pointA), sf::Vector2f(pointB), aStarGrid);
 
-	// if the end point of the path is not equal to pointB, that means we couldn't find a path to the point, so return false
-	if (Vector2fMath::distSqrd(path[path.size() - 1], sf::Vector2f(pointB)) > 1.f * 1.f) {
-		return false;
-	}
-
-	return true;
+	// return whether a path was found
+	return path.size() > 0;
 }
 
