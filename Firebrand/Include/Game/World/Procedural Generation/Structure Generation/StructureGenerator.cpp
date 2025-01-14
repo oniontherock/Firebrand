@@ -76,10 +76,10 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 				cell.type = WallGenerator::cellTypeGetFromWallType(wallData.first);
 				cell.rotation = wallData.second;
 
-			/*	if (wallSectionGrid[x][y].first != RoomType::Null && wallSectionGrid[x][y].second != RoomType::Null) {
+				//if (wallSectionGrid[x][y].first != RoomType::Null && wallSectionGrid[x][y].second != RoomType::Null) {
 
-						cell.type = "Misc Marker";
-				}*/
+				//		cell.type = "Misc Marker";
+				//}
 			}
 			else if (roomTypeGrid.cellGet(x, y).type != RoomType::Null) {
 				switch (roomTypeGrid.cellGet(x, y).type) {

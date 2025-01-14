@@ -22,7 +22,6 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 		std::set<RoomType> connectionTypesOr;
 
 		if (roomTypeInstance.constraints.dataHas("RoomConnectionsAnd")) {
-
 			// get RoomConnectionsAnd constraint
 			connectionTypesAnd = roomTypeInstance.constraints.dataGet<std::set<RoomType>>("RoomConnectionsAnd");
 		}
@@ -34,7 +33,7 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 #pragma endregion Connection Types Detection
 
 		// vector of vectors of sf::Vector2u, the main vector is ordered by sectionId, and the sub vectors contain all cell positions in a section
-		std::vector<std::vector<std::pair<sf::Vector2u, RoomType>>> possibleConnectionPoints = std::vector<std::vector<std::pair<sf::Vector2u, RoomType>>>(WallSectionGenerator::sectionIdCount);
+		std::vector<std::vector<sf::Vector2u>> possibleConnectionPoints = std::vector<std::vector<sf::Vector2u>>(uint16_t(RoomType::RoomTypeSize));
 		// set of neighboring RoomTypes, later used for deciding which room to connect to in connectionTypesOr
 		std::set<RoomType> neighboringTypes;
 
@@ -44,8 +43,8 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 		for (uint16_t x = 0; x < roomRectCur.width; x++) {
 			for (uint16_t y = 0; y < roomRectCur.height; y++) {
 
-				bool isOnEdgeX = x == 0 || x == roomRectCur.width - 1;
-				bool isOnEdgeY = y == 0 || y == roomRectCur.height - 1;
+				bool isOnEdgeX = x <= 0 || x >= roomRectCur.width - 1;
+				bool isOnEdgeY = y <= 0 || y >= roomRectCur.height - 1;
 
 				// skip if cell is not an edge
 				if (!(isOnEdgeX || isOnEdgeY)) continue;
@@ -73,10 +72,13 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 				if (wallSection.first == roomRectType) connectionType = wallSection.second;
 				else connectionType = wallSection.first;
 
+				// skip if room type is null
+				if (connectionType == RoomType::Null) continue;
+
 				neighboringTypes.insert(connectionType);
 
 				std::cout << "section Id: " << wallSection.sectionId << "\n";
-				possibleConnectionPoints[wallSection.sectionId].push_back(std::pair(sf::Vector2u(cellX, cellY), connectionType));
+				possibleConnectionPoints[uint16_t(connectionType)].push_back(sf::Vector2u(cellX, cellY));
 
 			}
 		}
@@ -99,19 +101,18 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 
 			bool doConnect = false;
 
+			std::cout << "connection index: " << connectionIndexOr << "\n";
+
 			if (i == connectionIndexOr) {
 				doConnect = true;
 			}
-			if (connectionTypesAnd.contains(possibleConnectionPoints[i][0].second)) {
+			if (connectionTypesAnd.contains(RoomType(i))) {
 				doConnect = true;
 			}
 
 			if (doConnect) {
-
-
-				sf::Vector2u connectionPoint = possibleConnectionPoints[i][RNGu16::getUnder(possibleConnectionPoints[i].size())].first;
+				sf::Vector2u connectionPoint = possibleConnectionPoints[i][RNGu16::getUnder(possibleConnectionPoints[i].size())];
 				doorGrid[connectionPoint.x][connectionPoint.y] = true;
-
 			}
 		}
 
