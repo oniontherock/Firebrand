@@ -7,15 +7,13 @@ WallSectionGenerator::WallSectionCell::WallSectionCell(RoomType _first, RoomType
 	first = _first;
 	second = _second;
 	sectionId = _sectionId;
-
-	if (sectionId + 1 > sectionIdCount) sectionIdCount = sectionId + 1;
 }
 
 uint16_t WallSectionGenerator::sectionIdCount = 0;
 
 WallSectionGenerator::WallSectionGrid2D WallSectionGenerator::wallSectionsGet(const WallGrid2D wallGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize) {
 
-	WallSectionGrid2D wallSectionGrid = WallSectionGrid2D(structureSize.x, WallSectionGrid1D(structureSize.y, WallSectionCell(RoomType::Null, RoomType::Null, 0)));
+	WallSectionGrid2D wallSectionGrid = WallSectionGrid2D(structureSize.x, WallSectionGrid1D(structureSize.y, WallSectionCell(RoomType::Null, RoomType::Null, UINT16_MAX)));
 
 	WallSectionId wallSectionIdCur = 0;
 
@@ -27,6 +25,7 @@ WallSectionGenerator::WallSectionGrid2D WallSectionGenerator::wallSectionsGet(co
 			if (!wallGrid[cellX][cellY]) continue;
 			// skip if a section has already been applied
 			if (wallSectionGrid[cellX][cellY].first != RoomType::Null && wallSectionGrid[cellX][cellY].second != RoomType::Null) continue;
+			if (wallSectionGrid[cellX][cellY].sectionId < UINT16_MAX) continue;
 
 			// if there are no walls to the left and and right, the section must be vertical (this assumes it's a valid section, it's validity is evaluated later)
 			bool sectionIsVertical = !(wallGrid[uint16_t(cellX - 1)][cellY] || wallGrid[uint16_t(cellX + 1)][cellY]);
@@ -74,11 +73,10 @@ WallSectionGenerator::WallSectionGrid2D WallSectionGenerator::wallSectionsGet(co
 				// position of the current cell in this section
 				sf::Vector2u sectionCellPosition = cellsToEvaluate.front();
 				cellsToEvaluate.pop();
-
 				uint16_t sectionCellX = uint16_t(sectionCellPosition.x);
 				uint16_t sectionCellY = uint16_t(sectionCellPosition.y);
 
-				cellsEvaluated.insert(sf::Vector2u(sectionCellX, sectionCellY));
+				cellsEvaluated.insert(sectionCellPosition);
 
 				// if there are no walls to the left and and right, the current cell section must be vertical
 				bool sectionCellIsVertical = !(wallGrid[uint16_t(sectionCellX - 1)][sectionCellY] || wallGrid[uint16_t(sectionCellX + 1)][sectionCellY]);
@@ -103,21 +101,28 @@ WallSectionGenerator::WallSectionGrid2D WallSectionGenerator::wallSectionsGet(co
 				// add current cell to the set of evaluated cells
 
 				// get the cell in front and behind this cell in the section
-				sf::Vector2u cellFront = sf::Vector2u(sectionCellX + sideOffsets.first.x, sectionCellY + sideOffsets.first.y);
-				sf::Vector2u cellBack = sf::Vector2u(sectionCellX + sideOffsets.second.x, sectionCellY + sideOffsets.second.y);
+				sf::Vector2u cellFront = sf::Vector2u(sectionCellX + frontOffsets.first.x, sectionCellY + frontOffsets.first.y);
+				sf::Vector2u cellBack = sf::Vector2u(sectionCellX + frontOffsets.second.x, sectionCellY + frontOffsets.second.y);
 
-				bool cellFrontIsOnEdge = (cellFront.x <= 0 || cellFront.x >= structureSize.x - 1) || (cellFront.y >= 0 || cellFront.y >= structureSize.y - 1);
-				bool cellBackIsOnEdge = (cellBack.x <= 0 || cellBack.x >= structureSize.x - 1) || (cellBack.y >= 0 || cellBack.y >= structureSize.y - 1);
+				bool cellFrontIsOnEdge = (cellFront.x <= 0 || cellFront.x >= structureSize.x - 1) || (cellFront.y <= 0 || cellFront.y >= structureSize.y - 1);
+				bool cellBackIsOnEdge = (cellBack.x <= 0 || cellBack.x >= structureSize.x - 1) || (cellBack.y <= 0 || cellBack.y >= structureSize.y - 1);
 
 				// if cellFront has yet to be evaluated, queue it for evaluation
-				if (!cellsEvaluated.contains(cellFront) && !cellFrontIsOnEdge) cellsToEvaluate.push(cellFront);
+				if ((!cellsEvaluated.contains(cellFront)) && (!cellFrontIsOnEdge)) {
+					cellsToEvaluate.push(cellFront);
+					//std::cout << "burger" << "\n";
+				}
 				// if cellBack has yet to be evaluated, queue it for evaluation
-				if (!cellsEvaluated.contains(cellBack) && !cellBackIsOnEdge) cellsToEvaluate.push(cellBack);
+				if ((!cellsEvaluated.contains(cellBack)) && (!cellBackIsOnEdge)) cellsToEvaluate.push(cellBack);
 			}
+
+			std::cout << "cells evaluated count: " << cellsEvaluated.size() << "\n";
 
 			wallSectionIdCur++;
 		}
 	}
+
+	sectionIdCount = wallSectionIdCur;
 
 	return wallSectionGrid;
 }

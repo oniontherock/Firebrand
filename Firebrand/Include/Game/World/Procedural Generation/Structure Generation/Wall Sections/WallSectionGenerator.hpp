@@ -8,8 +8,8 @@
 #include "../Wall Generation/WallGenerator.hpp"
 #include <set>
 
-namespace WallSectionGenerator {
-
+class WallSectionGenerator {
+public:
 	typedef uint16_t WallSectionId;
 
 	struct WallSectionCell : std::pair<RoomType, RoomType> {
@@ -20,12 +20,12 @@ namespace WallSectionGenerator {
 		WallSectionId sectionId;
 	};
 
-	uint16_t sectionIdCount;
+	static uint16_t sectionIdCount;
 
 	using WallSectionGrid1D = std::vector<WallSectionCell>;
 	using WallSectionGrid2D = std::vector<WallSectionGrid1D>;
 
-	WallSectionGrid2D wallSectionsGet(const WallGrid2D wallGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize);
+	static WallSectionGrid2D wallSectionsGet(const WallGrid2D wallGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize);
 };
 
 #endif

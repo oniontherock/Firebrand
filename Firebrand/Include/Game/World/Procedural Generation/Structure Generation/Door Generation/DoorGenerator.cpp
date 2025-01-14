@@ -34,9 +34,11 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 #pragma endregion Connection Types Detection
 
 		// vector of vectors of sf::Vector2u, the main vector is ordered by sectionId, and the sub vectors contain all cell positions in a section
-		std::vector<std::vector<sf::Vector2u>> possibleConnectionPoints = std::vector<std::vector<sf::Vector2u>>(WallSectionGenerator::sectionIdCount);
+		std::vector<std::vector<std::pair<sf::Vector2u, RoomType>>> possibleConnectionPoints = std::vector<std::vector<std::pair<sf::Vector2u, RoomType>>>(WallSectionGenerator::sectionIdCount);
 		// set of neighboring RoomTypes, later used for deciding which room to connect to in connectionTypesOr
 		std::set<RoomType> neighboringTypes;
+
+		std::cout << "section id count: " << WallSectionGenerator::sectionIdCount << "\n";
 
 		// iterate over dimensions of every roomRect
 		for (uint16_t x = 0; x < roomRectCur.width; x++) {
@@ -56,6 +58,9 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 
 				const WallSectionGenerator::WallSectionCell& wallSection = wallSectionGrid[cellX][cellY];
 
+				// skip if not a valid id
+				if (wallSection.sectionId >= UINT16_MAX) continue;
+
 				// the RoomType of the room that this section connects to.
 				// basically, if we are a bathroom, and the room to the right is a bedroom,
 				// and the section says it connects a bedroom and a bathroom, we set connectionType to bedroom
@@ -70,36 +75,43 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 
 				neighboringTypes.insert(connectionType);
 
-				possibleConnectionPoints[wallSection.sectionId].push_back(sf::Vector2u(cellX, cellY));
+				std::cout << "section Id: " << wallSection.sectionId << "\n";
+				possibleConnectionPoints[wallSection.sectionId].push_back(std::pair(sf::Vector2u(cellX, cellY), connectionType));
 
 			}
 		}
 
-		std::set<RoomType> neighborsOr;
-		std::set_intersection(connectionTypesOr.begin(), connectionTypesOr.end(), neighboringTypes.begin(), neighboringTypes.end(), std::inserter(neighborsOr, neighborsOr.begin()));
+		std::vector<RoomType> neighborsOr;
+		std::set_intersection(connectionTypesOr.begin(), connectionTypesOr.end(), neighboringTypes.begin(), neighboringTypes.end(), std::back_inserter(neighborsOr));
 
 		// points where a connection is
 		std::vector<sf::Vector2u> connectionPoints;
 
 		// index of a randomly chosen "or" connection to add a door to,
 		uint16_t connectionIndexOr;
-		if (neighborsOr.size() > 0) connectionIndexOr = neighborsOr[RNGu16::getUnder(neighborsOr.size())];
+		if (!neighborsOr.empty()) connectionIndexOr = uint16_t(neighborsOr[RNGu16::getUnder(neighborsOr.size())]);
 		else connectionIndexOr = UINT32_MAX;
 
 		for (uint16_t i = 0; i < possibleConnectionPoints.size(); i++) {
+
+			// skip if possibleConnectionPoints is empty
+			if (possibleConnectionPoints[i].empty()) continue;
 
 			bool doConnect = false;
 
 			if (i == connectionIndexOr) {
 				doConnect = true;
 			}
-			if (connectionTypesAnd.contains(RoomType(i))) {
+			if (connectionTypesAnd.contains(possibleConnectionPoints[i][0].second)) {
 				doConnect = true;
 			}
 
 			if (doConnect) {
-				sf::Vector2u connectionPoint = possibleConnectionPoints[i][RNGu16::getUnder(possibleConnectionPoints[i].size())];
+
+
+				sf::Vector2u connectionPoint = possibleConnectionPoints[i][RNGu16::getUnder(possibleConnectionPoints[i].size())].first;
 				doorGrid[connectionPoint.x][connectionPoint.y] = true;
+
 			}
 		}
 

@@ -42,7 +42,7 @@ int main() {
 		frameTimer += TimeHandler::deltaRealGet();
 		if (frameTimer > 1.0) {
 
-			ConsoleHandler::consolePrintDebug(std::to_string(frames));
+			//ConsoleHandler::consolePrintDebug(std::to_string(frames));
 
 			frames = 0;
 			frameTimer = 0.0;

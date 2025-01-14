@@ -39,6 +39,7 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 	}
 	
 	WallSectionGenerator::WallSectionGrid2D wallSectionGrid = WallSectionGenerator::wallSectionsGet(wallGrid, roomTypeGrid, structureSize);
+	DoorGenerator::DoorGrid2D doorGrid = DoorGenerator::doorsGenerate(wallSectionGrid, roomTypeGrid, structureSize, roomRectsVector);
 
 	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType->structureType, structurePosition, structureRotation);
 
@@ -48,34 +49,37 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 			StructureCell cell = StructureCell("Null", 0.f);
 
 			if (wallGrid[x][y]) {
-				//std::vector<bool> wallStates(9, false);
 
-				//for (int16_t offsetX = -1; offsetX <= 1; offsetX++) {
-				//	for (int16_t offsetY = -1; offsetY <= 1; offsetY++) {
+				if (doorGrid[x][y]) continue;
 
-				//		// if the offset is even it means it's either a diagonal, or (0, 0), which we don't want, so skip if it is
-				//		if (Mathi32::isEven(abs(offsetX + offsetY))) continue;
+				std::vector<bool> wallStates(9, false);
 
-				//		int16_t offsettedX = x + offsetX;
-				//		int16_t offsettedY = y + offsetY;
+				for (int16_t offsetX = -1; offsetX <= 1; offsetX++) {
+					for (int16_t offsetY = -1; offsetY <= 1; offsetY++) {
 
-				//		if (!structureGrid.cellPosIsInGrid(offsettedX, offsettedY)) continue;
+						// if the offset is even it means it's either a diagonal, or (0, 0), which we don't want, so skip if it is
+						if (Mathi32::isEven(abs(offsetX + offsetY))) continue;
 
-				//		uint16_t flattenedIndex = uint16_t(((offsetY + 1) * 3) + (offsetX + 1));
+						int16_t offsettedX = x + offsetX;
+						int16_t offsettedY = y + offsetY;
 
-				//		wallStates[flattenedIndex] = wallGrid[offsettedX][offsettedY];
-				//	}
-				//}
+						if (!structureGrid.cellPosIsInGrid(offsettedX, offsettedY)) continue;
 
-				//std::pair<WallGenerator::WallType, float> wallData = WallGenerator::wallDataGetFromSurroundings(wallStates);
+						uint16_t flattenedIndex = uint16_t(((offsetY + 1) * 3) + (offsetX + 1));
 
-				//cell.type = WallGenerator::cellTypeGetFromWallType(wallData.first);
-				//cell.rotation = wallData.second;
+						wallStates[flattenedIndex] = wallGrid[offsettedX][offsettedY];
+					}
+				}
 
-				if (wallSectionGrid[x][y].first != RoomType::Null && wallSectionGrid[x][y].second != RoomType::Null) {
+				std::pair<WallGenerator::WallType, float> wallData = WallGenerator::wallDataGetFromSurroundings(wallStates);
+
+				cell.type = WallGenerator::cellTypeGetFromWallType(wallData.first);
+				cell.rotation = wallData.second;
+
+			/*	if (wallSectionGrid[x][y].first != RoomType::Null && wallSectionGrid[x][y].second != RoomType::Null) {
 
 						cell.type = "Misc Marker";
-				}
+				}*/
 			}
 			else if (roomTypeGrid.cellGet(x, y).type != RoomType::Null) {
 				switch (roomTypeGrid.cellGet(x, y).type) {
