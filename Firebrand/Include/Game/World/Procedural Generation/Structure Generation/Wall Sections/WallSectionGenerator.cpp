@@ -7,7 +7,11 @@ WallSectionGenerator::WallSectionCell::WallSectionCell(RoomType _first, RoomType
 	first = _first;
 	second = _second;
 	sectionId = _sectionId;
+
+	if (sectionId + 1 > sectionIdCount) sectionIdCount = sectionId + 1;
 }
+
+uint16_t WallSectionGenerator::sectionIdCount = 0;
 
 WallSectionGenerator::WallSectionGrid2D WallSectionGenerator::wallSectionsGet(const WallGrid2D wallGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize) {
 

@@ -20,6 +20,8 @@ namespace WallSectionGenerator {
 		WallSectionId sectionId;
 	};
 
+	uint16_t sectionIdCount;
+
 	using WallSectionGrid1D = std::vector<WallSectionCell>;
 	using WallSectionGrid2D = std::vector<WallSectionGrid1D>;
 
