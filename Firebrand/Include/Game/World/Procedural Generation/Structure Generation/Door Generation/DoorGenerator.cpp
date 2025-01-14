@@ -5,7 +5,7 @@
 #include "DoorGenerator.hpp"
 #include <queue>
 
-DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector) {
+DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector) {
 
 	DoorGrid2D doorGrid = DoorGrid2D(structureSize.x, DoorGrid1D(structureSize.y, false));
 
