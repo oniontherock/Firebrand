@@ -6,13 +6,15 @@
 #include "../Room Types/RoomTypeRegistry.hpp"
 #include "../Room Types/RoomTypes.hpp"
 #include "../Wall Generation/WallGenerator.hpp"
+#include "../Wall Sections/WallSectionGenerator.hpp"
 #include <set>
 
-typedef std::vector<std::vector<bool>> DoorGrid2D;
+typedef std::vector<bool> DoorGrid1D;
+typedef std::vector<DoorGrid1D> DoorGrid2D;
 
 namespace DoorGenerator {
 
-	DoorGrid2D doorsGenerate(const WallGrid2D wallGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector);
+	DoorGrid2D doorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector);
 };
 
 #endif
