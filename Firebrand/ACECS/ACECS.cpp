@@ -4,6 +4,7 @@
 #include "GameLevel.hpp"
 #include "GameStates.hpp"
 #include "Panels.hpp"
+#include "RNGPoolIdRegistry.hpp"
 #include <Audio.hpp>
 #include <Auxiliary/NumberGenerator.hpp>
 #include <GameState.hpp>
@@ -154,12 +155,19 @@ void Engine::texturesRegister() {
 	circleTexture.loadFromImage(GraphicsStore::imageStore.objectGet("Art/Circle"));
 	GraphicsStore::textureStore.objectAddFromInstance("Circle", circleTexture);
 }
+void Engine::RNGPoolsRegister() {
+	RNGfPool::poolCreate(10000);
+	RNGfPool::poolFillRange(PROBABILITY_POOL_ID, 0.f, 1.f);
+}
+
 
 // initialize the ACECS engine by registering all inputs, initializing the ECS module, and registering game states.
 // of course, certain modules do not have to be initialized if the user does not want them to be
 void Engine::engineInitialize() {
 
 	RNGf::initialize();
+	RNGPoolsRegister();
+
 	RoomTypeRegistry::roomTypesRegister();
 
 	GameLevelGrid::levelGridInitialize(1, 1, 1);

@@ -1,3 +1,4 @@
+#include "../ACECS/RNGPoolIdRegistry.hpp"
 #include "WallGenerator.hpp"
 #include <Auxiliary/Math.hpp>
 #include <Auxiliary/NumberGenerator.hpp>
@@ -116,13 +117,13 @@ StructureCellType WallGenerator::cellTypeGetFromWallType(WallType wallType) {
 	}
 }
 
-void WallGenerator::roomWallsApplyToWallGrid(WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect, const bool solid) {
-	for (uint32_t x = 0; x < roomRect.width; x++) {
-		for (uint32_t y = 0; y < roomRect.height; y++) {
+void WallGenerator::roomWallsApplyToWallGrid(WallGrid2D& wallGrid, const sf::Vector2u, const RoomRect roomRect, const bool solid) {
+	for (uint32_t x = 0; x < uint32_t(roomRect.width); x++) {
+		for (uint32_t y = 0; y < uint32_t(roomRect.height); y++) {
 
 			sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + x, roomRect.top + y);
 
-			if (((x == 0 || x == roomRect.width - 1) || (y == 0 || y == roomRect.height - 1)) || solid) {
+			if (((x == 0 || x == uint32_t(roomRect.width) - 1) || (y == 0 || y == uint32_t(roomRect.height) - 1)) || solid) {
 				wallGrid[cellPosition.x][cellPosition.y] = true;
 			}
 		}
@@ -138,7 +139,7 @@ std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGr
 	for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
 		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + (roomRect.width - 1) + 1, roomRect.top + offsetY);
 
-		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
 		bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -151,7 +152,7 @@ std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGr
 	for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
 		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top - 1);
 
-		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
 		bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -164,7 +165,7 @@ std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGr
 	for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
 		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left - 1, roomRect.top + offsetY);
 
-		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
 		bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -177,7 +178,7 @@ std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGr
 	for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
 		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1) + 1);
 
-		if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
 		bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -254,8 +255,8 @@ RoomRect WallGenerator::roomRectFixDoubleWalls(const WallGrid2D& wallGrid, const
 	if (abs(int32_t(roomDesiredSize.x) - roomRectAdjusted.width) + abs(int32_t(roomDesiredSize.y) - roomRectAdjusted.height) > resizeTolerance) return RoomRect(0, 0, 0, 0);
 	// return error RoomRect if roomRect exceeds level bounds
 	if (
-		(roomRectAdjusted.left < 0 || roomRectAdjusted.left + (roomRectAdjusted.width - 1) >= structureSize.x) ||
-		(roomRectAdjusted.top < 0 || roomRectAdjusted.top + (roomRectAdjusted.height - 1) >= structureSize.y)) return RoomRect(0, 0, 0, 0);
+		(roomRectAdjusted.left < 0 || roomRectAdjusted.left + (roomRectAdjusted.width - 1) >= int32_t(structureSize.x)) ||
+		(roomRectAdjusted.top < 0 || roomRectAdjusted.top + (roomRectAdjusted.height - 1) >= int32_t(structureSize.y))) return RoomRect(0, 0, 0, 0);
 
 	return roomRectAdjusted;
 }
@@ -285,8 +286,8 @@ sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u struc
 	uint32_t breaker = 1000;
 	do {
 		// get position of room rect inside structure, always fits inside of structure
-		roomRect.left = RNGu16::getRange(0, structureSize.x - (roomSize.x - 1));
-		roomRect.top = RNGu16::getRange(0, structureSize.y - (roomSize.y - 1));
+		roomRect.left = RNGu16::getRange(0, uint16_t(structureSize.x - (roomSize.x - 1)));
+		roomRect.top = RNGu16::getRange(0, uint16_t(structureSize.y - (roomSize.y - 1)));
 
 		// the way we calculate contact depends on the fullContact variable, basically, true means we calculate by subtraction, false means we calculate by addition.
 		// so fullContact means we start assuming we are fully contacted on every side of the room, and we subtract by 1 every time we find a side which isn't contacted.
@@ -366,28 +367,31 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 
 	std::vector<RoomRect> roomRectsVector;
 	for (uint16_t roomIndCur = 0; roomIndCur < roomsCount; roomIndCur++) {
-
+		std::cout << "\n";
 		uint16_t breaker = 1000;
 
 		sf::Vector2u roomSize;
 		uint16_t roomContactCount;
 		do {
+			std::cout << breaker << "\n";
 			roomSize = structureType->roomSizeInstanceGet();
 			roomContactCount = structureType->roomContactCountInstanceGet();
 
 			// chance for roomContactCount to reroll depending on it's value
-			while (RNGf::probability(structureType->contactProbability[roomContactCount])) {
+			while (structureType->contactProbability[roomContactCount] > RNGfPool::poolValueGet(PROBABILITY_POOL_ID)) {
 				roomContactCount = structureType->roomContactCountInstanceGet();
 			}
 
 			RoomRect roomRect = roomGenerate(wallGrid, structureSize, roomSize, roomContactCount, true, structureType->doubleWallTolerance);
 
 			if (roomRect == RoomRect(0, 0, 0, 0)) continue;
+			std::cout << "valid rect" << "\n";
 
 			bool roomRectPosIsValid = true;
 			for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
 				if (RoomRect(roomRect.left + 1, roomRect.top + 1, roomRect.width - 2, roomRect.height - 2).intersects(roomRectsVector[i])) {
 					roomRectPosIsValid = false;
+					std::cout << "invalid position" << "\n";
 					break;
 				}
 			}
@@ -410,7 +414,7 @@ WallGrid2D WallGenerator::wallsGenerate(StructureTypeBase* structureType, sf::Ve
 
 	// solidify edges of wallGrid
 	roomWallsApplyToWallGrid(wallGrid, structureSize, RoomRect(0, 0, structureSize.x, structureSize.y));
-
+	
 	roomRectVectorLast = roomsGenerate(wallGrid, structureType, structureSize);
 
 	return wallGrid;

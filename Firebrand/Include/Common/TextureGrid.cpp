@@ -26,7 +26,7 @@ void TextureGrid::cellInitialize(CellCoordinate cellX, CellCoordinate cellY) {
 	
 	GridTextureUniquePtr& cell = cellGet(cellX, cellY);
 
-	cell->create(cellSize.x, cellSize.y);
+	cell->create(uint32_t(cellSize.x), uint32_t(cellSize.y));
 
 	sf::Vector2f cellPosition = sf::Vector2f(float(cellX) * cellSize.x, float(cellY) * cellSize.y);
 
@@ -131,7 +131,7 @@ std::vector<sf::Vector2u> TextureGrid::texturePositionsGetInRectangle(sf::FloatR
 			if (!cellPosIsInGrid(cellPosition)) continue;
 
 			// skip if we are checking cells validity before adding them (I.E. validity != 2) and if a cell's validity is not equal to validity
-			if ((validity != 2) && (cellValidate(cellPosition) != validity)) continue;
+			if ((validity != 2) && (uint8_t(cellValidate(cellPosition)) != validity)) continue;
 
 			// check to make sure the current cell position has not been checked already
 			if (!checkedCells.contains(cellPosition)) {

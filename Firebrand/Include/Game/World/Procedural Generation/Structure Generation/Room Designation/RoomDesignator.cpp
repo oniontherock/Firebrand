@@ -5,21 +5,6 @@
 #include <queue>
 #include <set>
 
-struct Vector2uLessThan
-{
-    bool operator()(const sf::Vector2u& lhs, const sf::Vector2u& rhs) const
-    {
-        // compare x coordinates first
-        if (lhs.x < rhs.x)
-            return true;
-        if (lhs.x > rhs.x)
-            return false;
-
-        // if x coordinates are equal, compare y coordinates
-        return lhs.y < rhs.y;
-    }
-};
-
 RoomType RoomDesignator::pointTypeGet(RoomTypeGrid& roomTypeGrid, const sf::Vector2u point) {
     return roomTypeGrid.cellGet(point).type;
 }
@@ -49,13 +34,13 @@ void RoomDesignator::areaFillWithType(const WallGrid2D& wallGrid, const sf::Vect
             for (int16_t offsetY = -1; offsetY <= 1; offsetY++) {
 
                 // skip if element is even, an even offset means it's either diagonal or (0, 0), which we don't want
-                if (Mathi16::isEven(abs(offsetX + offsetY))) continue;
+                if (Mathi32::isEven(abs(offsetX + offsetY))) continue;
 
-                int16_t offsettedX = pointCur.x + offsetX;
-                int16_t offsettedY = pointCur.y + offsetY;
+                int16_t offsettedX = int16_t(pointCur.x) + offsetX;
+                int16_t offsettedY = int16_t(pointCur.y) + offsetY;
 
                 // skip if offsetted point is out of bounds
-                if ((offsettedX < 0 || offsettedX >= structureSize.x) || (offsettedY < 0 || offsettedY >= structureSize.y)) continue;
+                if ((offsettedX < 0 || offsettedX >= int16_t(structureSize.x)) || (offsettedY < 0 || offsettedY >= int16_t(structureSize.y))) continue;
                 // skip if cell is a wall
                 if (wallGrid[offsettedX][offsettedY]) continue;
 
@@ -75,14 +60,14 @@ void RoomDesignator::roomFillWithType(const WallGrid2D& wallGrid, const sf::Vect
     areaFillWithType(wallGrid, structureSize, roomTypeGrid, sf::Vector2u(roomRect.getPosition() + (roomRect.getSize() / 2)), roomType);
 }
 
-std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect) {
+std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D&, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect) {
     std::set<RoomType> neighborTypes;
 
     // iterate right face
     for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
         sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + (roomRect.width - 1) + 1, roomRect.top + offsetY);
 
-        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+        if ((cellPosition.x < 0 || cellPosition.x >= int32_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= int32_t(structureSize.y))) continue;
     
         neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
     }
@@ -90,7 +75,7 @@ std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGr
     for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
         sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top - 1);
 
-        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+        if ((cellPosition.x < 0 || cellPosition.x >= int32_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= int32_t(structureSize.y))) continue;
        
         neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
     }
@@ -98,7 +83,7 @@ std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGr
     for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
         sf::Vector2i cellPosition = sf::Vector2i(roomRect.left - 1, roomRect.top + offsetY);
 
-        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+        if ((cellPosition.x < 0 || cellPosition.x >= int32_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= int32_t(structureSize.y))) continue;
 
         neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
     }
@@ -106,7 +91,7 @@ std::set<RoomType> RoomDesignator::roomNeighborTypesGet(const WallGrid2D& wallGr
     for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
         sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1) + 1);
 
-        if ((cellPosition.x < 0 || cellPosition.x >= structureSize.x) || (cellPosition.y < 0 || cellPosition.y >= structureSize.y)) continue;
+        if ((cellPosition.x < 0 || cellPosition.x >= int32_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= int32_t(structureSize.y))) continue;
         
         neighborTypes.insert(roomTypeGrid.cellGet(cellPosition.x, cellPosition.y).type);
     }
@@ -161,8 +146,7 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
     for (uint16_t i = 0; i < 8; i++) {
 
         for (const auto& roomCur : roomRectsVector) {
-            //if (roomTypeGet(roomTypeGrid, roomCur) != RoomType::Misc) continue;
-            
+
             std::vector<RoomType> roomTypesValid;
 
             // designate rooms
@@ -196,7 +180,7 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
                 // check if the room has a RoomConnectionsOr constraint
                 if (roomTypeInstance.constraints.dataHas("RoomConnectionsOr")) {
 
-                    // get RoomConnectionsAnd constraint
+                    // get RoomConnectionsOr constraint
                     std::set<RoomType> roomConnections = roomTypeInstance.constraints.dataGet<std::set<RoomType>>("RoomConnectionsOr");
 
                     bool neighborFound = false;
@@ -235,8 +219,8 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
                     std::pair<RoomSize, RoomSize> roomDimensionsRange = roomTypeInstance.constraints.dataGet<std::pair<RoomSize, RoomSize>>("RoomDimensionsRange");
 
                     // ensure room's dimensions are within the type's allowed range
-                    if ((roomCur.width < roomDimensionsRange.first.x || roomCur.width > roomDimensionsRange.second.x) ||
-                        (roomCur.height < roomDimensionsRange.first.y || roomCur.height> roomDimensionsRange.second.y)) {
+                    if ((roomCur.width < int32_t(roomDimensionsRange.first.x) || roomCur.width > int32_t(roomDimensionsRange.second.x)) ||
+                        (roomCur.height < int32_t(roomDimensionsRange.first.y) || roomCur.height> int32_t(roomDimensionsRange.second.y))) {
                         roomTypeConstraintsMet = false;
                     }
                 }
@@ -247,7 +231,7 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
                     std::pair<uint16_t, uint16_t> roomSizeRange = roomTypeInstance.constraints.dataGet<std::pair<uint16_t, uint16_t>>("RoomSizeRange");
 
                     // get the amount of cells in the room
-                    uint16_t roomSize = roomCur.width * roomCur.height;
+                    uint16_t roomSize = uint16_t(roomCur.width * roomCur.height);
 
                     // ensure room's size is within the type's allowed range
                     if (roomSize < roomSizeRange.first || roomSize > roomSizeRange.second) {
@@ -273,7 +257,7 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
 
             if (roomTypesValid.size() > 0) {
                 // get random valid type to choose
-                RoomType type = roomTypesValid[RNGu16::getUnder(roomTypesValid.size())];
+                RoomType type = roomTypesValid[RNGu16::getUnder(uint16_t(roomTypesValid.size()))];
 
                 roomFillWithType(wallGrid, structureSize, roomTypeGrid, roomCur, type);
                 addedTypes[uint16_t(type)]++;

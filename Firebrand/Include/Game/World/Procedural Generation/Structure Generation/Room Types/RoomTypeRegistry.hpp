@@ -1,4 +1,4 @@
-#ifndef __STRUCTURE_TYPE_REGISTRY_H__
+#ifndef __ROOM_TYPE_REGISTRY_H__
 #define __ROOM_TYPE_REGISTRY_H__
 
 #include "RoomTypes.hpp"

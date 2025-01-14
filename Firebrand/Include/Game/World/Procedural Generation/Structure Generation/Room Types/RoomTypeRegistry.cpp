@@ -39,7 +39,7 @@ void RoomTypeRegistry::roomTypesRegister() {
 
 	roomTypeInstance = RoomTypeInstance(RoomType::LivingRoom);
 	roomTypeInstance.constraints.dataSet("RoomConnectionsAnd", std::set<RoomType>{ Hallway });
-	roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair<uint16_t, uint16_t>(6 * 6, 32 * 32));
+	roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair<uint16_t, uint16_t>(uint16_t(6 * 6), uint16_t(32 * 32)));
 	roomTypeInstance.constraints.dataSet<uint16_t>("RoomTypeCount", 2u);
 	roomInstanceAdd(roomTypeInstance);
 
@@ -51,7 +51,7 @@ void RoomTypeRegistry::roomTypesRegister() {
 	roomTypeInstance = RoomTypeInstance(RoomType::Bathroom);
 	roomTypeInstance.constraints.dataSet("RoomConnectionsOr", std::set<RoomType>{ Bedroom, Hallway, LivingRoom });
 	roomTypeInstance.constraints.dataSet("RoomConnectionsNand", std::set<RoomType>{ Bathroom });
-	roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair<uint16_t, uint16_t>(3 * 4, 6 * 6));
+	roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair<uint16_t, uint16_t>(uint16_t(3 * 4), uint16_t(6 * 6)));
 	roomTypeInstance.constraints.dataSet<uint16_t>("RoomTypeCount", 3u);
 	roomInstanceAdd(roomTypeInstance);
 };

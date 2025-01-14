@@ -7,6 +7,21 @@
 #include "../Wall Generation/WallGenerator.hpp"
 #include <set>
 
+struct Vector2uLessThan
+{
+    bool operator()(const sf::Vector2u& lhs, const sf::Vector2u& rhs) const
+    {
+        // compare x coordinates first
+        if (lhs.x < rhs.x)
+            return true;
+        if (lhs.x > rhs.x)
+            return false;
+
+        // if x coordinates are equal, compare y coordinates
+        return lhs.y < rhs.y;
+    }
+};
+
 namespace RoomDesignator {
 	
 	RoomType pointTypeGet(RoomTypeGrid& roomTypeGrid, const sf::Vector2u point);

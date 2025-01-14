@@ -51,7 +51,7 @@ private:
 
 	std::vector<sf::Vector2f> pathPoints;
 
-	void textureUpdateValidity(sf::FloatRect rect, TextureGrid& texture) const;
+	void textureUpdateValidity(TextureGrid& texture) const;
 	void textureGridsUpdateValidity(sf::FloatRect rect);
 
 	// draws the grass on the backgroundTexture's cells that fall in the rect and haven't been drawn

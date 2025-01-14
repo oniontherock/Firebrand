@@ -1,3 +1,4 @@
+#include "Door Generation/DoorGenerator.hpp"
 #include "Room Designation/RoomDesignator.hpp"
 #include "StructureGenerator.hpp"
 #include <Auxiliary/Math.hpp>
@@ -17,17 +18,19 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 		// get roomRects from wall generation
 		RoomRectVector roomRectsVector = WallGenerator::roomsGetFromGeneration();
 		// shuffle roomRectsVector
-		for (int16_t i = roomRectsVector.size() - 1; i >= 0; i--) {
+		for (int16_t j = int16_t(roomRectsVector.size()) - 1; j >= 0; j--) {
 
 			// generate the random index 
-			uint16_t j = RNGu16::getUnder(i + 1);
+			uint16_t k = RNGu16::getUnder(j + 1);
 
-			RoomRect temp = roomRectsVector[i];
-			roomRectsVector[i] = roomRectsVector[j];
-			roomRectsVector[j] = temp;
+			RoomRect temp = roomRectsVector[j];
+			roomRectsVector[j] = roomRectsVector[k];
+			roomRectsVector[k] = temp;
 		}
 
 		bool generationSucceeded = RoomDesignator::structureRoomTypesDesignate(wallGrid, roomTypeGrid, structureSize, roomRectsVector);
+
+		DoorGenerator::doorsGenerate(wallGrid, roomTypeGrid, structureSize, roomRectsVector);
 
 		if (generationSucceeded) {
 			break;
@@ -48,7 +51,7 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 					for (int16_t offsetY = -1; offsetY <= 1; offsetY++) {
 
 						// if the offset is even it means it's either a diagonal, or (0, 0), which we don't want, so skip if it is
-						if (Mathi16::isEven(abs(offsetX + offsetY))) continue;
+						if (Mathi32::isEven(abs(offsetX + offsetY))) continue;
 
 						int16_t offsettedX = x + offsetX;
 						int16_t offsettedY = y + offsetY;

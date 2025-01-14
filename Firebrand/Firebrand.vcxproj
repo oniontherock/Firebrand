@@ -158,6 +158,7 @@
     <ClCompile Include="Include\Game\World\Objects\Object Grid\ObjectGrid.cpp" />
     <ClCompile Include="Include\Game\World\Objects\ObjectRegistry.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeCell.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureCell.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="ACECS\GameLevel.hpp" />
     <ClInclude Include="ACECS\GameStates.hpp" />
     <ClInclude Include="ACECS\Panels.hpp" />
+    <ClInclude Include="ACECS\RNGPoolIdRegistry.hpp" />
     <ClInclude Include="ACECS\SaveOperations.hpp" />
     <ClInclude Include="Include\Common\DataCache.hpp" />
     <ClInclude Include="Include\Common\Grid.hpp" />
@@ -218,6 +220,7 @@
     <ClInclude Include="Include\Game\World\Objects\ObjectRegistry.hpp" />
     <ClInclude Include="Include\Game\World\Objects\ObjectTypes.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeCell.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureCell.hpp" />
@@ -225,6 +228,7 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Instantiation\StructureInstantiator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Path Verification\PathVerifier.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Room Designation\RoomDesignator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Room Types\RoomRect.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Room Types\RoomTypeRegistry.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Room Types\RoomTypes.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Structure Types\StructureTypeRegistry.hpp" />

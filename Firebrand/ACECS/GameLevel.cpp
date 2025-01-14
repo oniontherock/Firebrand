@@ -34,7 +34,7 @@ void GameLevel::backgroundDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 	pathsDraw(rect, drawIterationsMax);
 }
 
-void GameLevel::textureUpdateValidity(sf::FloatRect rect, TextureGrid& texture) const {
+void GameLevel::textureUpdateValidity(TextureGrid& texture) const {
 	std::vector<sf::Vector2u> texturesInBackgroundRect = texture.texturePositionsGetInRectangle(backgroundRect);
 
 	// iterate over texturesInRect and initialize any invalid textures
@@ -58,8 +58,8 @@ void GameLevel::textureGridsUpdateValidity(sf::FloatRect rect) {
 
 	backgroundRect = sf::FloatRect(rect.getPosition() - (rect.getSize() / 2.f), rect.getSize() * 2.f);
 
-	textureUpdateValidity(rect, backgroundTexture);
-	textureUpdateValidity(rect, pathsTexture);
+	textureUpdateValidity(backgroundTexture);
+	textureUpdateValidity(pathsTexture);
 
 	backgroundRectPrev = backgroundRect;
 }
@@ -83,8 +83,8 @@ void GameLevel::pathsGenerate() {
 
 	// loop if the distance between the start and end points is less than the length of the level size divided by levelSizeDivider
 	do {
-		startPoint = sf::Vector2f(RNGf::getRange(0, levelSize.x), RNGf::getRange(0, levelSize.y));
-		endPoint = sf::Vector2f(RNGf::getRange(0, levelSize.x), RNGf::getRange(0, levelSize.y));
+		startPoint = sf::Vector2f(RNGf::getRange(0, float(levelSize.x)), RNGf::getRange(0, float(levelSize.y)));
+		endPoint = sf::Vector2f(RNGf::getRange(0, float(levelSize.x)), RNGf::getRange(0, float(levelSize.y)));
 
 		pointDistSqrd = Vector2fMath::distSqrd(startPoint, endPoint);
 		
@@ -94,6 +94,7 @@ void GameLevel::pathsGenerate() {
 
 	ConsoleHandler::consolePrintLoadingGame("Path Start And End Points Generated");
 
+	ConsoleHandler::consolePrintLoadingGame("Path Generation Started");
 	pathGenerator.pathGenerate(startPoint, endPoint);
 	ConsoleHandler::consolePrintLoadingGame("Path Generation Finished");
 
@@ -134,8 +135,10 @@ void GameLevel::pathsGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Path Point Plotting Completed");
 }
 void GameLevel::structuresGenerate() {
+	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
 	StructureGrid structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), 0.f, sf::Vector2u(24, 24));
 	StructureInstantiator::structureInstantiate(levelPosition, structure);
+	ConsoleHandler::consolePrintLoadingGame("Structure Generation Completed");
 }
 
 void GameLevel::grassDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
@@ -220,7 +223,7 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 		GridTexture* texture = texturesInRect[i];
 
-		uint16_t textureDisplayCount = texture->displayCountGet();
+		uint16_t textureDisplayCount = uint16_t(texture->displayCountGet());
 
 		if (textureDisplayCount >= drawIterationsMax) continue;
 		
@@ -236,9 +239,9 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 		// get the points in pathPoints that are near the texture
 		std::vector<sf::Vector2f> points;
-		for (uint16_t i = 0; i < pathPoints.size(); i++) {
-			if (textureRect.contains(pathPoints[i])) {
-				points.push_back(pathPoints[i]);
+		for (uint16_t j = 0; j < pathPoints.size(); j++) {
+			if (textureRect.contains(pathPoints[j])) {
+				points.push_back(pathPoints[j]);
 			}
 		}
 
@@ -247,11 +250,11 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 		constexpr uint16_t distributionWeight = 16;
 
 		if (textureDisplayCount < drawIterationsMax / 2) {
-			const uint32_t dirtPerPointCount = (500 * points.size()) / drawIterationsMax;
+			const uint32_t dirtPerPointCount = uint32_t((500 * points.size()) / drawIterationsMax);
 
-			for (uint32_t i = 0; i < dirtPerPointCount; i++) {
+			for (uint32_t j = 0; j < dirtPerPointCount; j++) {
 
-				sf::Vector2f pointPosition = points[RNGu32::getUnder(points.size())];
+				sf::Vector2f pointPosition = points[RNGu32::getUnder(uint32_t(points.size()))];
 
 				sf::Vector2f averagedOffset;
 				for (uint16_t weightIteration = 0; weightIteration < distributionWeight; weightIteration++) {
@@ -261,7 +264,7 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 				sf::Vector2f circlePosition = pointPosition + Vector2fMath::lengthLimit(averagedOffset, circleSize);
 
-				float distToNearestPointSqrd = 99999999999;
+				float distToNearestPointSqrd = 99999999999.f;
 				for (uint32_t pointIndCur = 0; pointIndCur < points.size(); pointIndCur++) {
 
 					float distSqrd = Vector2fMath::distSqrd(points[pointIndCur], circlePosition);
@@ -273,7 +276,7 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 				float offsetDistFromCenter = 1.f - (sqrt(distToNearestPointSqrd) / circleSize);
 				float colorMult = offsetDistFromCenter * offsetDistFromCenter * offsetDistFromCenter;
 
-				sf::Color color = sf::Color(RNGf::getRange(25, 70) * colorMult, RNGf::getRange(20, 60) * colorMult, RNGf::getRange(0, 6) * colorMult, 85 * colorMult);
+				sf::Color color = sf::Color(sf::Uint8(RNGf::getRange(25, 70) * colorMult), sf::Uint8(RNGf::getRange(20, 60) * colorMult), sf::Uint8(RNGf::getRange(0, 6) * colorMult), sf::Uint8(85 * colorMult));
 
 				sf::FloatRect circleDimensions = sf::FloatRect(circlePosition.x, circlePosition.y, RNGf::getRange(1.f, 16.f), RNGf::getRange(1.f, 16.f));
 				circleDimensions.left -= (circleDimensions.width / 2.f);
@@ -299,9 +302,9 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 				cornerBottomLeft.color = color;
 
 				cornerTopLeft.texCoords = sf::Vector2f(0.f, 0.f);
-				cornerTopRight.texCoords = sf::Vector2f(circleTexture.getSize().x, 0.f);
-				cornerBottomRight.texCoords = sf::Vector2f(circleTexture.getSize().x, circleTexture.getSize().y);
-				cornerBottomLeft.texCoords = sf::Vector2f(0.f, circleTexture.getSize().y);
+				cornerTopRight.texCoords = sf::Vector2f(float(circleTexture.getSize().x), 0.f);
+				cornerBottomRight.texCoords = sf::Vector2f(float(circleTexture.getSize().x), float(circleTexture.getSize().y));
+				cornerBottomLeft.texCoords = sf::Vector2f(0.f, float(circleTexture.getSize().y));
 
 				quads.append(cornerTopLeft);
 				quads.append(cornerTopRight);
@@ -310,11 +313,11 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 			}
 		}
 		else {
-			const uint32_t linePerPointCount = (25 * points.size()) / drawIterationsMax;
+			const uint32_t linePerPointCount = uint32_t((25 * points.size()) / drawIterationsMax);
 
-			for (uint32_t i = 0; i < linePerPointCount; i++) {
+			for (uint32_t j = 0; j < linePerPointCount; j++) {
 
-				sf::Vector2f pointPosition = points[RNGu16::getUnder(points.size())];
+				sf::Vector2f pointPosition = points[RNGu16::getUnder(uint16_t(points.size()))];
 
 				sf::Vector2f averagedOffset;
 				for (uint16_t weightIteration = 0; weightIteration < distributionWeight; weightIteration++) {
@@ -324,7 +327,7 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 				sf::Vector2f linePosition = pointPosition + Vector2fMath::lengthLimit(averagedOffset, circleSize);
 
-				float distToNearestPointSqrd = 9999999999999999;
+				float distToNearestPointSqrd = 9999999999999999.f;
 				for (uint32_t pointIndCur = 0; pointIndCur < points.size(); pointIndCur++) {
 
 					float distSqrd = Vector2fMath::distSqrd(points[pointIndCur], linePosition);
@@ -336,7 +339,7 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 				float offsetDistFromCenter = 1.f - (sqrt(distToNearestPointSqrd) / circleSize);
 				float colorMult = offsetDistFromCenter * offsetDistFromCenter;
 
-				sf::Color color = sf::Color(RNGf::getRange(25, 125) * colorMult, RNGf::getRange(25, 75) * colorMult, RNGf::getRange(0, 0) * colorMult, 85);
+				sf::Color color = sf::Color(sf::Uint8(RNGf::getRange(25, 125) * colorMult), sf::Uint8(RNGf::getRange(25, 75) * colorMult), sf::Uint8(RNGf::getRange(0, 0) * colorMult), sf::Uint8(85));
 
 				sf::Vertex lineStart;
 				lineStart.color = color;

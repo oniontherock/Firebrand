@@ -75,7 +75,7 @@ void PathGenerator::pointsConnect(const PathPoint* a, const PathPoint* b) {
 
 PathPoint* PathGenerator::pointCreate(sf::Vector2f position) {
 
-	PointIndex index = pathPoints.size();
+	PointIndex index = PointIndex(pathPoints.size());
 
 	pathPoints.push_back(new PathPoint(position, index));
 
@@ -130,7 +130,7 @@ bool PathGenerator::pointMergeWithClosestToPosition(PointIndex pointInd, sf::Vec
 			float angleToMergePoint = Vector2fMath::angle(point->position, pathPoints[points[i]]->position);
 
 			// merge if the angle to the merge point isn't too off course to the end target
-			if (abs(angleToMergePoint - angle) < Mathf::PI / 1.25) {
+			if (abs(angleToMergePoint - angle) < angleThreshold) {
 				pointsConnect(pointInd, points[i]);
 				return true;
 			}
@@ -182,7 +182,7 @@ void PathGenerator::pointGenerate(PathPoint* point, const PathPoint* pointEnd, u
 
 			PathPoint* childPoint = pointCreate(childBestPosition + childOffset);
 
-			uint16_t breaker = 100000;
+			uint32_t breaker = uint32_t(100000u);
 			while ((lineIntersectsPath(point, childPoint) || (pointGetDistSqrdToClosest(childPoint) < childrenMinDist * childrenMinDist)) && ((--breaker) > 0)) {
 
 				childAngleOffset = RNGf::getRange(Mathf::PI);
@@ -214,12 +214,12 @@ void PathGenerator::pointGenerate(PathPoint* point, const PathPoint* pointEnd, u
 	}
 	else {
 		pointsConnect(point, pointEnd);
-
 	}
 }
 void PathGenerator::pathGenerate(sf::Vector2f pointStartPosition, sf::Vector2f pointEndPosition) {
 	int16_t breaker = 1000;
-	while (pathPoints.size() < 15 && (--breaker > 0)) {
+	//while (pathPoints.size() < 15 && (--breaker > 0)) {
+		//std::cout << pathPoints.size() << " " << breaker << "\n";
 		pathPoints.clear();
 		connections.clear();
 
@@ -227,7 +227,7 @@ void PathGenerator::pathGenerate(sf::Vector2f pointStartPosition, sf::Vector2f p
 		PathPoint* pointEnd = pointCreate(pointEndPosition);
 
 		pointGenerate(pointStart, pointEnd, 0, 12);
-	}
+	//}
 }
 
 const std::vector<PathPoint*>& PathGenerator::pathGet() {

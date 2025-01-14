@@ -22,6 +22,8 @@ private:
 	static void imagesRegister();
 	// registers all sorts of textures
 	static void texturesRegister();
+	// registers the random numbers in RNG pools
+	static void RNGPoolsRegister();
 public:
 	// saves the engine
 	static void engineSave();

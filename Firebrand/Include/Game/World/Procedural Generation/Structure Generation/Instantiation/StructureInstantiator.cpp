@@ -5,14 +5,14 @@
 #include <ECS/Entities/EntityManager.hpp>
 
 void StructureInstantiator::structureInstantiate(LevelPosition instantiationLevel, StructureGrid structure) {
-	GameLevel* level = GameLevelGrid::levelGet(instantiationLevel);
+	//GameLevel* level = GameLevelGrid::levelGet(instantiationLevel);
 
 	for (uint16_t x = 0; x < structure.gridGetSizeX(); x++) {
 		for (uint16_t y = 0; y < structure.gridGetSizeY(); y++) {
 
 			StructureCell cell = structure.cellGet(x, y);
 
-			if (cell.type == "Null") continue;
+			if (std::strcmp(cell.type, "Null") == 0) continue;
 
 			sf::Vector2f cellPosition = sf::Vector2f(0, 0);
 

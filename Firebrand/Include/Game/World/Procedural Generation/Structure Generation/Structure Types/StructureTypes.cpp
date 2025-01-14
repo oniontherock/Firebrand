@@ -5,8 +5,8 @@ RoomSize StructureTypeBase::roomSizeInstanceGet() const {
 
 	// get room dimensions in the min/max range.
 	// we do plus one because getRange returns a value in the range of A to B-1, and in this case we just want A to B.
-	uint16_t sizeX = RNGu16::getRange(roomSizeMin.x, roomSizeMax.x + 1);
-	uint16_t sizeY = RNGu16::getRange(roomSizeMin.y, roomSizeMax.y + 1);
+	uint16_t sizeX = RNGu16::getRange(uint16_t(roomSizeMin.x), uint16_t(roomSizeMax.x) + 1u);
+	uint16_t sizeY = RNGu16::getRange(uint16_t(roomSizeMin.y), uint16_t(roomSizeMax.y) + 1u);
 
 	return sf::Vector2u(sizeX, sizeY);
 }

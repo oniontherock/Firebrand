@@ -212,19 +212,19 @@ void PanelHud::panelUpdate() {
 	if (mode == Normal || mode == ObjectsRender || mode == PathsRender) {
 	}
 	if (mode == ObjectsRender) {
-		ObjectGrid& objectGrid = level->objectGrid;
+		//ObjectGrid& objectGrid = level->objectGrid;
 
-		static ObjectGridRenderer objectGridRenderer = ObjectGridRenderer(viewRect.getSize());
+		//static ObjectGridRenderer objectGridRenderer = ObjectGridRenderer();
 
-		objectGridRenderer.objectGridRender(objectGrid, viewRect);
+		//objectGridRenderer.objectGridRender(objectGrid, viewRect);
 
-		sf::Texture objectGridTexture = objectGridRenderer.objectGridTextureGet();
+		//sf::Texture objectGridTexture = objectGridRenderer.objectGridTextureGet();
 
-		sf::Sprite objectGridSprite(objectGridTexture);
-		//objectGridSprite.setScale(objectGrid.cellsGetSize());
-		objectGridSprite.setPosition(viewRect.getPosition());
+		//sf::Sprite objectGridSprite(objectGridTexture);
+		////objectGridSprite.setScale(objectGrid.cellsGetSize());
+		//objectGridSprite.setPosition(viewRect.getPosition());
 
-		objectDraw(objectGridSprite);
+		//objectDraw(objectGridSprite);
 	}
 	if (mode == PathsRender) {
 		AStarPathDrawer::cellsInvalidDraw(level->aStarGrid);

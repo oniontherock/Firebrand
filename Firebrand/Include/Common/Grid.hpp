@@ -127,7 +127,7 @@ public:
 
 	// uses ints instead of uints because the cells may go negative
 	bool cellPosIsInGrid(int32_t cellX, int32_t cellY) {
-		return !(cellX < 0 || cellX >= gridSize.x || cellY < 0 || cellY >= gridSize.y);
+		return !(cellX < 0 || cellX >= int32_t(gridSize.x) || cellY < 0 || cellY >= int32_t(gridSize.y));
 	}
 	bool cellPosIsInGrid(sf::Vector2i cellPos) {
 		return cellPosIsInGrid(cellPos.x, cellPos.y);
