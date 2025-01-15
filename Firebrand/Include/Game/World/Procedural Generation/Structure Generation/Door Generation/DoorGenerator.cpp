@@ -52,8 +52,8 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 				// skip if cell is corner cell
 				if (isOnEdgeX && isOnEdgeY) continue;
 
-				uint16_t cellX = roomRectCur.left + x;
-				uint16_t cellY = roomRectCur.top + y;
+				uint16_t cellX = uint16_t(roomRectCur.left) + x;
+				uint16_t cellY = uint16_t(roomRectCur.top) + y;
 
 				const WallSectionGenerator::WallSectionCell& wallSection = wallSectionGrid[cellX][cellY];
 
@@ -91,8 +91,8 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 
 		// index of a randomly chosen "or" connection to add a door to,
 		uint16_t connectionIndexOr;
-		if (!neighborsOr.empty()) connectionIndexOr = uint16_t(neighborsOr[RNGu16::getUnder(neighborsOr.size())]);
-		else connectionIndexOr = UINT32_MAX;
+		if (!neighborsOr.empty()) connectionIndexOr = uint16_t(neighborsOr[RNGu16::getUnder(uint16_t(neighborsOr.size()))]);
+		else connectionIndexOr = UINT16_MAX;
 
 		for (uint16_t i = 0; i < possibleConnectionPoints.size(); i++) {
 
@@ -111,7 +111,7 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 			}
 
 			if (doConnect) {
-				sf::Vector2u connectionPoint = possibleConnectionPoints[i][RNGu16::getUnder(possibleConnectionPoints[i].size())];
+				sf::Vector2u connectionPoint = possibleConnectionPoints[i][RNGu16::getUnder(uint16_t(possibleConnectionPoints[i].size()))];
 				doorGrid[connectionPoint.x][connectionPoint.y] = true;
 			}
 		}

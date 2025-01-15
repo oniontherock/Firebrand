@@ -159,6 +159,7 @@
     <ClCompile Include="Include\Game\World\Objects\ObjectRegistry.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeCell.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureCell.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="Include\Game\World\Objects\ObjectTypes.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeCell.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureCell.hpp" />
@@ -246,6 +248,8 @@
   <ItemGroup>
     <Image Include="Art\Circle.png" />
     <Image Include="Art\Squad Member.png" />
+    <Image Include="Art\Structures\Floors\Plank Floor.png" />
+    <Image Include="Art\Structures\Floors\Tile Floor.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Corner.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Junction Plus.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Junction T.png" />

@@ -1,8 +1,10 @@
 #ifndef __STRUCTURE_CELL_H__
 #define __STRUCTURE_CELL_H__
 
+#include <string>
+
 // type of a StructureCell, used for checking what kind of cell a cell is, and for instancing entities from templates
-typedef const char* StructureCellType;
+typedef std::string StructureCellType;
 
 struct StructureCell {
 

@@ -211,6 +211,33 @@ void EntityComponents::componentTemplatesInitialize() {
 		}
 		);
 #pragma endregion Wall Templates
+#pragma region Floor Templates
+
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Floor Plank",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Plank Floor", false),
+		}
+		);
+
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"Floor Tile",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Tile Floor", false),
+		}
+		);
+#pragma endregion Floor Templates
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
@@ -223,96 +250,6 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentPosition>(sf::Vector2f(512.f, 256.f)),
 			createComponentPairFromType<ComponentSprite>("Art/Circle", true),
-
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-
-		/// template name
-		"Hallway Marker",
-		{
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(255, 255, 255, 255)),
-
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-
-		/// template name
-		"Bathroom Marker",
-		{
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(0, 0, 255, 255)),
-
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-
-		/// template name
-		"Bedroom Marker",
-		{
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(255, 0, 0, 255)),
-
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-
-		/// template name
-		"LivingRoom Marker",
-		{
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(150, 150, 150, 255)),
-
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-
-		/// template name
-		"Laboratory Marker",
-		{
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(0, 150, 150, 255)),
-
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-
-		/// template name
-		"Misc Marker",
-		{
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentPosition>(),
-			createComponentPairFromType<ComponentSprite>("Art/White Square", "png", false, sf::Vector2f(-INFINITY, -INFINITY), sf::Color(150, 50, 25, 255)),
 
 		}
 		);

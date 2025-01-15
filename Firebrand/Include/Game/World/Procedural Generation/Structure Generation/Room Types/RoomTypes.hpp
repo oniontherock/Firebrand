@@ -40,6 +40,9 @@ struct RoomTypeInstance {
 
 	// constraints for this room
 	RoomConstraints constraints;
+
+	// the type floor that is used in this room type
+	std::string floorType = "";
 };
 
 #endif

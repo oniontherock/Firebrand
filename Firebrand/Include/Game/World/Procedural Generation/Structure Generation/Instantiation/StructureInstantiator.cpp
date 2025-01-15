@@ -12,7 +12,7 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 
 			StructureCell cell = structure.cellGet(x, y);
 
-			if (std::strcmp(cell.type, "Null") == 0) continue;
+			if (cell.type == StructureCellType("Null")) continue;
 
 			sf::Vector2f cellPosition = sf::Vector2f(0, 0);
 
@@ -35,7 +35,6 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, cell.type, updateType);
 
 			auto* entityComponentPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>();
-
 			entityComponentPosition->position = cellPosition;
 
 			if (entity.entityComponentHas<EntityComponents::ComponentRotation>()) {

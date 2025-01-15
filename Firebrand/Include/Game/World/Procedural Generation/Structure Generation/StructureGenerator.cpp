@@ -46,6 +46,8 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {
 
+			const RoomType roomType = roomTypeGrid.cellGet(x, y).type;
+
 			StructureCell cell = StructureCell("Null", 0.f);
 
 			if (wallGrid[x][y]) {
@@ -81,24 +83,31 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 				//		cell.type = "Misc Marker";
 				//}
 			}
-			else if (roomTypeGrid.cellGet(x, y).type != RoomType::Null) {
-				switch (roomTypeGrid.cellGet(x, y).type) {
-				case RoomType::Hallway:
-					cell.type = "Hallway Marker";
-					break;
-				case RoomType::Bathroom:
-					cell.type = "Bathroom Marker";
-					break;
-				case RoomType::Bedroom:
-					cell.type = "Bedroom Marker";
-					break;
-				case RoomType::LivingRoom:
-					cell.type = "LivingRoom Marker";
-					break;
-				//case RoomType::Laboratory:
-				//	cell.type = "Laboratory Marker";
-				//	break;
+			else if (roomType != RoomType::Null) {
+
+				const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(roomType);
+
+				if (roomTypeInstance.floorType != "") {
+					cell.type = std::string("Floor") + " " + roomTypeInstance.floorType;
 				}
+
+				//switch (roomTypeGrid.cellGet(x, y).type) {
+				//case RoomType::Hallway:
+				//	cell.type = "Hallway Marker";
+				//	break;
+				//case RoomType::Bathroom:
+				//	cell.type = "Bathroom Marker";
+				//	break;
+				//case RoomType::Bedroom:
+				//	cell.type = "Bedroom Marker";
+				//	break;
+				//case RoomType::LivingRoom:
+				//	cell.type = "LivingRoom Marker";
+				//	break;
+				////case RoomType::Laboratory:
+				////	cell.type = "Laboratory Marker";
+				////	break;
+				//}
 			}
 
 			structureGrid.cellSet(x, y, cell);
