@@ -13,6 +13,9 @@ GameLevel::GameLevel() :
 	pathsTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720))
 {
 	entities = std::vector<EntityId>();
+
+	entitiesDrawableStatic.resize(100);
+	entitiesDrawableDynamic.resize(100);
 }
 
 GameLevel::GameLevel(LevelCoordinate _idX, LevelCoordinate _idY, LevelCoordinate _idZ) :
@@ -52,6 +55,21 @@ void GameLevel::textureUpdateValidity(TextureGrid& texture) const {
 			texture.cellTerminate(validTexturesPrev[i]);
 		}
 	}
+}
+
+void GameLevel::entityMarkDrawable(EntityId id, bool isDynamic, uint16_t drawOrder) {
+	if (isDynamic) {
+		entitiesDrawableDynamic[drawOrder].insert(id);
+	}
+	else {
+		entitiesDrawableStatic[drawOrder].insert(id);
+	}
+}
+const std::vector<std::set<EntityId>>& GameLevel::entitiesDrawableStaticGet() {
+	return entitiesDrawableStatic;
+}
+const std::vector<std::set<EntityId>>& GameLevel::entitiesDrawableDynamicGet() {
+	return entitiesDrawableDynamic;
 }
 
 void GameLevel::textureGridsUpdateValidity(sf::FloatRect rect) {
@@ -136,7 +154,7 @@ void GameLevel::pathsGenerate() {
 }
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
-	StructureGrid structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), 0.f, sf::Vector2u(24, 24));
+	StructureGrid structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), RNGf::getFullRange(Mathf::PI), sf::Vector2u(24, 24));
 	StructureInstantiator::structureInstantiate(levelPosition, structure);
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Completed");
 }

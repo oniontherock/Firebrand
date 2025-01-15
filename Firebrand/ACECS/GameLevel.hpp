@@ -27,8 +27,8 @@ struct GameLevel : public BaseLevel {
 
 	uint32_t exampleVariable = 0;
 
-	std::set<EntityId> entitiesDrawableStatic;
-	std::set<EntityId> entitiesDrawableDynamic;
+
+
 
 	ObjectGrid objectGrid;
 	AStarGrid aStarGrid;
@@ -43,8 +43,17 @@ struct GameLevel : public BaseLevel {
 	void pathsGenerate();
 	void structuresGenerate();
 	void backgroundDraw(sf::FloatRect rect, uint32_t drawIterationsMax);
+	
+
+	
+	void entityMarkDrawable(EntityId id, bool isDynamic, uint16_t drawOrder = 50);
+
+	const std::vector<std::set<EntityId>>& entitiesDrawableStaticGet();
+	const std::vector<std::set<EntityId>>& entitiesDrawableDynamicGet();
 
 private:
+	std::vector<std::set<EntityId>> entitiesDrawableStatic;
+	std::vector<std::set<EntityId>> entitiesDrawableDynamic;
 
 	sf::FloatRect backgroundRect;
 	sf::FloatRect backgroundRectPrev;

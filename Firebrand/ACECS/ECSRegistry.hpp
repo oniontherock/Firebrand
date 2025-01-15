@@ -95,7 +95,7 @@ namespace EntityComponents {
 			hasSystem = true;
 		};
 		// constructor that takes file name and extension, then loads/gets an image from the imageStore, and loads the texture with that image
-		ComponentSprite(std::string _fileName, std::string _fileExtension, bool _isDynamic, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
+		ComponentSprite(std::string _fileName, std::string _fileExtension, bool _isDynamic, uint16_t _drawOrder = 50, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
 			ComponentSprite()
 		{
 			fileName = _fileName;
@@ -103,12 +103,13 @@ namespace EntityComponents {
 			isDynamic = _isDynamic;
 			origin = _origin;
 			color = _color;
+			drawOrder = _drawOrder;
 
 			textureInitialize();
 
 		};
-		ComponentSprite(std::string _fileName, bool _isDynamic, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
-			ComponentSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet(), _isDynamic, _origin, _color)
+		ComponentSprite(std::string _fileName, bool _isDynamic, uint16_t _drawOrder = 50, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
+			ComponentSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet(), _isDynamic, _drawOrder, _origin, _color)
 		{};
 
 		// the name of the file for the texture
@@ -123,10 +124,13 @@ namespace EntityComponents {
 		// color of the sprite
 		sf::Color color;
 
+		// the draw order of the sprite
+		uint16_t drawOrder = 50;
+
 		sf::Sprite sprite;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentSprite(fileName, fileExtension, isDynamic, origin, color));
+			return std::unique_ptr<Duplicatable>(new ComponentSprite(fileName, fileExtension, isDynamic, drawOrder, origin, color));
 		};
 
 		void save(std::ofstream& str) override;

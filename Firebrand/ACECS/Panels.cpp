@@ -69,12 +69,14 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	levelActive->pathsTexture.drawRectangleToTexture(viewRect, texture);
 }
 void PanelStaticView::charactersDraw(GameLevel* levelActive) {
-	for (const EntityId& i : levelActive->entitiesDrawableStatic) {
-		Entity& entityCur = EntityManager::entityGet(i);
+	for (const std::set<EntityId>& idSetCur : levelActive->entitiesDrawableStaticGet()) {
+		for (const EntityId& idCur : idSetCur) {
+			Entity& entityCur = EntityManager::entityGet(idCur);
 
-		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
+			auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
 
-		objectDraw(componentSprite->sprite);
+			objectDraw(componentSprite->sprite);
+		}
 	}
 }
 
@@ -161,12 +163,14 @@ void PanelDynamicView::staticDraw() {
 	objectDraw(staticSprite);
 }
 void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
-	for (const EntityId& i : levelActive->entitiesDrawableDynamic) {
-		Entity& entityCur = EntityManager::entityGet(i);
+	for (const std::set<EntityId>& idSetCur : levelActive->entitiesDrawableDynamicGet()) {
+		for (const EntityId& idCur : idSetCur) {
+			Entity& entityCur = EntityManager::entityGet(idCur);
 
-		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
+			auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
 
-		objectDraw(componentSprite->sprite);
+			objectDraw(componentSprite->sprite);
+		}
 	}
 }
 void PanelDynamicView::viewMaskApply() {

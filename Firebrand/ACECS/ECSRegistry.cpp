@@ -151,7 +151,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Single", false),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Single", false, 60),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -165,7 +165,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false, 60),
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -179,7 +179,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, sf::Vector2f(13.f, 13.f)),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60, sf::Vector2f(13.f, 13.f)),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -193,7 +193,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false, 60),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -207,7 +207,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false, 60),
 		}
 		);
 #pragma endregion Wall Templates
@@ -222,7 +222,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Plank Floor", false),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Debug Floor", false, 0),
 		}
 		);
 
@@ -234,7 +234,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Tile Floor", false),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Tile Floor", false, 0),
 		}
 		);
 #pragma endregion Floor Templates
@@ -249,7 +249,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Door),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentPosition>(sf::Vector2f(512.f, 256.f)),
-			createComponentPairFromType<ComponentSprite>("Art/Circle", true),
+			createComponentPairFromType<ComponentSprite>("Art/Circle", true, 50),
 
 		}
 		);
@@ -340,12 +340,7 @@ void ComponentSprite::system(Entity& entity) {
 	if (!entity.entityComponentHas<ComponentPosition>()) return;
 
 	if (entity.entityEventHas<EventInitialize>()) {
-		if (isDynamic) {
-			GameLevelGrid::levelGet(entity.levelId)->entitiesDrawableDynamic.insert(entity.Id);
-		}
-		else {
-			GameLevelGrid::levelGet(entity.levelId)->entitiesDrawableStatic.insert(entity.Id);
-		}
+		GameLevelGrid::levelGet(entity.levelId)->entityMarkDrawable(entity.Id, isDynamic, drawOrder);
 	}
 
 	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
