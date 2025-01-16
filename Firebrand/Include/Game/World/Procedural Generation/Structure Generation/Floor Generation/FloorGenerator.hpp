@@ -12,8 +12,20 @@
 
 
 namespace FloorGenerator {
-	typedef std::vector<std::string> FloorGrid1D;
+
+	enum FloorType {
+		Null,
+		Solid,
+		Long,
+		Corner,
+	};
+
+	typedef std::vector<FloorType> FloorGrid1D;
 	typedef std::vector<FloorGrid1D> FloorGrid2D;
+	// gets floor data from surroundings,
+	// so for example, it checks for corners or long floors, and returns a rotation and type according to that,
+	std::pair<FloorType, float> floorDataGetFromSurroundings(SurroundingWallsVector wallStates);
+	StructureCellType cellTypeGetFromFloorType(FloorType wallType);
 
 	FloorGrid2D floorsGenerate(RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize);
 };

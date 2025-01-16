@@ -10,7 +10,7 @@ std::pair<WallGenerator::WallType, float> WallGenerator::wallDataGetFromSurround
 	WallType wallType;
 	float wallRotation = 0.f;
 
-	// check all
+	// check for plus
 	if (wallStates[1] && wallStates[3] && wallStates[5] && wallStates[7]) {
 		wallType = JunctionPlus;
 	}

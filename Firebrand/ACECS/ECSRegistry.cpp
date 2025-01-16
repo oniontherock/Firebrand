@@ -214,15 +214,36 @@ void EntityComponents::componentTemplatesInitialize() {
 #pragma region Floor Templates
 
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
-		"Floor Plank",
+		"Floor Solid Plank",
 		{
 			"Transform",
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Debug Floor", false, 0),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Solid", false, 0, sf::Vector2f(32.f, 32.f)),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"Floor Long Plank",
+		{
+			"Transform",
+		},
+		/// list of components in template 
+		{
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Long", false, 0, sf::Vector2f(32.f, 32.f)),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"Floor Corner Plank",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Corner", false, 0, sf::Vector2f(32.f, 32.f)),
 		}
 		);
 

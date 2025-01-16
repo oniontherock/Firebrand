@@ -34,7 +34,6 @@ class WallGenerator {
 	// so for example, it checks for straight walls vertically or horizontally, and returns a rotation and type according to that,
 	// it does a bunch of checks like that.
 	static std::pair<WallType, float> wallDataGetFromSurroundings(SurroundingWallsVector wallStates);
-	// returns a wall
 	static StructureCellType cellTypeGetFromWallType(WallType wallType);
 
 	// returns a vector of bools, where each bool represents whether a face of the roomRect has a double wall.
