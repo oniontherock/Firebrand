@@ -87,6 +87,80 @@ namespace EntityComponents {
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	};
+	struct ComponentSpriteOrigin final : public Component {
+
+		ComponentSpriteOrigin() {
+			hasSystem = false;
+		};
+		ComponentSpriteOrigin(sf::Vector2f _origin) :
+			ComponentSpriteOrigin()
+		{
+			origin = _origin;
+		};
+		ComponentSpriteOrigin(float originX, float originY) :
+			ComponentSpriteOrigin(sf::Vector2f(originX, originY))
+		{
+		};
+
+		// origin of the sprite component on this entity
+		sf::Vector2f origin;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentSpriteOrigin(origin));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	struct ComponentSpriteFlip final : public Component {
+
+		ComponentSpriteFlip() {
+			hasSystem = false;
+		};
+		ComponentSpriteFlip(bool _flipX, bool _flipY) :
+			ComponentSpriteFlip()
+		{
+			flipX = _flipX;
+			flipY = _flipY;
+		};
+
+		// whether or not the X scale of the sprite should be inverted
+		bool flipX = false;
+		// whether or not the Y scale of the sprite should be inverted
+		bool flipY = false;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentSpriteFlip(flipX, flipY));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	struct ComponentSpriteColor final : public Component {
+
+		ComponentSpriteColor() {
+			hasSystem = false;
+		};
+		ComponentSpriteColor(sf::Color _color) :
+			ComponentSpriteColor()
+		{
+			color = _color;
+		};
+		ComponentSpriteColor(sf::Uint8 r, sf::Uint8 g, sf::Uint8 b, sf::Uint8 a) :
+			ComponentSpriteColor(sf::Color(r, g, b, a))
+		{
+		};
+
+		// color of the sprite component on this entity
+		sf::Color color;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentSpriteColor(color));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
 	struct ComponentSprite final : public Component {
 
 		void system(Entity& entity) final;
@@ -95,21 +169,18 @@ namespace EntityComponents {
 			hasSystem = true;
 		};
 		// constructor that takes file name and extension, then loads/gets an image from the imageStore, and loads the texture with that image
-		ComponentSprite(std::string _fileName, std::string _fileExtension, bool _isDynamic, uint16_t _drawOrder = 50, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
+		ComponentSprite(std::string _fileName, std::string _fileExtension, bool _isDynamic, uint16_t _drawOrder) :
 			ComponentSprite()
 		{
 			fileName = _fileName;
 			fileExtension = _fileExtension;
 			isDynamic = _isDynamic;
-			origin = _origin;
-			color = _color;
 			drawOrder = _drawOrder;
 
 			textureInitialize();
-
 		};
-		ComponentSprite(std::string _fileName, bool _isDynamic, uint16_t _drawOrder = 50, sf::Vector2f _origin = sf::Vector2f(-INFINITY, -INFINITY), sf::Color _color = sf::Color(255, 255, 255, 255)) :
-			ComponentSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet(), _isDynamic, _drawOrder, _origin, _color)
+		ComponentSprite(std::string _fileName, bool _isDynamic, uint16_t _drawOrder) :
+			ComponentSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet(), _isDynamic, _drawOrder)
 		{};
 
 		// the name of the file for the texture
@@ -119,10 +190,10 @@ namespace EntityComponents {
 
 		// whether this sprite should be drawn as a dynamic or static sprite, dynamic only draw when in vision, static draw in or out of vision
 		bool isDynamic = false;
-		// origin of the sprite, note that this is relative to the center of the sprite, note the top left corner.
-		sf::Vector2f origin;
-		// color of the sprite
-		sf::Color color;
+		//// origin of the sprite, note that this is relative to the center of the sprite, note the top left corner.
+		//sf::Vector2f origin;
+		//// color of the sprite
+		//sf::Color color;
 
 		// the draw order of the sprite
 		uint16_t drawOrder = 50;
@@ -130,7 +201,7 @@ namespace EntityComponents {
 		sf::Sprite sprite;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentSprite(fileName, fileExtension, isDynamic, drawOrder, origin, color));
+			return std::unique_ptr<Duplicatable>(new ComponentSprite(fileName, fileExtension, isDynamic, drawOrder));
 		};
 
 		void save(std::ofstream& str) override;

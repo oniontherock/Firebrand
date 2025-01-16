@@ -7,7 +7,7 @@
 
 uint32_t MAX_ENTITIES = 1000;
 uint16_t MAX_EVENT_TYPES = 4;
-uint16_t MAX_COMPONENT_TYPES = 9;
+uint16_t MAX_COMPONENT_TYPES = 12;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -80,6 +80,9 @@ void EntityComponents::componentIDsInitialize() {
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRadius>>();
 	// sprites/drawing
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteFlip>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteColor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentViewFollow>>();
@@ -134,7 +137,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
-			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false),
+			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, 50),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud } ),
 
 		}
@@ -179,7 +182,9 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60, sf::Vector2f(13.f, 13.f)),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60),
+			//createComponentPairFromType<ComponentSpriteOrigin>(13.f, 13.f),
+
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -221,7 +226,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Solid", false, 0, sf::Vector2f(32.f, 32.f)),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Solid", false, 0),
+			//createComponentPairFromType<ComponentSpriteOrigin>(32.f, 32.f),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -232,7 +238,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template 
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Long", false, 0, sf::Vector2f(32.f, 32.f)),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Long", false, 0),
+			//createComponentPairFromType<ComponentSpriteOrigin>(32.f, 32.f),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -243,7 +250,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Corner", false, 0, sf::Vector2f(32.f, 32.f)),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Corner", false, 0),
+			//createComponentPairFromType<ComponentSpriteOrigin>(32.f, 32.f),
 		}
 		);
 
@@ -369,13 +377,16 @@ void ComponentSprite::system(Entity& entity) {
 	sf::Texture& texture = GraphicsStore::textureStore.objectGet(fileName);
 
 	sprite.setTexture(texture);
-	sprite.setColor(color);
 
-	if (origin.x < -9999999 && origin.y < -9999999) {
+	if (entity.entityComponentHas<ComponentSpriteColor>()) {
+		sprite.setColor(entity.entityComponentGet<ComponentSpriteColor>()->color);
+	}
+
+	if (!entity.entityComponentHas<ComponentSpriteOrigin>()) {
 		sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
 	}
 	else {
-		sprite.setOrigin(origin);
+		sprite.setOrigin(entity.entityComponentGet<ComponentSpriteOrigin>()->origin);
 	}
 	sprite.setPosition(positionComponent->position);
 

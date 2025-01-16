@@ -204,6 +204,25 @@ void EntityComponents::ComponentObjectVision::save(std::ofstream& str) {
 void EntityComponents::ComponentObjectVision::load(std::ifstream& str) {
 	str >> cooldownVisionUpdate;
 }
-
+void EntityComponents::ComponentSpriteColor::save(std::ofstream& str) {
+	str << color;
+}
+void EntityComponents::ComponentSpriteColor::load(std::ifstream& str) {
+	str >> color;
+}
+void EntityComponents::ComponentSpriteOrigin::save(std::ofstream& str) {
+	str << origin;
+}
+void EntityComponents::ComponentSpriteOrigin::load(std::ifstream& str) {
+	str >> origin;
+}
+void EntityComponents::ComponentSpriteFlip::save(std::ofstream& str) {
+	str << flipX;
+	str << flipY;
+}
+void EntityComponents::ComponentSpriteFlip::load(std::ifstream& str) {
+	str >> flipX;
+	str >> flipY;
+}
 
 #pragma endregion
