@@ -57,7 +57,7 @@ void RoomTypeRegistry::roomTypesRegister() {
 	roomTypeInstance.constraints.dataSet("RoomConnectionsNand", std::set<RoomType>{ Bathroom });
 	roomTypeInstance.constraints.dataSet("RoomSizeRange", std::pair<uint16_t, uint16_t>(uint16_t(3 * 4), uint16_t(6 * 6)));
 	roomTypeInstance.constraints.dataSet<uint16_t>("RoomTypeCount", 3u);
-	roomTypeInstance.floorType = "Plank";
+	roomTypeInstance.floorType = "Tile";
 	//roomTypeInstance.floorType = "Tile";
 	roomInstanceAdd(roomTypeInstance);
 };

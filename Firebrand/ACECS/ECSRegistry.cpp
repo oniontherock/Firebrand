@@ -226,7 +226,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Solid", false, 0),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Plank", false, 0),
 		}
 		);
 
@@ -238,7 +238,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Tile Floor", false, 0),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Tile", false, 0),
 		}
 		);
 #pragma endregion Floor Templates
