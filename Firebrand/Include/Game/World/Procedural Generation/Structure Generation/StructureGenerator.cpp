@@ -7,7 +7,7 @@
 #include <Auxiliary/NumberGenerator.hpp>
 
 
-StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
+Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
 
 	WallGrid2D wallGrid;
 
@@ -42,7 +42,7 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 	WallSectionGenerator::WallSectionGrid2D wallSectionGrid = WallSectionGenerator::wallSectionsGet(wallGrid, roomTypeGrid, structureSize);
 	DoorGenerator::DoorGrid2D doorGrid = DoorGenerator::doorsGenerate(wallSectionGrid, roomTypeGrid, structureSize, roomRectsVector);
 
-	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y, structureType->structureType, structurePosition, structureRotation);
+	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y);
 
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {
@@ -82,23 +82,23 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 				cell.type = WallGenerator::cellTypeGetFromWallType(wallData.first);
 				cell.rotation = wallData.second;
 
-				//if (wallSectionGrid[x][y].first != RoomType::Null && wallSectionGrid[x][y].second != RoomType::Null) {
+				//if (wallSectionGrid[x][y].first != RoomType::Null && wallSectionGrid[x][y].second != RoomType::Null) {	
 
 				//		cell.type = "Misc Marker";
 				//}
 			}
 			else if (roomType != RoomType::Null) {
 
-				const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(roomType);
+				//const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(roomType);
 
-				std::pair<FloorGenerator::FloorType, float> floorData = FloorGenerator::floorDataGetFromSurroundings(wallStates);
+				//std::pair<:FloorType, float> floorData = FloorGenerator::floorDataGetFromSurroundings(wallStates);
 
-				cell.type = FloorGenerator::cellTypeGetFromFloorType(floorData.first);
-				cell.rotation = floorData.second;
+				//cell.type = FloorGenerator::cellTypeGetFromFloorType(floorData.first);
+				//cell.rotation = floorData.second;
 
-				std::cout << "cell rotation: " << cell.rotation << "\n";
+				//std::cout << "cell rotation: " << cell.rotation << "\n";
 
-				cell.type += std::string(" ") + roomTypeInstance.floorType;
+				//cell.type += std::string(" ") + roomTypeInstance.floorType;
 
 				//switch (roomTypeGrid.cellGet(x, y).type) {
 				//case RoomType::Hallway:
@@ -123,6 +123,6 @@ StructureGrid StructureGenerator::structureGenerate(StructureTypeBase* structure
 		}
 	}
 
-	return structureGrid;
+	return Structure(structureGrid, FloorGenerator::floorsGenerate(roomTypeGrid, structureSize), structureType->structureType, structurePosition, structureRotation);
 }
 

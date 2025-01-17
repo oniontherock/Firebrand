@@ -5,7 +5,7 @@
 #include <Graphics/PanelManager.hpp>
 #include <Input.hpp>
 
-uint32_t MAX_ENTITIES = 1000;
+uint32_t MAX_ENTITIES = 10000;
 uint16_t MAX_EVENT_TYPES = 4;
 uint16_t MAX_COMPONENT_TYPES = 12;
 
@@ -183,7 +183,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60),
-			//createComponentPairFromType<ComponentSpriteOrigin>(13.f, 13.f),
+			createComponentPairFromType<ComponentSpriteOrigin>(13.f, 13.f),
 
 		}
 		);
@@ -220,38 +220,13 @@ void EntityComponents::componentTemplatesInitialize() {
 
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
-		"Floor Solid Plank",
+		"Floor Plank",
 		{
 			"Transform",
 		},
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Solid", false, 0),
-			//createComponentPairFromType<ComponentSpriteOrigin>(32.f, 32.f),
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-		/// template name
-		"Floor Long Plank",
-		{
-			"Transform",
-		},
-		/// list of components in template 
-		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Long", false, 0),
-			//createComponentPairFromType<ComponentSpriteOrigin>(32.f, 32.f),
-		}
-		);
-	ComponentTemplateManager::componentTemplateAdd(
-		/// template name
-		"Floor Corner Plank",
-		{
-			"Transform",
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Debug Corner", false, 0),
-			//createComponentPairFromType<ComponentSpriteOrigin>(32.f, 32.f),
 		}
 		);
 

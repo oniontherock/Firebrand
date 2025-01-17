@@ -1,93 +1,89 @@
 #include "FloorGenerator.hpp"
 #include "Auxiliary/Math.hpp"
 
+void FloorGenerator::floorMarkHorizontal(RoomTypeGrid& roomTypeGrid, FloorGrid& floorGrid, const sf::Vector2u structureSize, sf::Vector2u cell, std::string leftType, std::string rightType) {
+	floorGrid.cellGet(cell.x, cell.y) = leftType;
+	floorGrid.cellGet(cell.x, cell.y + 1) = leftType;
 
-std::pair<FloorGenerator::FloorType, float> FloorGenerator::floorDataGetFromSurroundings(SurroundingWallsVector wallStates) {
-	
-	// inverted version of wallStates, we use this instead of wall states because we are mostly checking for empty space, instead of walls
-	std::vector<bool> wallStatesInverted = wallStates;
-
-	for (uint16_t i = 0; i < wallStatesInverted.size(); i++) {
-		wallStatesInverted[i] = !wallStates[i];
-	}
-
-	FloorType floorType;
-	float floorRotation = 0.f;
-	 
-
-	/// Check corner shapes
-	// check bottom right corner
-	if (wallStatesInverted[6] && wallStatesInverted[8] && wallStatesInverted[9]) {
-		floorType = Corner;
-		floorRotation = 0;
-	}
-	// check top right corner
-	else if (wallStatesInverted[2] && wallStatesInverted[3] && wallStatesInverted[6]) {
-		floorType = Corner;
-		floorRotation = -Mathf::PI / 2.f;
-	}
-	// check top left corner
-	else if (wallStatesInverted[1] && wallStatesInverted[2] && wallStatesInverted[4]) {
-		floorType = Corner;
-		floorRotation = Mathf::PI;
-	}
-	// check bottom left corner
-	else if (wallStatesInverted[4] && wallStatesInverted[7] && wallStatesInverted[8]) {
-		floorType = Corner;
-		floorRotation = Mathf::PI / 2.f;
-	}
-	/// End of check corner shapes
-	/// Check longs
-	// right
-	else if (wallStatesInverted[6]) {
-		floorType = Long;
-		floorRotation = 0;
-	}
-	// top
-	else if (wallStatesInverted[2]) {
-		floorType = Long;
-		floorRotation = -Mathf::PI / 2.f;
-	}
-	// left
-	else if (wallStatesInverted[4]) {
-		floorType = Long;
-		floorRotation = Mathf::PI;
-	}
-	// bottom
-	else if (wallStatesInverted[8]) {
-		floorType = Long;
-		floorRotation = Mathf::PI / 2.f;
-	}
-	/// End of check corners
-	else {
-		floorType = Solid;
-	}
-
-	return std::pair(floorType, floorRotation);
+	floorGrid.cellGet(cell.x + 1, cell.y) = rightType;
+	floorGrid.cellGet(cell.x + 1, cell.y + 1) = rightType;
 }
-StructureCellType FloorGenerator::cellTypeGetFromFloorType(FloorType wallType) {
-	// note that, although we could use a vector that we access by WallType, we use a switch statement because reorder the WallType enum wouldn't mess up anything
-	switch (wallType) {
-	case Solid:
-		return "Floor Solid";
-	case Long:
-		return "Floor Long";
-	case Corner:
-		return "Floor Corner";
-	default:
-		return "Null";
-	}
+void FloorGenerator::floorMarkVertical(RoomTypeGrid& roomTypeGrid, FloorGrid& floorGrid, const sf::Vector2u structureSize, sf::Vector2u cell, std::string upType, std::string downType) {
+	floorGrid.cellGet(cell.x, cell.y) = upType;
+	floorGrid.cellGet(cell.x + 1, cell.y) = upType;
+
+	floorGrid.cellGet(cell.x, cell.y + 1) = downType;
+	floorGrid.cellGet(cell.x + 1, cell.y + 1) = downType;
 }
 
-FloorGenerator::FloorGrid2D FloorGenerator::floorsGenerate(RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize) {
+FloorGrid FloorGenerator::floorsGenerate(RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize) {
 
-	FloorGrid2D floorGrid = FloorGrid2D(structureSize.x, FloorGrid1D(structureSize.y, Null));
+	using enum RoomType;
 
-	//for (uint16_t x = 0; x < structureSize.x; x++) {
-	//	for (uint16_t y = 0; y < structureSize.y; y++) {
-	//		floorGrid[x][y] = WallGenerator:
-	//	}
-	//}
+	FloorGrid floorGrid = FloorGrid(structureSize.x * 2, structureSize.y * 2);
 
-	return FloorGrid2D();
+	for (uint16_t x = 0; x < structureSize.x; x++) {
+		for (uint16_t y = 0; y < structureSize.y; y++) {
+
+			// get validity of all sides of the cell
+			bool rightIsValid = roomTypeGrid.cellPosIsInGrid(x + 1, y);
+			bool upIsValid = roomTypeGrid.cellPosIsInGrid(x, y - 1);
+			bool leftIsValid = roomTypeGrid.cellPosIsInGrid(x - 1, y);
+			bool downIsValid = roomTypeGrid.cellPosIsInGrid(x, y + 1);
+
+			// initialize types for all sides of the cell
+			RoomType rightType = RoomType::Null;
+			RoomType upType = RoomType::Null;
+			RoomType leftType = RoomType::Null;
+			RoomType downType = RoomType::Null;
+
+			// get the type at a given side of the cell if it is valid
+			if (rightIsValid) {
+				rightType = roomTypeGrid.cellGet(x + 1, y).type;
+			}
+			if (upIsValid) {
+				upType = roomTypeGrid.cellGet(x, y - 1).type;
+			}
+			if (leftIsValid) {
+				leftType = roomTypeGrid.cellGet(x - 1, y).type;
+			}
+			if (downIsValid) {
+				downType = roomTypeGrid.cellGet(x, y + 1).type;
+			}
+
+			// get floor types of every side
+			std::string rightFloorType = RoomTypeRegistry::roomTypeInstanceGet(rightType).floorType;
+			std::string upFloorType = RoomTypeRegistry::roomTypeInstanceGet(rightType).floorType;
+			std::string leftFloorType = RoomTypeRegistry::roomTypeInstanceGet(rightType).floorType;
+			std::string downFloorType = RoomTypeRegistry::roomTypeInstanceGet(rightType).floorType;
+
+
+			// if there are no types up and down, mark floors horizontally
+			if (upType == Null && downType == Null) {
+				floorMarkHorizontal(roomTypeGrid, floorGrid, structureSize, sf::Vector2u(x * 2, y * 2), leftFloorType, rightFloorType);
+			}
+			// if there are no types left and right, mark floors vertically
+			else if (leftType == Null && rightType == Null) {
+				floorMarkVertical(roomTypeGrid, floorGrid, structureSize, sf::Vector2u(x * 2, y * 2), upFloorType, downFloorType);
+			}
+			// if one (or more) of the the up or down types are null, and neither left/right types are null, mark floor horizontally
+			else if ((upType == Null || downType == Null) && (leftType != Null && rightType != Null)) {
+				floorMarkHorizontal(roomTypeGrid, floorGrid, structureSize, sf::Vector2u(x * 2, y * 2), leftFloorType, rightFloorType);
+			}
+			// if one (or more) of the the left or right types are null, and neither up/down types are null, mark floor vertically
+			else if ((leftType == Null || rightType == Null) && (upType != Null && downType != Null)) {
+				floorMarkVertical(roomTypeGrid, floorGrid, structureSize, sf::Vector2u(x * 2, y * 2), leftFloorType, rightFloorType);
+			}
+			// if the up type isn't the same as the down type, mark floors horizontally
+			else if (upType != downType && leftType == rightType) {
+				floorMarkHorizontal(roomTypeGrid, floorGrid, structureSize, sf::Vector2u(x * 2, y * 2), leftFloorType, rightFloorType);
+			}
+			// if the left type isn't the same as the right type, mark floors vertically
+			else if (leftType != rightType && upType == downType) {
+				floorMarkVertical(roomTypeGrid, floorGrid, structureSize, sf::Vector2u(x * 2, y * 2), leftFloorType, rightFloorType);
+			}
+		}
+	}
+
+	return floorGrid;
 }

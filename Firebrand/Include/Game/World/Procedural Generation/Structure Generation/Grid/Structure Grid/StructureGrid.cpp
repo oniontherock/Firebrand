@@ -1,6 +1,6 @@
 #include "StructureGrid.hpp"
 
-StructureGrid::StructureGrid(uint32_t gridSizeX, uint32_t gridSizeY, StructureType _structureType, sf::Vector2f _position, float _rotation) :
+StructureGrid::StructureGrid(uint32_t gridSizeX, uint32_t gridSizeY) :
 	Grid<StructureCell>::Grid(gridSizeX, gridSizeY, structureGridCellSize, structureGridCellSize)
 {
 	StructureGrid2D rows(gridSize.x);
@@ -13,8 +13,4 @@ StructureGrid::StructureGrid(uint32_t gridSizeX, uint32_t gridSizeY, StructureTy
 	}
 
 	cells = std::move(rows);
-
-	structureType = _structureType;
-	position = _position;
-	rotation = _rotation;
 }

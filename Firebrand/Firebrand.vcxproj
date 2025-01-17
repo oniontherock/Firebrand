@@ -161,6 +161,7 @@
     <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Floor Grid\FloorGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeCell.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureCell.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Room Types\RoomTypes.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Structure Types\StructureTypeRegistry.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Structure Types\StructureTypes.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Structure.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\StructureGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.cpp" />
@@ -226,6 +228,7 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Floor Grid\FloorGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeCell.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Room Designation Grid\RoomTypeGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureCell.hpp" />
@@ -242,6 +245,7 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Sections\WallSectionGenerator.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Structure.hpp" />
     <ClInclude Include="Include\Game\World\World Clock\WorldClock.hpp" />
   </ItemGroup>
   <ItemGroup>

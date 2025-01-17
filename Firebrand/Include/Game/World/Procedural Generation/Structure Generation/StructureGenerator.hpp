@@ -6,12 +6,13 @@
 #include <cstdint>
 #include <SFML/Graphics/Rect.hpp>
 #include "Wall Generation/WallGenerator.hpp"
+#include "Structure.hpp"
 
 class StructureGenerator {
 
 public:
 	// generates a building of type structureType and size, and assigns it the specified position and rotation.
-	static StructureGrid structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize);
+	static Structure structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize);
 };
 
 #endif
