@@ -166,7 +166,7 @@ void GameLevel::pathsGenerate() {
 }
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
-	Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), RNGf::getFullRange(Mathf::PI), sf::Vector2u(24, 24));
+	Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), RNGf::getFullRange(0), sf::Vector2u(24, 24));
 	StructureInstantiator::structureInstantiate(levelPosition, structure);
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Completed");
 }

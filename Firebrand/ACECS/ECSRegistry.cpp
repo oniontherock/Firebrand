@@ -180,8 +180,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 10) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 12) }),
 			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
@@ -195,9 +195,9 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60),
-			createComponentPairFromType<ComponentSpriteOrigin>(13.f, 13.f),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 24, 48), sf::FloatRect(-12, -12, 48, 24) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 24, 48), sf::FloatRect(-12, -12, 48, 24) }),
+			createComponentPairFromType<ComponentSpriteOrigin>(12.f, 12.f),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 10, 38), sf::FloatRect(-5, -5, 38, 10) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 10, 38), sf::FloatRect(-5, -5, 38, 10) }),
 			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
@@ -209,10 +209,10 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),	
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 44, 24), sf::FloatRect(-12, -32, 24, 64) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 44, 24), sf::FloatRect(-12, -32, 24, 64) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 38, 10), sf::FloatRect(-5, -32, 10, 65) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 38, 10), sf::FloatRect(-5, -32, 10, 65) }),
 			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
@@ -226,8 +226,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -12, 64, 24), sf::FloatRect(-12, -32, 24, 64) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -12, 64, 24), sf::FloatRect(-12, -32, 24, 64) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 10), sf::FloatRect(-5, -32, 10, 64) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 10), sf::FloatRect(-5, -32, 10, 64) }),
 			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
@@ -515,9 +515,9 @@ void ComponentObjectGridInhabiterRectangles::system(Entity& entity) {
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationComponent->rotation);
 
 				// ensure positionPrev is in the grid, skip if not
-				if (!objectGridDepopulation.worldPosIsInGridFull(positionPrev.x + offsetX, positionPrev.y + offsetY)) continue;
+				if (!objectGridDepopulation.worldPosIsInGridFull(positionPrev.x + offset.x, positionPrev.y + offset.y)) continue;
 				// remove entity's id from grid at the offset
-				objectGridDepopulation.cellGetFromWorld(positionPrev.x + offsetX, positionPrev.y + offsetY).idRemove(entity.Id);
+				objectGridDepopulation.cellGetFromWorld(positionPrev.x + offset.x, positionPrev.y + offset.y).idRemove(entity.Id);
 			}
 		}
 	}
@@ -537,9 +537,9 @@ void ComponentObjectGridInhabiterRectangles::system(Entity& entity) {
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationComponent->rotation);
 
 				// ensure position is in the grid, skip if not
-				if (!objectGridPopulation.worldPosIsInGridFull(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY)) continue;
+				if (!objectGridPopulation.worldPosIsInGridFull(positionComponent->position.x + offset.x, positionComponent->position.y + offset.y)) continue;
 				// add entity's id to grid at the offset
-				objectGridPopulation.cellGetFromWorld(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY).idAdd(entity.Id);
+				objectGridPopulation.cellGetFromWorld(positionComponent->position.x + offset.x, positionComponent->position.y + offset.y).idAdd(entity.Id);
 			}
 		}
 	}

@@ -7,5 +7,12 @@
 #include "../Game/World/Objects/ObjectRegistry.hpp"
 #include "../Game/World/Objects/ObjectTypes.hpp"
 
+struct ObjectGridRenderer {
+
+	sf::Texture texture;
+
+	void gridRender(ObjectGrid& objectGrid, PanelRect viewRect);
+
+};
 
 #endif
