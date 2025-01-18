@@ -5,15 +5,13 @@
 #include "DoorGenerator.hpp"
 #include <queue>
 
-DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector) {
-
-	DoorGrid2D doorGrid = DoorGrid2D(structureSize.x, DoorGrid1D(structureSize.y, false));
+void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector) {
 
 	// iterate over all roomRects
 	for (RoomRect& roomRectCur : roomRectsVector) {
 
 		RoomType roomRectType = RoomDesignator::roomTypeGet(roomTypeGrid, roomRectCur);
-		
+
 		const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(roomRectType);
 
 #pragma region Connection Types Detection
@@ -77,7 +75,6 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 
 				neighboringTypes.insert(connectionType);
 
-				std::cout << "section Id: " << wallSection.sectionId << "\n";
 				possibleConnectionPoints[uint16_t(connectionType)].push_back(sf::Vector2u(cellX, cellY));
 
 			}
@@ -101,8 +98,6 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 
 			bool doConnect = false;
 
-			std::cout << "connection index: " << connectionIndexOr << "\n";
-
 			if (i == connectionIndexOr) {
 				doConnect = true;
 			}
@@ -115,8 +110,97 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 				doorGrid[connectionPoint.x][connectionPoint.y] = true;
 			}
 		}
-
 	}
+}
+void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, const sf::Vector2u structureSize, const uint16_t desiredDoorCount) {
+	
+	std::vector<sf::Vector2u> possibleConnectionPoints = std::vector<sf::Vector2u>(uint16_t(RoomType::RoomTypeSize));
+
+	for (uint16_t x = 0; x < structureSize.x; x++) {
+		for (uint16_t y = 0; y < structureSize.y; y++) {
+			bool isOnEdgeX = x <= 0 || x >= structureSize.x - 1;
+			bool isOnEdgeY = y <= 0 || y >= structureSize.y - 1;
+
+			// skip if cell is not an edge
+			if (!(isOnEdgeX || isOnEdgeY)) continue;
+
+			// skip if cell is corner cell
+			if (isOnEdgeX && isOnEdgeY) continue;
+
+			for (int16_t offsetX = -1; offsetX <= 1; offsetX++) {
+				for (int16_t offsetY = -1; offsetY <= 1; offsetY++) {
+
+					int16_t offsettedX = int16_t(x) + offsetX;
+					int16_t offsettedY = int16_t(y) + offsetY;
+
+					// skip if even (I.E. not a cardinal direction)
+					if (Mathi32::isEven(abs(offsetX + offsetY))) continue;
+
+					// skip if pos is not in grid
+					if (!roomTypeGrid.cellPosIsInGrid(offsettedX, offsettedY)) continue;
+
+					// skip if room type is not hallway
+					if (roomTypeGrid.cellGet(offsettedX, offsettedY).type != RoomType::Hallway) continue;
+
+					possibleConnectionPoints.push_back(sf::Vector2u(x, y));
+					break;
+
+				}
+			}
+		}
+	}
+
+	// shuffle possibleConnectionPoints
+	for (int16_t i = int16_t(possibleConnectionPoints.size()) - 1; i >= 0; i--) {
+
+		// generate the random index 
+		uint16_t j = RNGu16::getUnder(i + 1);
+
+		sf::Vector2u temp = possibleConnectionPoints[i];
+		possibleConnectionPoints[i] = possibleConnectionPoints[j];
+		possibleConnectionPoints[j] = temp;
+	}
+
+	const float minDist = std::min((float(structureSize.x) * 0.3333333f), (float(structureSize.y) * 0.3333333f));
+
+	std::cout << minDist << " " << minDist * minDist << "\n";
+
+	// iterate over possibleConnectionPoints and remove any points that are too close on one axis
+	for (int16_t i = possibleConnectionPoints.size() - 1; i >= 0; i--) {
+		for (int16_t j = possibleConnectionPoints.size() - 1; j >= 0; j--) {
+
+			// skip if i equals j
+			if (i == j) continue;
+
+			float axisLenSqrd = Vector2iMath::distSqrd(sf::Vector2i(possibleConnectionPoints[i]), sf::Vector2i(possibleConnectionPoints[j]));
+
+			if (axisLenSqrd < (minDist * minDist)) {
+				possibleConnectionPoints.erase(possibleConnectionPoints.begin() + i);
+				break;
+			}
+		}
+	}
+
+	if (possibleConnectionPoints.size() <= 0) return;
+
+	for (uint16_t i = 0; i < desiredDoorCount; i++) {
+		
+		uint32_t pointInd = RNGu32::getUnder(possibleConnectionPoints.size());
+
+		sf::Vector2u doorPos = possibleConnectionPoints[pointInd];
+
+		possibleConnectionPoints.erase(possibleConnectionPoints.begin() + pointInd);
+
+		doorGrid[doorPos.x][doorPos.y] = true;
+	}
+}
+
+DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector) {
+
+	DoorGrid2D doorGrid = DoorGrid2D(structureSize.x, DoorGrid1D(structureSize.y, false));
+
+	roomDoorsGenerate(wallSectionGrid, roomTypeGrid, doorGrid, structureSize, roomRectsVector);
+	exteriorDoorsGenerate(roomTypeGrid, doorGrid, structureSize, RNGu16::getRange(1, 4));
 
 	return doorGrid;
 }
