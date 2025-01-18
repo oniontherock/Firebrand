@@ -49,7 +49,7 @@ struct PanelDynamicView : public Panel {
 private:
 
 	sf::RenderTexture viewMaskTexture;
-	sf::ConvexShape viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount);
+	std::vector<sf:: Vector2f> viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount);
 	void viewMaskCreate();
 	bool isFirstUpdate = true;
 

@@ -6,6 +6,12 @@
 ObjectVision::ObjectVision() {
 	objectsSeenCreate();
 }
+ObjectVision::ObjectVision(OcclusionGrid* _occlusionGrid) :
+	ObjectVision()
+{
+	occlusionGrid = _occlusionGrid;
+}
+
 
 void ObjectVision::objectGridSet(ObjectGrid* objectGridNew) {
 	objectGrid = objectGridNew;

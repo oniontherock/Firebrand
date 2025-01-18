@@ -18,6 +18,7 @@ typedef std::vector<std::vector<EntityId>> ObjectIdVector;
 struct ObjectVision : public RayCaster {
 
 	ObjectVision();
+	ObjectVision(OcclusionGrid* _occlusionGrid);
 
 	void objectGridSet(ObjectGrid* objectGridNew);
 	void update(sf::Vector2f castPosition, float castAngle, float coneSize, float rayMaxDist, uint32_t rayCount) override;

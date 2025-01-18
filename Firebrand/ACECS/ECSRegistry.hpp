@@ -348,7 +348,6 @@ namespace EntityComponents {
 		ComponentObjectGridInhabiterRadius() {
 			hasSystem = true;
 			radius = 0;
-			WorldPosition{};
 		};
 		ComponentObjectGridInhabiterRadius(float _radius) :
 			ComponentObjectGridInhabiterRadius()
@@ -407,6 +406,57 @@ namespace EntityComponents {
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentObjectVisionDebug());
 		};
+	};
+	// fills the OcclusionGrid in a radius around the entity
+	struct ComponentOcclusionRadius final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentOcclusionRadius() {
+			hasSystem = true;
+			radius = 0;
+		};
+		ComponentOcclusionRadius(float _radius) :
+			ComponentOcclusionRadius()
+		{
+			radius = _radius;
+		};
+
+		float radius;
+		// previous position of population, used for depopulation.
+		sf::Vector2f positionPrev;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentOcclusionRadius(radius));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	// fills the OcclusionGrid with some rectangles
+	struct ComponentOcclusionRectangles final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentOcclusionRectangles() {
+			hasSystem = true;
+		};
+		ComponentOcclusionRectangles(std::vector<sf::FloatRect> _rectangles) :
+			ComponentOcclusionRectangles()
+		{
+			rectangles = _rectangles;
+		};
+
+		std::vector<sf::FloatRect> rectangles;
+		// previous position of population, used for depopulation.
+		sf::Vector2f positionPrev;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentOcclusionRectangles(rectangles));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
 	};
 }
 

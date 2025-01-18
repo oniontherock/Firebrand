@@ -10,7 +10,8 @@ GameLevel::GameLevel() :
 	objectGrid(levelSize.x / 16, levelSize.y / 16, 16.f, 16.f),
 	pathGenerator(PathGenerator()),
 	backgroundTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
-	pathsTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720))
+	pathsTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
+	occlusionGrid(levelSize.x / 1, levelSize.y / 1, 1, 1)
 {
 	entities = std::vector<EntityId>();
 

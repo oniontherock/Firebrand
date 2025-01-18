@@ -224,5 +224,17 @@ void EntityComponents::ComponentSpriteFlip::load(std::ifstream& str) {
 	str >> flipX;
 	str >> flipY;
 }
+void EntityComponents::ComponentOcclusionRadius::save(std::ofstream& str) {
+	str << radius;
+}
+void EntityComponents::ComponentOcclusionRadius::load(std::ifstream& str) {
+	str >> radius;
+}
+void EntityComponents::ComponentOcclusionRectangles::save(std::ofstream& str) {
+	str << rectangles;
+}
+void EntityComponents::ComponentOcclusionRectangles::load(std::ifstream& str) {
+	str >> rectangles;
+}
 
 #pragma endregion

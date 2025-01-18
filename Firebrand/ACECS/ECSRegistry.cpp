@@ -7,7 +7,7 @@
 
 uint32_t MAX_ENTITIES = 10000;
 uint16_t MAX_EVENT_TYPES = 4;
-uint16_t MAX_COMPONENT_TYPES = 12;
+uint16_t MAX_COMPONENT_TYPES = 15;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -78,6 +78,8 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentPosition>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotation>>();
 
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentOcclusionRectangles>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentOcclusionRadius>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRadius>>();
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -90,7 +92,6 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
 
-	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 }
@@ -144,7 +145,6 @@ void EntityComponents::componentTemplatesInitialize() {
 	);
 #pragma region Wall Templates
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Wall Single",
 		{
@@ -155,10 +155,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Single", false, 60),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 48, 24) }),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Wall Straight",
 		{
@@ -169,10 +169,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false, 60),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -12, 64, 24) }),
 		}
-	);
+		);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Wall Corner",
 		{
@@ -184,11 +184,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60),
 			createComponentPairFromType<ComponentSpriteOrigin>(13.f, 13.f),
-
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 24, 48), sf::FloatRect(-12, -12, 48, 24) }),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Wall Junction T",
 		{
@@ -199,10 +198,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false, 60),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 44, 24), sf::FloatRect(-12, -32, 24, 64) }),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Wall Junction Plus",
 		{
@@ -213,6 +212,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false, 60),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -12, 64, 24), sf::FloatRect(-12, -32, 24, 64) }),
 		}
 		);
 #pragma endregion Wall Templates
@@ -539,6 +539,120 @@ void ComponentObjectVisionDebug::system(Entity& entity) {
 			ConsoleHandler::consolePrintColor(string, 6);
 		}
 	}
+}
+void ComponentOcclusionRadius::system(Entity& entity) {
+	// check that entity has ComponentPosition
+	if (!entity.entityComponentHas<ComponentPosition>()) {
+		ConsoleHandler::consolePrintErr("ComponentOcclusionRadius assigned to an entity without a ComponentPosition!");
+
+		entity.entityComponentTerminate<ComponentOcclusionRadius>();
+		return;
+	}
+
+
+	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+
+	// check if positionPrev has been set yet
+	if (positionPrev == sf::Vector2f(0, 0)) {
+		positionPrev = positionComponent->position;
+	}
+
+	// note that two separate objectGrid references are used because an entity could travel to a different level.
+
+	auto& occlusionGridDepopulation = GameLevelGrid::levelGet(entity.levelId)->occlusionGrid;
+
+	for (float offsetX = -radius / 2.f; offsetX <= +radius / 2.f; offsetX += 1.f) {
+		for (float offsetY = -radius / 2.f; offsetY <= +radius / 2.f; offsetY += 1.f) {
+
+			// ensure the offset is normalized (I.E. in the circle that the radius represents)
+			if (Vector2fMath::lengthSqrd(offsetX, offsetY) > (radius * radius) / (2.f * 2.f)) continue;
+			// ensure positionPrev is in the grid, skip if not
+			if (!occlusionGridDepopulation.worldPosIsInGridFull(positionPrev.x + offsetX, positionPrev.y + offsetY)) continue;
+			// remove entity's id from grid at the offset
+			occlusionGridDepopulation.cellSetFromWorld(positionPrev.x + offsetX, positionPrev.y + offsetY, false);
+		}
+	};
+
+	auto& occlusionGridPopulation = GameLevelGrid::levelGet(entity.levelId)->occlusionGrid;
+
+	for (float offsetX = -radius / 2.f; offsetX <= +radius / 2.f; offsetX += 1.f) {
+		for (float offsetY = -radius / 2.f; offsetY <= +radius / 2.f; offsetY += 1.f) {
+
+			// ensure the offset is normalized (I.E. in the circle that the radius represents)
+			if (Vector2fMath::lengthSqrd(offsetX, offsetY) > (radius * radius) / (2.f * 2.f)) continue;
+			// ensure position is in the grid, skip if not
+			if (!occlusionGridPopulation.worldPosIsInGridFull(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY)) continue;
+			// add entity's id to grid at the offset
+			occlusionGridPopulation.cellSetFromWorld(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY, true);
+		}
+	};
+
+	positionPrev = positionComponent->position;
+}
+void ComponentOcclusionRectangles::system(Entity& entity) {
+	// check that entity has ComponentPosition
+	if (!entity.entityComponentHas<ComponentPosition>()) {
+		ConsoleHandler::consolePrintErr("ComponentOcclusionRadius assigned to an entity without a ComponentPosition!");
+
+		entity.entityComponentTerminate<ComponentOcclusionRadius>();
+		return;
+	}
+
+
+	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+	auto* rotationComponent = entity.entityComponentGet<ComponentRotation>();
+
+	// check if positionPrev has been set yet
+	if (positionPrev == sf::Vector2f(0, 0)) {
+		positionPrev = positionComponent->position;
+	}
+
+	// note that two separate objectGrid references are used because an entity could travel to a different level.
+
+	auto& occlusionGridDepopulation = GameLevelGrid::levelGet(entity.levelId)->occlusionGrid;
+
+	for (uint16_t i = 0; i < rectangles.size(); i++) {
+		sf::FloatRect& rectangle = rectangles[i];
+
+		for (uint16_t x = 0; x < rectangle.width; x++) {
+			for (uint16_t y = 0; y < rectangle.height; y++) {
+
+				int16_t offsetX = rectangle.left + x;
+				int16_t offsetY = rectangle.top + y;
+
+				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationComponent->rotation);
+
+				// ensure positionPrev is in the grid, skip if not
+				if (!occlusionGridDepopulation.worldPosIsInGridFull(positionPrev.x + offset.x, positionPrev.y + offset.y)) continue;
+				// remove entity's id from grid at the offset
+				occlusionGridDepopulation.cellSetFromWorld(positionPrev.x + offset.x, positionPrev.y + offset.y, false);
+			}
+		}
+	}
+
+
+	auto& occlusionGridPopulation = GameLevelGrid::levelGet(entity.levelId)->occlusionGrid;
+
+	for (uint16_t i = 0; i < rectangles.size(); i++) {
+		sf::FloatRect& rectangle = rectangles[i];
+
+		for (uint16_t x = 0; x < rectangle.width; x++) {
+			for (uint16_t y = 0; y < rectangle.height; y++) {
+
+				int16_t offsetX = rectangle.left + x;
+				int16_t offsetY = rectangle.top + y;
+
+				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationComponent->rotation);
+
+				// ensure position is in the grid, skip if not
+				if (!occlusionGridPopulation.worldPosIsInGridFull(positionComponent->position.x + offset.x, positionComponent->position.y + offset.y)) continue;
+				// add entity's id to grid at the offset
+				occlusionGridPopulation.cellSetFromWorld(positionComponent->position.x + offset.x, positionComponent->position.y + offset.y, true);
+			}
+		}
+	}
+
+	positionPrev = positionComponent->position;
 }
 
 #pragma endregion Systems

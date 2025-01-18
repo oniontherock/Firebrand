@@ -4,12 +4,20 @@
 #include <cstdint>
 #include <World/LevelTypeDefinitions.hpp>
 #include <SFML/System/Vector2.hpp>
+#include "Occlusion Grid/OcclusionGrid.hpp"
 
 // casts a series of rays out from a position
 struct RayCaster {
+
+	RayCaster() = default;
+	RayCaster(OcclusionGrid* _occlusionGrid);
+
+
 	// update the RayCaster, always calls raysCast().
 	virtual void update(sf::Vector2f castPosition, float castAngle, float coneSize, float rayMaxDist, uint32_t rayCount);
 
+	// OcclusionGrid used by this RayCaster for occlusion, if set to nullptr, does not occlude
+	OcclusionGrid* occlusionGrid = nullptr;
 protected:
 	
 	// casts out a series of rays from castPosition towards an castAngle in a cone

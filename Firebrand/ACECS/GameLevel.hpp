@@ -3,6 +3,7 @@
 
 #include "../Include/Common/TextureGrid.hpp"
 #include "../Include/Game/Pathfinding/AStar/Grid/AStarGrid.hpp"
+#include "../Include/Game/Raycasting/Occlusion Grid/OcclusionGrid.hpp"
 #include "../Include/Game/World/Objects/Object Grid/ObjectGrid.hpp"
 #include "../Include/Game/World/Procedural Generation/Path Generation/PathGenerator.hpp"
 #include <Auxiliary/Math.hpp>
@@ -27,8 +28,8 @@ struct GameLevel : public BaseLevel {
 
 	uint32_t exampleVariable = 0;
 
-
-
+	// OcclusionGrid used by RayCasters in this level
+	OcclusionGrid occlusionGrid;
 
 	ObjectGrid objectGrid;
 	AStarGrid aStarGrid;

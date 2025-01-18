@@ -3,6 +3,7 @@
 #include "../Include/Game/GameData.hpp"
 #include "ECSRegistry.hpp"
 #include "Panels.hpp"
+#include "SFML/Graphics.hpp"
 #include <Graphics/PanelManager.hpp>
 #include <Input/InputInterface.hpp>
 
@@ -82,10 +83,9 @@ void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 
 void PanelDynamicView::panelUpdate() {
 
-	if (isFirstUpdate) {
+	//if (isFirstUpdate) {
 		viewMaskCreate();
-		isFirstUpdate = false;
-	}
+	//}
 
 	checkModeChange();
 
@@ -94,32 +94,60 @@ void PanelDynamicView::panelUpdate() {
 	staticDraw();
 	charactersDraw(level);
 	viewMaskApply();
+	isFirstUpdate = false;
 }
 
-sf::ConvexShape PanelDynamicView::viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount) {
+std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount) {
 
-	// convex shape used for the vision mask
-	sf::ConvexShape viewMaskShape;
+	// get player
+	Entity& player = EntityManager::entityGet(GameData::playerId);
+
+	GameLevel* gameLevel = GameLevelGrid::levelGet(player.levelId);
+
+	// list of points used for the vision mask
+	std::vector<sf::Vector2f> viewMaskShape;
 	if (coneSize < Mathf::TAU) {
-		viewMaskShape.setPointCount(pointsCount + 1);
-		viewMaskShape.setPoint(pointsCount, sf::Vector2f(0, 0));
+		//viewMaskShape.resize(pointsCount + 1);
+		viewMaskShape.push_back(sf::Vector2f(0, 0));
 	}
 	else {
-		viewMaskShape.setPointCount(pointsCount);
+		//viewMaskShape.resize(pointsCount);
 	}
 
-	// the angular distance between two points
-	const float pointsAngleDistanceBetween = coneSize / pointsCount;
+	// get player position
+	const sf::Vector2f playerPosition = player.entityComponentGet<EntityComponents::ComponentPosition>()->position;
+	// get player rotation
+	const float playerRotation = player.entityComponentGet<EntityComponents::ComponentRotation>()->rotation;;
+	// get cone angle
+	const float coneAngle = playerRotation - (coneSize / 2.f);
 
-	for (uint16_t i = 0; i < pointsCount; i++) {
+	// the angular difference (in radians) between two rays.
+	const float rayAngleDifference = coneSize / pointsCount;
 
-		// get the angle of this point in the view shape
-		const float pointAngle = pointsAngleDistanceBetween * float(i - (pointsCount / 2));
+	for (uint32_t curRayInd = 0; curRayInd < pointsCount; curRayInd++) {
 
-		sf::Vector2f pointPosition = sf::Vector2f(cos(pointAngle), sin(pointAngle)) * radius;
+		// the rotation (in radians) of the current ray.
+		const float rayRotation = coneAngle + (float(curRayInd) * rayAngleDifference);
+		// heading of the ray
+		const sf::Vector2f rayHeading = sf::Vector2f(cos(rayRotation), sin(rayRotation));
+		// iterate from 0.f to rayMaxDist in steps of 1.f, updating the ray each iteration
+		viewMaskShape.push_back(sf::Vector2f(cos(rayRotation), sin(rayRotation)));
+		float dist = 0.f;
+		for (; dist < radius; dist += 1.f) {
+			// calculate ray position from castPosition and heading * dist
+			sf::Vector2f rayPositionCur = playerPosition + (rayHeading * dist);
 
-		viewMaskShape.setPoint(i, pointPosition);
-	}  
+			if (!gameLevel->occlusionGrid.worldPosIsInGridFull(rayPositionCur)) break;
+
+			// if we should occlude, check if the ray's position falls on a cell in the occlusion grid which is marked as occluding, if that's the case, break
+			if (gameLevel->occlusionGrid.cellGetFromWorld(rayPositionCur)) break;
+
+
+		}
+		sf::Vector2f pointPosition = sf::Vector2f(cos(rayRotation), sin(rayRotation)) * dist;
+		viewMaskShape.push_back(pointPosition);
+	}
+
 	return viewMaskShape;
 }
 
@@ -127,22 +155,29 @@ void PanelDynamicView::viewMaskCreate() {
 
 	sf::Vector2u viewMaskSize = sf::Vector2u(2000, 2000);
 
-	sf::ConvexShape viewConeShape = viewMaskShapeCreate(1280.f, Mathf::PI / 2.f, 64);
-	// set view mask position to center of the screen rect
-	viewConeShape.setPosition(float(viewMaskSize.x / 2), float(viewMaskSize.y / 2));
-	viewConeShape.setFillColor(sf::Color::White);
+	std::vector<sf::Vector2f> viewConePoints = viewMaskShapeCreate(1280.f, Mathf::PI / 2.f, 512);
 
-	sf::ConvexShape viewSurroundingsShape = viewMaskShapeCreate(48.f, Mathf::TAU, 64);
-	// set view mask position to center of the screen rect
-	viewSurroundingsShape.setPosition(float(viewMaskSize.x / 2), float(viewMaskSize.y / 2));
-	viewSurroundingsShape.setFillColor(sf::Color::White);
+	sf::VertexArray coneVertexArray(sf::Lines, viewConePoints.size());
 
+	for (uint32_t i = 0; i < viewConePoints.size(); i++) {
+		coneVertexArray[i].position = viewConePoints[i] + sf::Vector2f(viewMaskSize / 2u);
+		coneVertexArray[i].color = sf::Color(255, 255, 255, 255);
+	}
+
+	std::vector<sf::Vector2f> viewAreaPoints = viewMaskShapeCreate(48.f, Mathf::TAU, 256);
+
+	sf::VertexArray areaVertexArray(sf::Lines, viewAreaPoints.size());
+
+	for (uint32_t i = 0; i < viewAreaPoints.size(); i++) {
+		areaVertexArray[i].position = viewAreaPoints[i] + sf::Vector2f(viewMaskSize / 2u);
+		areaVertexArray[i].color = sf::Color(255, 255, 255, 255);
+	}
 
 	viewMaskTexture.create(viewMaskSize.x, viewMaskSize.y);
 	viewMaskTexture.clear(sf::Color::Transparent);
 
-	viewMaskTexture.draw(viewConeShape);
-	viewMaskTexture.draw(viewSurroundingsShape);
+	viewMaskTexture.draw(coneVertexArray);
+	viewMaskTexture.draw(areaVertexArray);
 	viewMaskTexture.display();
 }
 
@@ -194,7 +229,7 @@ void PanelDynamicView::viewMaskApply() {
 	// set position to the player's position relative to the viewRect
 	viewMaskSprite.setPosition(playerPosition - viewRect.getPosition());
 	// set rotation to that of the player
-	viewMaskSprite.setRotation(playerRotation * 180.f / Mathf::PI);
+	//viewMaskSprite.setRotation(playerRotation * 180.f / Mathf::PI);
 
 	viewRenderTexture.draw(viewMaskSprite);
 	viewRenderTexture.display();
