@@ -6,8 +6,8 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 10000;
-uint16_t MAX_EVENT_TYPES = 4;
-uint16_t MAX_COMPONENT_TYPES = 15;
+uint16_t MAX_EVENT_TYPES = 5;
+uint16_t MAX_COMPONENT_TYPES = 20;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -43,6 +43,7 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventMove>>();
 	EventRegistry::typeRegister<EventIDs<EventRotate>>();
 	EventRegistry::typeRegister<EventIDs<EventObjectSeen>>();
+	EventRegistry::typeRegister<EventIDs<EventCollision>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -71,16 +72,27 @@ void EntityComponents::componentIDsInitialize() {
 	using ComponentRegistry = TypeIDAllocator<Component>;
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectTypeAssigner>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollidable>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMoveByInput>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotateToMouse>>();
+	// collision
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollides>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentStopOnCollision>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentPosition>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotation>>();
+	
+
+	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
+	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
+	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentOcclusionRectangles>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentOcclusionRadius>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRadius>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRectangles>>();
+
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteFlip>>();
@@ -92,8 +104,6 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
 
-	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
-	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 }
 
 #pragma endregion Components
@@ -140,7 +150,8 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, 50),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud } ),
-
+			createComponentPairFromType<ComponentCollides>(8.f),
+			createComponentPairFromType<ComponentStopOnCollision>(),
 		}
 	);
 #pragma region Wall Templates
@@ -153,9 +164,10 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Single", false, 60),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 48, 24) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 48, 24) }),
+			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -167,9 +179,10 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false, 60),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
+			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -181,10 +194,11 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60),
 			createComponentPairFromType<ComponentSpriteOrigin>(13.f, 13.f),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 24, 48), sf::FloatRect(-12, -12, 48, 24) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 24, 48), sf::FloatRect(-12, -12, 48, 24) }),
+			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -196,9 +210,10 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false, 60),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 44, 24), sf::FloatRect(-12, -32, 24, 64) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 44, 24), sf::FloatRect(-12, -32, 24, 64) }),
+			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -210,9 +225,10 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false, 60),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -12, 64, 24), sf::FloatRect(-12, -32, 24, 64) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -12, 64, 24), sf::FloatRect(-12, -32, 24, 64) }),
+			createComponentPairFromType<ComponentCollidable>(),
 		}
 		);
 #pragma endregion Wall Templates
@@ -465,6 +481,71 @@ void ComponentObjectGridInhabiterRadius::system(Entity& entity) {
 
 	positionPrev = positionComponent->position;
 }
+void ComponentObjectGridInhabiterRectangles::system(Entity& entity) {
+	// check that entity has ComponentPosition
+	if (!entity.entityComponentHas<ComponentPosition>()) {
+		ConsoleHandler::consolePrintErr("ComponentObjectGridInhabiterRectangles assigned to an entity without a ComponentPosition!");
+
+		entity.entityComponentTerminate<ComponentObjectGridInhabiterRectangles>();
+		return;
+	}
+
+
+	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+	auto* rotationComponent = entity.entityComponentGet<ComponentRotation>();
+
+	// check if positionPrev has been set yet
+	if (positionPrev == sf::Vector2f(0, 0)) {
+		positionPrev = positionComponent->position;
+	}
+
+	// note that two separate objectGrid references are used because an entity could travel to a different level.
+
+	auto& objectGridDepopulation = GameLevelGrid::levelGet(entity.levelId)->objectGrid;
+
+	for (uint16_t i = 0; i < rectangles.size(); i++) {
+		sf::FloatRect& rectangle = rectangles[i];
+
+		for (uint16_t x = 0; x < rectangle.width; x++) {
+			for (uint16_t y = 0; y < rectangle.height; y++) {
+
+				int16_t offsetX = rectangle.left + x;
+				int16_t offsetY = rectangle.top + y;
+
+				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationComponent->rotation);
+
+				// ensure positionPrev is in the grid, skip if not
+				if (!objectGridDepopulation.worldPosIsInGridFull(positionPrev.x + offsetX, positionPrev.y + offsetY)) continue;
+				// remove entity's id from grid at the offset
+				objectGridDepopulation.cellGetFromWorld(positionPrev.x + offsetX, positionPrev.y + offsetY).idRemove(entity.Id);
+			}
+		}
+	}
+
+
+	auto& objectGridPopulation = GameLevelGrid::levelGet(entity.levelId)->objectGrid;
+
+	for (uint16_t i = 0; i < rectangles.size(); i++) {
+		sf::FloatRect& rectangle = rectangles[i];
+
+		for (uint16_t x = 0; x < rectangle.width; x++) {
+			for (uint16_t y = 0; y < rectangle.height; y++) {
+
+				int16_t offsetX = rectangle.left + x;
+				int16_t offsetY = rectangle.top + y;
+
+				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationComponent->rotation);
+
+				// ensure position is in the grid, skip if not
+				if (!objectGridPopulation.worldPosIsInGridFull(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY)) continue;
+				// add entity's id to grid at the offset
+				objectGridPopulation.cellGetFromWorld(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY).idAdd(entity.Id);
+			}
+		}
+	}
+
+	positionPrev = positionComponent->position;
+}
 void ComponentObjectVision::system(Entity& entity) {
 
 
@@ -571,7 +652,7 @@ void ComponentOcclusionRadius::system(Entity& entity) {
 			// remove entity's id from grid at the offset
 			occlusionGridDepopulation.cellSetFromWorld(positionPrev.x + offsetX, positionPrev.y + offsetY, false);
 		}
-	};
+	}
 
 	auto& occlusionGridPopulation = GameLevelGrid::levelGet(entity.levelId)->occlusionGrid;
 
@@ -585,7 +666,7 @@ void ComponentOcclusionRadius::system(Entity& entity) {
 			// add entity's id to grid at the offset
 			occlusionGridPopulation.cellSetFromWorld(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY, true);
 		}
-	};
+	}
 
 	positionPrev = positionComponent->position;
 }
@@ -650,6 +731,95 @@ void ComponentOcclusionRectangles::system(Entity& entity) {
 				occlusionGridPopulation.cellSetFromWorld(positionComponent->position.x + offset.x, positionComponent->position.y + offset.y, true);
 			}
 		}
+	}
+
+	positionPrev = positionComponent->position;
+}
+void ComponentCollidable::system(Entity& entity) {
+	// mark the entity as collidable if the entity was just created
+	if (entity.entityEventHas<EventInitialize>()) {
+		GameLevel* entityLevel = GameLevelGrid::levelGet(entity.levelId);
+
+		entityLevel->entityMarkCollidable(entity.Id);
+	}
+}
+void ComponentCollides::system(Entity& entity) {
+
+	// check that entity has ComponentPosition
+	if (!entity.entityComponentHas<ComponentPosition>()) {
+		ConsoleHandler::consolePrintErr("ComponentCollides assigned to an entity without a ComponentPosition!");
+
+		entity.entityComponentTerminate<ComponentCollides>();
+		return;
+	}
+
+	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+
+	GameLevel* gameLevel = GameLevelGrid::levelGet(entity.levelId);
+
+	auto& objectGrid = gameLevel->objectGrid;
+
+	// set of EntityIds of entities we've already marked as being collided with, this is used so we don't send an EventCollision twice
+	std::set<EntityId> entitiesCollided;
+
+	for (float offsetX = -radius / 2.f; offsetX <= +radius / 2.f; offsetX += 1.f) {
+		for (float offsetY = -radius / 2.f; offsetY <= +radius / 2.f; offsetY += 1.f) {
+
+			// ensure the offset is normalized (I.E. in the circle that the radius represents)
+			if (Vector2fMath::lengthSqrd(offsetX, offsetY) > (radius * radius) / (2.f * 2.f)) continue;
+			// ensure position is in the grid, skip if not
+			if (!objectGrid.worldPosIsInGridFull(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY)) continue;
+			// get objects at the position
+			const std::set<EntityId>& entityIds = objectGrid.cellIdsGetFromWorld(positionComponent->position.x + offsetX, positionComponent->position.y + offsetY);
+
+			for (auto itr = entityIds.begin(); itr != entityIds.end(); itr++) {
+
+				EntityId entityIdCur = *itr;
+
+				// skip if we already detected a collision with the entity
+				if (entitiesCollided.contains(entityIdCur)) continue;
+
+				// skip if the entity we're checking is us
+				if (entityIdCur == entity.Id) continue;
+				// check if the entity we're checking is collidable
+				if (gameLevel->entityIsCollidable(entityIdCur)) {
+					// get colliding entity
+					Entity& collidingEntity = EntityManager::entityGet(entityIdCur);
+
+					// add collision event to colliding entity
+					EventCollision* collisionEvent = collidingEntity.entityEventAddAndGet<EventCollision>();
+					collisionEvent->colliderId = entity.Id;
+
+					// add collision event to self
+					EventCollision* collisionEventSelf = entity.entityEventAddAndGet<EventCollision>();
+					collisionEventSelf->colliderId = entityIdCur;
+
+					entitiesCollided.insert(entityIdCur);
+				}
+			}
+		}
+	}
+}
+void ComponentStopOnCollision::system(Entity& entity) {
+	// check that entity has ComponentPosition
+	if (!entity.entityComponentHas<ComponentPosition>()) {
+		ConsoleHandler::consolePrintErr("ComponentStopOnCollision assigned to an entity without a ComponentPosition!");
+
+		entity.entityComponentTerminate<ComponentStopOnCollision>();
+		return;
+	}
+
+	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
+
+	// check if positionPrev has been set yet
+	if (positionPrev == sf::Vector2f(0, 0)) {
+		positionPrev = positionComponent->position;
+	}
+
+	if (entity.entityEventHas<EventCollision>()) {
+		sf::Vector2f collisionAxis = Vector2fMath::axis(positionPrev, positionComponent->position);
+
+		positionComponent->position -= collisionAxis;
 	}
 
 	positionPrev = positionComponent->position;

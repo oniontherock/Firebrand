@@ -64,6 +64,22 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventObjectSeen());
 		};
 	};
+	struct EventCollision final : public Event {
+
+		EventCollision() {
+			clear();
+		};
+
+		EntityId colliderId;
+
+		void clear() final {
+			colliderId = UINT32_MAX;
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventCollision());
+		};
+	};
 }
 namespace EntityComponents {
 	struct ComponentMoveByInput final : public Component {
@@ -366,6 +382,31 @@ namespace EntityComponents {
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	};
+	// fills the ObjectGrid with some rectangles
+	struct ComponentObjectGridInhabiterRectangles final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentObjectGridInhabiterRectangles() {
+			hasSystem = true;
+		};
+		ComponentObjectGridInhabiterRectangles(std::vector<sf::FloatRect> _rectangles) :
+			ComponentObjectGridInhabiterRectangles()
+		{
+			rectangles = _rectangles;
+		};
+
+		std::vector<sf::FloatRect> rectangles;
+		// previous position of population, used for depopulation.
+		sf::Vector2f positionPrev;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentObjectGridInhabiterRectangles(rectangles));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
 	// gets a list of seen objects using an ObjectVision and creates an EventObjectSeen with them.
 	struct ComponentObjectVision final : public Component {
 
@@ -458,31 +499,57 @@ namespace EntityComponents {
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	};
-	//struct ComponentCollisionRadius final : public Component {
+	// marks an entity as collidable in the GameLevel
+	struct ComponentCollidable final : public Component {
 
-	//	void system(Entity& entity) final;
+		void system(Entity& entity) final;
 
-	//	ComponentCollisionRadius() {
-	//		hasSystem = true;
-	//		radius = 0;
-	//	};
-	//	ComponentCollisionRadius(float _radius) :
-	//		ComponentCollisionRadius()
-	//	{
-	//		radius = _radius;
-	//	};
+		ComponentCollidable() {
+			hasSystem = true;
+		};
 
-	//	float radius;
-	//	// previous position of population, used for depopulation.
-	//	sf::Vector2f positionPrev;
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentCollidable());
+		};
+	};
+	// checks for collisions with collidable entities and sends EventCollisions if collisions are detected
+	struct ComponentCollides final : public Component {
 
-	//	std::unique_ptr<Duplicatable> duplicate() override {
-	//		return std::unique_ptr<Duplicatable>(new ComponentCollisionRadius(radius));
-	//	};
+		void system(Entity& entity) final;
 
-	//	void save(std::ofstream& str) override;
-	//	void load(std::ifstream& str) override;
-	//};
+		ComponentCollides() {
+			hasSystem = true;
+			radius = 0.f;
+		};
+		ComponentCollides(float _radius) :
+			ComponentCollides()
+		{
+			radius = _radius;
+		};
+
+		float radius;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentCollides(radius));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	struct ComponentStopOnCollision final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentStopOnCollision() {
+			hasSystem = true;
+		};
+
+		sf::Vector2f positionPrev;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentStopOnCollision());
+		};
+	};
 }
 
 #endif

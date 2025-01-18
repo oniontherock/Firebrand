@@ -236,5 +236,17 @@ void EntityComponents::ComponentOcclusionRectangles::save(std::ofstream& str) {
 void EntityComponents::ComponentOcclusionRectangles::load(std::ifstream& str) {
 	str >> rectangles;
 }
+void EntityComponents::ComponentCollides::save(std::ofstream& str) {
+	str << radius;
+}
+void EntityComponents::ComponentCollides::load(std::ifstream& str) {
+	str >> radius;
+}
+void EntityComponents::ComponentObjectGridInhabiterRectangles::save(std::ofstream& str) {
+	str << rectangles;
+}
+void EntityComponents::ComponentObjectGridInhabiterRectangles::load(std::ifstream& str) {
+	str >> rectangles;
+}
 
 #pragma endregion

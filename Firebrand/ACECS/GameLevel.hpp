@@ -52,6 +52,10 @@ struct GameLevel : public BaseLevel {
 	const std::vector<std::set<EntityId>>& entitiesDrawableStaticGet();
 	const std::vector<std::set<EntityId>>& entitiesDrawableDynamicGet();
 
+	bool entityIsCollidable(EntityId entityId);
+	void entityMarkCollidable(EntityId entityId);
+	void entityUnmarkCollidable(EntityId entityId);
+
 private:
 	std::vector<std::set<EntityId>> entitiesDrawableStatic;
 	std::vector<std::set<EntityId>> entitiesDrawableDynamic;
@@ -60,6 +64,8 @@ private:
 	sf::FloatRect backgroundRectPrev;
 
 	std::vector<sf::Vector2f> pathPoints;
+
+	std::set<EntityId> collidableEntities;
 
 	void textureUpdateValidity(TextureGrid& texture) const;
 	void textureGridsUpdateValidity(sf::FloatRect rect);
