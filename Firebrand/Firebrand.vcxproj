@@ -258,6 +258,7 @@
   <ItemGroup>
     <Image Include="Art\Circle.png" />
     <Image Include="Art\Squad Member.png" />
+    <Image Include="Art\Structures\Doors\Door Wooden.png" />
     <Image Include="Art\Structures\Floors\Floor Debug Corner.png" />
     <Image Include="Art\Structures\Floors\Floor Debug Long.png" />
     <Image Include="Art\Structures\Floors\Floor Debug.png" />

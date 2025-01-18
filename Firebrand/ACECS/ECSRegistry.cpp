@@ -259,6 +259,22 @@ void EntityComponents::componentTemplatesInitialize() {
 		);
 #pragma endregion Floor Templates
 	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"Door Wooden",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 60),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -1, 64, 1) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 1) }),
+			createComponentPairFromType<ComponentCollidable>(),
+		}
+		);
+
+	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
 		"Test Object",

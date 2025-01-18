@@ -72,9 +72,14 @@ Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType
 			}
 #pragma endregion
 
-			if (wallGrid[x][y]) {
+			if (doorGrid[x][y]) {
+				std::pair<WallGenerator::WallType, float> wallData = WallGenerator::wallDataGetFromSurroundings(wallStates);
 
-				if (doorGrid[x][y]) continue;
+				cell.type = "Door Wooden";
+				cell.rotation = wallData.second;
+			}
+			else if (wallGrid[x][y]) {
+
 
 				// get wall data
 				std::pair<WallGenerator::WallType, float> wallData = WallGenerator::wallDataGetFromSurroundings(wallStates);
