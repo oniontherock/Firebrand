@@ -11,7 +11,7 @@ GameLevel::GameLevel() :
 	pathGenerator(PathGenerator()),
 	backgroundTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
 	pathsTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
-	occlusionGrid(levelSize.x / 1, levelSize.y / 1, 1, 1)
+	occlusionGrid(levelSize.x / 1, levelSize.y / 1, 1.f, 1.f)
 {
 	entities = std::vector<EntityId>();
 
@@ -155,7 +155,7 @@ void GameLevel::pathsGenerate() {
 }
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
-	Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), RNGf::getFullRange(0), sf::Vector2u(24, 24));
+	Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), RNGf::getFullRange(Mathf::PI), sf::Vector2u(24, 24));
 	StructureInstantiator::structureInstantiate(levelPosition, structure);
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Completed");
 }

@@ -458,6 +458,31 @@ namespace EntityComponents {
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	};
+	//struct ComponentCollisionRadius final : public Component {
+
+	//	void system(Entity& entity) final;
+
+	//	ComponentCollisionRadius() {
+	//		hasSystem = true;
+	//		radius = 0;
+	//	};
+	//	ComponentCollisionRadius(float _radius) :
+	//		ComponentCollisionRadius()
+	//	{
+	//		radius = _radius;
+	//	};
+
+	//	float radius;
+	//	// previous position of population, used for depopulation.
+	//	sf::Vector2f positionPrev;
+
+	//	std::unique_ptr<Duplicatable> duplicate() override {
+	//		return std::unique_ptr<Duplicatable>(new ComponentCollisionRadius(radius));
+	//	};
+
+	//	void save(std::ofstream& str) override;
+	//	void load(std::ifstream& str) override;
+	//};
 }
 
 #endif
