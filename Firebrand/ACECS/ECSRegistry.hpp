@@ -70,9 +70,11 @@ namespace EntityEvents {
 			clear();
 		};
 
+		sf::Vector2f collisionAxis;
 		EntityId colliderId;
 
 		void clear() final {
+			collisionAxis = sf::Vector2f(0, 0);
 			colliderId = UINT32_MAX;
 		}
 
@@ -399,6 +401,8 @@ namespace EntityComponents {
 		std::vector<sf::FloatRect> rectangles;
 		// previous position of population, used for depopulation.
 		sf::Vector2f positionPrev;
+		// previous rotation
+		float rotationPrev = 0.f;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentObjectGridInhabiterRectangles(rectangles));
@@ -491,6 +495,8 @@ namespace EntityComponents {
 		std::vector<sf::FloatRect> rectangles;
 		// previous position of population, used for depopulation.
 		sf::Vector2f positionPrev;
+		// previous rotation
+		float rotationPrev;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentOcclusionRectangles(rectangles));
@@ -529,8 +535,35 @@ namespace EntityComponents {
 
 		float radius;
 
+		sf::Vector2f positionPrev;
+
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentCollides(radius));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	// checks for collisions with collidable entities and sends EventCollisions if collisions are detected
+	struct ComponentCollisionRectangles final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentCollisionRectangles() {
+			hasSystem = true;
+		};
+		ComponentCollisionRectangles(std::vector<sf::FloatRect> _rectangles) :
+			ComponentCollisionRectangles()
+		{
+			rectangles = _rectangles;
+		};
+
+		std::vector<sf::FloatRect> rectangles;
+
+		sf::Vector2f positionPrev;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentCollisionRectangles(rectangles));
 		};
 
 		void save(std::ofstream& str) override;
@@ -548,6 +581,45 @@ namespace EntityComponents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentStopOnCollision());
+		};
+	};
+	// pushes the entity back when it collides with another entity
+	struct ComponentPushOnCollision final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentPushOnCollision() {
+			hasSystem = true;
+		};
+
+		sf::Vector2f velocity;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentPushOnCollision());
+		};
+	};
+	struct ComponentHingeOnPoint final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentHingeOnPoint() {
+			hasSystem = true;
+		};
+		ComponentHingeOnPoint(sf::Vector2f _hingeOffset) :
+			ComponentHingeOnPoint()
+		{
+			hingeOffset = _hingeOffset;
+		};
+
+		// point local to the entity to hinge around
+		sf::Vector2f hingeOffset;
+		// global position of the hinge point in the world,
+		// determined when the component first runs based off of the hingeOffset and the entity's position
+		sf::Vector2f hingePoint = sf::Vector2f(-INFINITY, -INFINITY);
+		
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentHingeOnPoint(hingeOffset));
 		};
 	};
 }

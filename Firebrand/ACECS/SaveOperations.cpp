@@ -248,5 +248,11 @@ void EntityComponents::ComponentObjectGridInhabiterRectangles::save(std::ofstrea
 void EntityComponents::ComponentObjectGridInhabiterRectangles::load(std::ifstream& str) {
 	str >> rectangles;
 }
+void EntityComponents::ComponentCollisionRectangles::save(std::ofstream& str) {
+	str << rectangles;
+}
+void EntityComponents::ComponentCollisionRectangles::load(std::ifstream& str) {
+	str >> rectangles;
+}
 
 #pragma endregion

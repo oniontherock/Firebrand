@@ -22,10 +22,10 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 
 			EntityUpdateType updateType = EntityUpdateType::Never;
 
-			//// if cell.type is a , set it's update type to frame
-			//if (std::strstr(cell.type, "Door")) {
-			//	updateType = EntityUpdateType::Frame;
-			//}
+			// if cell.type is a door, set it's update type to frame
+			if (cell.type.find("Door") != std::string::npos) {
+				updateType = EntityUpdateType::Frame;
+			}
 
 			// cellPositionLocal with the transform of the structure applied
 			sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);
