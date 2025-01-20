@@ -1,5 +1,5 @@
 ﻿#include "../ACECS/ACECS.hpp"
-#include "../Include/Game/World/Physics/Collision/GJK/GJKCollisionHandler.hpp"
+#include "../Include/Game/World/Physics/Collision/CollisionHandler.hpp"
 #include "Auxiliary/ConsoleHandler.hpp"
 #include "Graphics/WindowHolder.hpp"
 #include "Input/Input Events/InputManager.hpp"
@@ -24,12 +24,12 @@ int main() {
 	Engine::engineInitialize();
 	//Engine::engineLoad();
 
-	uint32_t frames = 0;
-	double frameTimer = 0.0;
+	//uint32_t frames = 0;
+	//double frameTimer = 0.0;
 
-	CollisionShape shapeA(CollisionPolygon{ sf::Vector2f(-128, 0), sf::Vector2f(0, -128), sf::Vector2f(128, 0) });
+	CollisionShape shapeA(CollisionPolygon{ sf::Vector2f(-64, -64), sf::Vector2f(64, -64), sf::Vector2f(64, 64), sf::Vector2f(-64, 64) });
 	shapeA.centerSet(sf::Vector2f(640.f, 360.f));
-	CollisionShape shapeB(CollisionPolygon{ sf::Vector2f(-128, 0), sf::Vector2f(0, -128), sf::Vector2f(128, 0) });
+	CollisionShape shapeB(CollisionPolygon{ sf::Vector2f(-32, 0), sf::Vector2f(64, -128), sf::Vector2f(128, 0), sf::Vector2f(12, 128) });
 	shapeB.centerSet(sf::Vector2f(640.f - 320.f, 360.f));
 
 	//run main program loop if window is open
@@ -74,14 +74,15 @@ int main() {
 		if (InputInterface::inputGetActive("Rotate Right")) {
 			shapeA.rotationAdd(Mathf::PI / 128);
 		}
+		shapeB.rotationAdd(Mathf::PI / 256);
 
 		if (inputAxis.x != 0 || inputAxis.y != 0) {
 
 			shapeA.centerAdd(moveAxis);
 		}
 
-		if (GJKCollisionHandler::collisionsCheck(shapeA, shapeB)) {
-			shapeA.centerAdd(-moveAxis);
+		if (CollisionHandler::collisionCheck(shapeA, shapeB)) {
+			shapeA.centerAdd(-CollisionHandler::collisionVectorGet(shapeA, shapeB));
 		}
 		//Engine::engineUpdate();
 

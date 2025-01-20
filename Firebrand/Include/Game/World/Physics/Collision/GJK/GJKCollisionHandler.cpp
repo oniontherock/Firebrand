@@ -1,3 +1,4 @@
+#include "../CollisionMath.hpp"
 #include "Auxiliary/Math.hpp"
 #include "Auxiliary/VectorMath.hpp"
 #include "GJKCollisionHandler.hpp"
@@ -5,17 +6,14 @@
 #define ORIGIN sf::Vector2f(0, 0)
 
 sf::Vector2f GJKCollisionHandler::direction(0, 0);
-
-sf::Vector2f GJKCollisionHandler::supportGet(CollisionShape& shapeA, CollisionShape& shapeB) {
-	return shapeA.supportPointGet(direction) - shapeB.supportPointGet(-direction);
-}
+std::vector<sf::Vector2f> GJKCollisionHandler::simplex{};
 
 void GJKCollisionHandler::directionSetToVec3(sf::Vector3f directionNew) {
 	direction.x = directionNew.x;
 	direction.y = directionNew.y;
 }
 
-bool GJKCollisionHandler::lineProcess(std::vector<sf::Vector2f>& simplex) {
+bool GJKCollisionHandler::lineProcess() {
 	sf::Vector2f B = simplex[0];
 	sf::Vector2f A = simplex[1];
 
@@ -30,7 +28,7 @@ bool GJKCollisionHandler::lineProcess(std::vector<sf::Vector2f>& simplex) {
 
 	return false;
 }
-bool GJKCollisionHandler::triangleProcess(std::vector<sf::Vector2f>& simplex) {
+bool GJKCollisionHandler::triangleProcess() {
 	sf::Vector2f C = simplex[0];
 	sf::Vector2f B = simplex[1];
 	sf::Vector2f A = simplex[2];
@@ -57,28 +55,28 @@ bool GJKCollisionHandler::triangleProcess(std::vector<sf::Vector2f>& simplex) {
 	return true;
 }
 
-bool GJKCollisionHandler::simplexProcess(std::vector<sf::Vector2f>& simplex) {
+bool GJKCollisionHandler::simplexProcess() {
 	if (simplex.size() == 2) {
-		return lineProcess(simplex);
+		return lineProcess();
 	}
-	return triangleProcess(simplex);
+	return triangleProcess();
 }
 
 bool GJKCollisionHandler::collisionsCheck(CollisionShape& shapeA, CollisionShape& shapeB) {
 
 	direction = Vector2fMath::dir(shapeA.centerGet(), shapeB.centerGet());
 
-	std::vector<sf::Vector2f> simplex = { supportGet(shapeA, shapeB) };
+	simplex = { CollisionMath::supportGet(shapeA, shapeB, direction) };
 
 	direction = Vector2fMath::dir(simplex[0], ORIGIN);
 
 	while (true) {
-		sf::Vector2f pointA = supportGet(shapeA, shapeB);
+		sf::Vector2f pointA = CollisionMath::supportGet(shapeA, shapeB, direction);
 
 		if (Vector2fMath::dot(pointA, direction) < 0.f) return false;
 
 		simplex.push_back(pointA);
-		if (simplexProcess(simplex)) {
+		if (simplexProcess()) {
 			return true;
 		}
 	}

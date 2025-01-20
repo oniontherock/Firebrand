@@ -496,7 +496,7 @@ namespace EntityComponents {
 		// previous position of population, used for depopulation.
 		sf::Vector2f positionPrev;
 		// previous rotation
-		float rotationPrev;
+		float rotationPrev = 0;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentOcclusionRectangles(rectangles));

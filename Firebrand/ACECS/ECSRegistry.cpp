@@ -151,7 +151,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
-			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, 50),
+			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, 50u),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud } ),
 			createComponentPairFromType<ComponentCollides>(8.f),
 			//createComponentPairFromType<ComponentCollidable>(),
@@ -534,8 +534,8 @@ void ComponentObjectGridInhabiterRectangles::system(Entity& entity) {
 		for (uint16_t x = 0; x < rectangle.width; x++) {
 			for (uint16_t y = 0; y < rectangle.height; y++) {
 
-				int16_t offsetX = rectangle.left + x;
-				int16_t offsetY = rectangle.top + y;
+				int16_t offsetX = int16_t(rectangle.left + x);
+				int16_t offsetY = int16_t(rectangle.top + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationPrev);
 
@@ -553,8 +553,8 @@ void ComponentObjectGridInhabiterRectangles::system(Entity& entity) {
 		for (uint16_t x = 0; x < rectangle.width; x++) {
 			for (uint16_t y = 0; y < rectangle.height; y++) {
 
-				int16_t offsetX = rectangle.left + x;
-				int16_t offsetY = rectangle.top + y;
+				int16_t offsetX = int16_t(rectangle.left + x);
+				int16_t offsetY = int16_t(rectangle.top + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotation);
 
@@ -720,8 +720,8 @@ void ComponentOcclusionRectangles::system(Entity& entity) {
 		for (uint16_t x = 0; x < rectangle.width; x++) {
 			for (uint16_t y = 0; y < rectangle.height; y++) {
 
-				int16_t offsetX = rectangle.left + x;
-				int16_t offsetY = rectangle.top + y;
+				int16_t offsetX = int16_t(rectangle.left + x);
+				int16_t offsetY = int16_t(rectangle.top + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationPrev);
 
@@ -739,8 +739,8 @@ void ComponentOcclusionRectangles::system(Entity& entity) {
 		for (uint16_t x = 0; x < rectangle.width; x++) {
 			for (uint16_t y = 0; y < rectangle.height; y++) {
 
-				int16_t offsetX = rectangle.left + x;
-				int16_t offsetY = rectangle.top + y;
+				int16_t offsetX = int16_t(rectangle.left + x);
+				int16_t offsetY = int16_t(rectangle.top + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotation);
 
@@ -855,8 +855,8 @@ void ComponentCollisionRectangles::system(Entity& entity) {
 		for (uint16_t x = 0; x < rectangle.width; x++) {
 			for (uint16_t y = 0; y < rectangle.height; y++) {
 
-				int16_t offsetX = rectangle.left + x;
-				int16_t offsetY = rectangle.top + y;
+				int16_t offsetX = int16_t(rectangle.left + x);
+				int16_t offsetY = int16_t(rectangle.top + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotation);
 
@@ -935,8 +935,6 @@ void ComponentPushOnCollision::system(Entity& entity) {
 		entity.entityComponentTerminate<ComponentPushOnCollision>();
 		return;
 	}
-
-	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
 
 	if (entity.entityEventHas<EventCollision>()) {
 

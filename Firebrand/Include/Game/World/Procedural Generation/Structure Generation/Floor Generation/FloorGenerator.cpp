@@ -1,14 +1,14 @@
 #include "FloorGenerator.hpp"
 #include "Auxiliary/Math.hpp"
 
-void FloorGenerator::floorMarkHorizontal(RoomTypeGrid& roomTypeGrid, FloorGrid& floorGrid, const sf::Vector2u structureSize, sf::Vector2u cell, std::string leftType, std::string rightType) {
+void FloorGenerator::floorMarkHorizontal(FloorGrid& floorGrid, sf::Vector2u cell, std::string leftType, std::string rightType) {
 	floorGrid.cellGet(cell.x, cell.y) = leftType;
 	floorGrid.cellGet(cell.x, cell.y + 1) = leftType;
 
 	floorGrid.cellGet(cell.x + 1, cell.y) = rightType;
 	floorGrid.cellGet(cell.x + 1, cell.y + 1) = rightType;
 }
-void FloorGenerator::floorMarkVertical(RoomTypeGrid& roomTypeGrid, FloorGrid& floorGrid, const sf::Vector2u structureSize, sf::Vector2u cell, std::string upType, std::string downType) {
+void FloorGenerator::floorMarkVertical(FloorGrid& floorGrid, sf::Vector2u cell, std::string upType, std::string downType) {
 	floorGrid.cellGet(cell.x, cell.y) = upType;
 	floorGrid.cellGet(cell.x + 1, cell.y) = upType;
 
@@ -30,7 +30,7 @@ FloorGrid FloorGenerator::floorsGenerate(RoomTypeGrid& roomTypeGrid, const sf::V
 		for (uint16_t y = 0; y < floorGridSize.y; y++) {
 
 			// floor cell coordinates converted to coordinates as a structure cell
-			sf::Vector2u structureCellPos = sf::Vector2u(trunc(x / 2u), trunc(y / 2u));
+			sf::Vector2u structureCellPos = sf::Vector2u(uint32_t(trunc(x / 2u)), uint32_t(trunc(y / 2u)));
 
 			RoomType roomType = roomTypeGrid.cellGet(structureCellPos).type;
 
@@ -57,7 +57,7 @@ FloorGrid FloorGenerator::floorsGenerate(RoomTypeGrid& roomTypeGrid, const sf::V
 					if (!floorGrid.cellPosIsInGrid(offsettedX, offsettedY)) continue;
 
 					// get neighbor's position as a structureCell
-					sf::Vector2u neighborStructureCellPos = sf::Vector2u(trunc(offsettedX / 2u), trunc(offsettedY / 2u));
+					sf::Vector2u neighborStructureCellPos = sf::Vector2u(uint32_t(trunc(offsettedX / 2u)), uint32_t(trunc(offsettedY / 2u)));
 					// if the neighbor's structure cell pos is the same as ours, skip
 					if (structureCellPos == neighborStructureCellPos) continue;
 
@@ -94,7 +94,7 @@ FloorGrid FloorGenerator::floorsGenerate(RoomTypeGrid& roomTypeGrid, const sf::V
 					if (!floorGrid.cellPosIsInGrid(offsettedX, offsettedY)) continue;
 
 					// get neighbor's position as a structureCell
-					sf::Vector2u neighborStructureCellPos = sf::Vector2u(trunc(offsettedX / 2u), trunc(offsettedY / 2u));
+					sf::Vector2u neighborStructureCellPos = sf::Vector2u(uint32_t(trunc(offsettedX / 2u)), uint32_t(trunc(offsettedY / 2u)));
 					// if the neighbor's structure cell pos is the same as ours, skip
 					if (structureCellPos == neighborStructureCellPos) continue;
 

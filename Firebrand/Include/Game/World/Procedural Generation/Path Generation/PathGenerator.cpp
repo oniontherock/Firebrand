@@ -217,17 +217,13 @@ void PathGenerator::pointGenerate(PathPoint* point, const PathPoint* pointEnd, u
 	}
 }
 void PathGenerator::pathGenerate(sf::Vector2f pointStartPosition, sf::Vector2f pointEndPosition) {
-	int16_t breaker = 1000;
-	//while (pathPoints.size() < 15 && (--breaker > 0)) {
-		//std::cout << pathPoints.size() << " " << breaker << "\n";
-		pathPoints.clear();
-		connections.clear();
+	pathPoints.clear();
+	connections.clear();
 
-		PathPoint* pointStart = pointCreate(pointStartPosition);
-		PathPoint* pointEnd = pointCreate(pointEndPosition);
+	PathPoint* pointStart = pointCreate(pointStartPosition);
+	PathPoint* pointEnd = pointCreate(pointEndPosition);
 
-		pointGenerate(pointStart, pointEnd, 0, 12);
-	//}
+	pointGenerate(pointStart, pointEnd, 0, 12);
 }
 
 const std::vector<PathPoint*>& PathGenerator::pathGet() {

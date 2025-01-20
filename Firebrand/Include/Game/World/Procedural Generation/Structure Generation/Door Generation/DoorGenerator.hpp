@@ -15,7 +15,7 @@ namespace DoorGenerator {
 	typedef std::vector<DoorGrid1D> DoorGrid2D;
 
 	void exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, const sf::Vector2u structureSize, const uint16_t desiredDoorCount);
-	void roomDoorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector);
+	void roomDoorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, RoomRectVector& roomRectsVector);
 
 	DoorGrid2D doorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector);
 };

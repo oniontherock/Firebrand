@@ -5,7 +5,7 @@
 #include "DoorGenerator.hpp"
 #include <queue>
 
-void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, const sf::Vector2u structureSize, RoomRectVector& roomRectsVector) {
+void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGrid2D& wallSectionGrid, RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, RoomRectVector& roomRectsVector) {
 
 	// iterate over all roomRects
 	for (RoomRect& roomRectCur : roomRectsVector) {
@@ -166,8 +166,8 @@ void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D
 	std::cout << minDist << " " << minDist * minDist << "\n";
 
 	// iterate over possibleConnectionPoints and remove any points that are too close on one axis
-	for (int16_t i = possibleConnectionPoints.size() - 1; i >= 0; i--) {
-		for (int16_t j = possibleConnectionPoints.size() - 1; j >= 0; j--) {
+	for (int16_t i = int16_t(possibleConnectionPoints.size() - 1); i >= 0; i--) {
+		for (int16_t j = int16_t(possibleConnectionPoints.size() - 1); j >= 0; j--) {
 
 			// skip if i equals j
 			if (i == j) continue;
@@ -185,7 +185,7 @@ void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D
 
 	for (uint16_t i = 0; i < desiredDoorCount; i++) {
 		
-		uint32_t pointInd = RNGu32::getUnder(possibleConnectionPoints.size());
+		uint32_t pointInd = RNGu32::getUnder(uint32_t(possibleConnectionPoints.size()));
 
 		sf::Vector2u doorPos = possibleConnectionPoints[pointInd];
 
@@ -199,7 +199,7 @@ DoorGenerator::DoorGrid2D DoorGenerator::doorsGenerate(const WallSectionGenerato
 
 	DoorGrid2D doorGrid = DoorGrid2D(structureSize.x, DoorGrid1D(structureSize.y, false));
 
-	roomDoorsGenerate(wallSectionGrid, roomTypeGrid, doorGrid, structureSize, roomRectsVector);
+	roomDoorsGenerate(wallSectionGrid, roomTypeGrid, doorGrid, roomRectsVector);
 	exteriorDoorsGenerate(roomTypeGrid, doorGrid, structureSize, RNGu16::getRange(1, 4));
 
 	return doorGrid;

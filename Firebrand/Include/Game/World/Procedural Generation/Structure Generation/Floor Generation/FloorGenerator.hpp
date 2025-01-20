@@ -16,8 +16,8 @@ struct FloorGenerator {
 	static FloorGrid floorsGenerate(RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize);
 
 private:
-	static void floorMarkHorizontal(RoomTypeGrid& roomTypeGrid, FloorGrid& floorGrid, const sf::Vector2u structureSize, sf::Vector2u cell, std::string leftType, std::string rightType);
-	static void floorMarkVertical(RoomTypeGrid& roomTypeGrid, FloorGrid& floorGrid, const sf::Vector2u structureSize, sf::Vector2u cell, std::string upType, std::string downType);
+	static void floorMarkHorizontal(FloorGrid& floorGrid, sf::Vector2u cell, std::string leftType, std::string rightType);
+	static void floorMarkVertical(FloorGrid& floorGrid, sf::Vector2u cell, std::string upType, std::string downType);
 };
 
 

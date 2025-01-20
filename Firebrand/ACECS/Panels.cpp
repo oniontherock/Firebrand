@@ -223,13 +223,9 @@ void PanelDynamicView::viewMaskApply() {
 	Entity& player = EntityManager::entityGet(GameData::playerId);
 	// get player position
 	sf::Vector2f playerPosition = player.entityComponentGet<EntityComponents::ComponentPosition>()->position;
-	// get player rotation
-	float playerRotation = player.entityComponentGet<EntityComponents::ComponentRotation>()->rotation;
 
 	// set position to the player's position relative to the viewRect
 	viewMaskSprite.setPosition(playerPosition - viewRect.getPosition());
-	// set rotation to that of the player
-	//viewMaskSprite.setRotation(playerRotation * 180.f / Mathf::PI);
 
 	viewRenderTexture.draw(viewMaskSprite);
 	viewRenderTexture.display();
