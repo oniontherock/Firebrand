@@ -160,6 +160,8 @@
     <ClCompile Include="Include\Game\World\Objects\Object Grid\ObjectGrid.cpp" />
     <ClCompile Include="Include\Game\World\Objects\ObjectRegistry.cpp" />
     <ClCompile Include="Include\Game\World\Physics\Collision\Collision Grid\CollisionGrid.cpp" />
+    <ClCompile Include="Include\Game\World\Physics\Collision\GJK\CollisionShape.cpp" />
+    <ClCompile Include="Include\Game\World\Physics\Collision\GJK\GJKCollisionHandler.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.cpp" />
@@ -229,6 +231,8 @@
     <ClInclude Include="Include\Game\World\Objects\ObjectRegistry.hpp" />
     <ClInclude Include="Include\Game\World\Objects\ObjectTypes.hpp" />
     <ClInclude Include="Include\Game\World\Physics\Collision\Collision Grid\CollisionGrid.hpp" />
+    <ClInclude Include="Include\Game\World\Physics\Collision\GJK\CollisionShape.hpp" />
+    <ClInclude Include="Include\Game\World\Physics\Collision\GJK\GJKCollisionHandler.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.hpp" />

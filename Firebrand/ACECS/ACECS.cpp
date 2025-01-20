@@ -21,6 +21,9 @@ void Engine::inputsRegister() {
 	InputInterface::inputRegister("Move Left", KeySet{ KeyEvent("A", Held), KeyEvent("Left", Held) }, InputKeyLogic::Or);
 	InputInterface::inputRegister("Move Down", KeySet{ KeyEvent("S", Held), KeyEvent("Down", Held) }, InputKeyLogic::Or);
 
+	InputInterface::inputRegister("Rotate Left", KeySet{ KeyEvent("Q", Held) }, InputKeyLogic::Or);
+	InputInterface::inputRegister("Rotate Right", KeySet{ KeyEvent("E", Held) }, InputKeyLogic::Or);
+
 	InputInterface::inputRegister("Toggle ObjectGrid Rendering", KeySet{ KeyEvent("Numpad1", Pressed) }, InputKeyLogic::Or);
 	InputInterface::inputRegister("Toggle Paths Rendering", KeySet{ KeyEvent("Numpad2", Pressed) }, InputKeyLogic::Or);
 	InputInterface::inputRegister("Toggle Timescale", KeySet{ KeyEvent("Numpad3", Pressed) }, InputKeyLogic::Or);
