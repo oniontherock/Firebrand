@@ -3,6 +3,9 @@
 #include "queue"
 #include <Auxiliary/ConsoleHandler.hpp>
 
+CollisionShape::CollisionShape() {
+}
+
 CollisionShape::CollisionShape(CollisionPolygon _vertices) {
 	if (_vertices.size() <= 2) {
 		ConsoleHandler::consolePrintErr("CollisionShape created with less than 3 vertices!");

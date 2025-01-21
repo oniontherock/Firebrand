@@ -6,6 +6,7 @@
 typedef std::vector<sf::Vector2f> CollisionPolygon;
 
 struct CollisionShape {
+	CollisionShape();
 	CollisionShape(CollisionPolygon _vertices);
 
 	// list of points that make up the shape relative to center

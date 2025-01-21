@@ -3,6 +3,8 @@
 
 #include "../ACECS/Panels.hpp"
 #include "../Include/Game/RayCasting/Object Vision/ObjectVision.hpp"
+#include "../Include/Game/World/Physics/Collision/CollisionHandler.hpp"
+#include "../Include/Game/World/Physics/Collision/CollisionShape.hpp"
 #include "ECS.hpp"
 #include "SFML/Graphics.hpp"
 #include <Audio/AudioStore.hpp>
@@ -70,12 +72,17 @@ namespace EntityEvents {
 			clear();
 		};
 
+		// axis of collision
 		sf::Vector2f collisionAxis;
+		// id of the collider
 		EntityId colliderId;
+		// mass of the collider
+		float colliderMass;
 
 		void clear() final {
 			collisionAxis = sf::Vector2f(0, 0);
 			colliderId = UINT32_MAX;
+			colliderMass = 10.f;
 		}
 
 		std::unique_ptr<Duplicatable> duplicate() override {
@@ -505,6 +512,25 @@ namespace EntityComponents {
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	};
+	// gives an entity a mass, mass affects which object gets pushed more in a physics context
+	struct ComponentMass final : public Component {
+
+		ComponentMass() {
+			hasSystem = false;
+		};
+		ComponentMass(float _mass) :
+			ComponentMass()
+		{
+			mass = _mass;
+		};
+
+		// mass for this object, affects the 
+		float mass = 10.f;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentMass(mass));
+		};
+	};
 	// marks an entity as collidable in the GameLevel
 	struct ComponentCollidable final : public Component {
 
@@ -519,85 +545,133 @@ namespace EntityComponents {
 		};
 	};
 	// checks for collisions with collidable entities and sends EventCollisions if collisions are detected
-	struct ComponentCollides final : public Component {
+	struct ComponentCollisionShape final : public Component {
 
 		void system(Entity& entity) final;
 
-		ComponentCollides() {
+		ComponentCollisionShape() {
 			hasSystem = true;
-			radius = 0.f;
 		};
-		ComponentCollides(float _radius) :
-			ComponentCollides()
+		ComponentCollisionShape(CollisionShape _shape) :
+			ComponentCollisionShape()
 		{
-			radius = _radius;
+			shape = _shape;
+
+			float minX = 0.f;
+			float minY = 0.f;
+			float maxX = 0.f;
+			float maxY = 0.f;
+
+
+			for (uint16_t i = 0; i < shape.vertices.size(); i++) {
+				
+				const sf::Vector2f& vertex = shape.vertices[i];
+
+				// create bounding rect from the vertices
+				if (vertex.x < minX) minX = vertex.x;
+				else if ((vertex.x + 1) > maxX) maxX = (vertex.x + 1);
+				if (vertex.y < minY) minY = vertex.y;
+				else if ((vertex.y + 1) > maxY) maxY = (vertex.y + 1);
+			}
+
+			shapeBoundingRect.left = minX;
+			shapeBoundingRect.top = minY;
+
+			shapeBoundingRect.width = maxX - minX;
+			shapeBoundingRect.height = maxY - minY;
 		};
 
-		float radius;
-
-		sf::Vector2f positionPrev;
+		CollisionShape shape;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentCollides(radius));
+			return std::unique_ptr<Duplicatable>(new ComponentCollisionShape(shape));
 		};
 
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
+	private:
+		// bounding rect of shape, used for determine where to check for objects we could collide with
+		sf::FloatRect shapeBoundingRect;
 	};
-	// checks for collisions with collidable entities and sends EventCollisions if collisions are detected
-	struct ComponentCollisionRectangles final : public Component {
+	// basically the same as ComponentCollisionShape but can have multiple shapes
+	struct ComponentCollisionShapeMulti final : public Component {
 
 		void system(Entity& entity) final;
 
-		ComponentCollisionRectangles() {
+		ComponentCollisionShapeMulti() {
 			hasSystem = true;
 		};
-		ComponentCollisionRectangles(std::vector<sf::FloatRect> _rectangles) :
-			ComponentCollisionRectangles()
+		ComponentCollisionShapeMulti(std::vector<CollisionShape> _shapes) :
+			ComponentCollisionShapeMulti()
 		{
-			rectangles = _rectangles;
+			shapes = _shapes;
+
+			float minX = 0.f;
+			float minY = 0.f;
+			float maxX = 0.f;
+			float maxY = 0.f;
+
+			for (CollisionShape& shape : shapes) {
+
+				for (uint16_t i = 0; i < shape.vertices.size(); i++) {
+
+					const sf::Vector2f& vertex = shape.vertices[i];
+
+					// create bounding rect from the vertices
+					if (vertex.x < minX) minX = vertex.x;
+					else if ((vertex.x + 1) > maxX) maxX = (vertex.x + 1);
+					if (vertex.y < minY) minY = vertex.y;
+					else if ((vertex.y + 1) > maxY) maxY = (vertex.y + 1);
+				}
+
+				shapeBoundingRect.left = minX;
+				shapeBoundingRect.top = minY;
+
+				shapeBoundingRect.width = maxX - minX;
+				shapeBoundingRect.height = maxY - minY;
+			}
 		};
 
-		std::vector<sf::FloatRect> rectangles;
-
-		sf::Vector2f positionPrev;
+		std::vector<CollisionShape> shapes;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentCollisionRectangles(rectangles));
+			return std::unique_ptr<Duplicatable>(new ComponentCollisionShapeMulti(shapes));
 		};
 
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
+	private:
+		// bounding rect of shape, used for determine where to check for objects we could collide with
+		sf::FloatRect shapeBoundingRect;
 	};
-	struct ComponentStopOnCollision final : public Component {
+	// if this entity collides with another collidable object, it moves itself 
+	struct ComponentCollisionResponse final : public Component {
 
 		void system(Entity& entity) final;
 
-		ComponentStopOnCollision() {
+		ComponentCollisionResponse() {
 			hasSystem = true;
 		};
 
-		sf::Vector2f positionPrev;
-
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentStopOnCollision());
+			return std::unique_ptr<Duplicatable>(new ComponentCollisionResponse());
 		};
 	};
-	// pushes the entity back when it collides with another entity
-	struct ComponentPushOnCollision final : public Component {
+	//// pushes the entity back when it collides with another entity
+	//struct ComponentPushOnCollision final : public Component {
 
-		void system(Entity& entity) final;
+	//	void system(Entity& entity) final;
 
-		ComponentPushOnCollision() {
-			hasSystem = true;
-		};
+	//	ComponentPushOnCollision() {
+	//		hasSystem = true;
+	//	};
 
-		sf::Vector2f velocity;
+	//	sf::Vector2f velocity;
 
-		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentPushOnCollision());
-		};
-	};
+	//	std::unique_ptr<Duplicatable> duplicate() override {
+	//		return std::unique_ptr<Duplicatable>(new ComponentPushOnCollision());
+	//	};
+	//};
 	struct ComponentHingeOnPoint final : public Component {
 
 		void system(Entity& entity) final;

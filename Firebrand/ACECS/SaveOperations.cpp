@@ -236,23 +236,27 @@ void EntityComponents::ComponentOcclusionRectangles::save(std::ofstream& str) {
 void EntityComponents::ComponentOcclusionRectangles::load(std::ifstream& str) {
 	str >> rectangles;
 }
-void EntityComponents::ComponentCollides::save(std::ofstream& str) {
-	str << radius;
-}
-void EntityComponents::ComponentCollides::load(std::ifstream& str) {
-	str >> radius;
-}
 void EntityComponents::ComponentObjectGridInhabiterRectangles::save(std::ofstream& str) {
 	str << rectangles;
 }
 void EntityComponents::ComponentObjectGridInhabiterRectangles::load(std::ifstream& str) {
 	str >> rectangles;
 }
-void EntityComponents::ComponentCollisionRectangles::save(std::ofstream& str) {
-	str << rectangles;
+void EntityComponents::ComponentCollisionShape::save(std::ofstream& str) {
+	str << shape;
+	str << shapeBoundingRect;
 }
-void EntityComponents::ComponentCollisionRectangles::load(std::ifstream& str) {
-	str >> rectangles;
+void EntityComponents::ComponentCollisionShape::load(std::ifstream& str) {
+	str >> shape;
+	str >> shapeBoundingRect;
+}
+void EntityComponents::ComponentCollisionShapeMulti::save(std::ofstream& str) {
+	str << shapes;
+	str << shapeBoundingRect;
+}
+void EntityComponents::ComponentCollisionShapeMulti::load(std::ifstream& str) {
+	str >> shapes;
+	str >> shapeBoundingRect;
 }
 
 #pragma endregion

@@ -67,6 +67,7 @@ struct PanelHud : public Panel {
 		Normal,
 		PathsRender,
 		ObjectsRender,
+		CollisionShapesRender,
 	};
 
 	Modes mode = Normal;

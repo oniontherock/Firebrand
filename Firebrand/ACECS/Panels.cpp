@@ -244,7 +244,7 @@ void PanelHud::panelUpdate() {
 
 	GameLevel* level = GameLevelGrid::levelGet(EntityManager::entityGet(GameData::playerId).levelId);
 
-	if (mode == Normal || mode == ObjectsRender || mode == PathsRender) {
+	if (mode == Normal || mode == ObjectsRender || mode == PathsRender || mode == CollisionShapesRender) {
 	}
 	if (mode == ObjectsRender) {
 		ObjectGrid& objectGrid = level->objectGrid;
@@ -271,6 +271,69 @@ void PanelHud::panelUpdate() {
 		objectDraw(pathsSprite);
 		AStarPathDrawer::pathsTextureReset();
 	}
+	if (mode == CollisionShapesRender) {
+
+		for (uint16_t i = 0; i < level->entities.size(); i++) {
+			Entity& entity = EntityManager::entityGet(level->entities[i]);
+
+			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
+				auto* componentCollisionShape = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
+				sf::ConvexShape convexShape;
+				convexShape.setPointCount(componentCollisionShape->shape.vertices.size());
+				for (uint16_t i = 0; i < componentCollisionShape->shape.vertices.size(); i++) {
+					convexShape.setPoint(i, componentCollisionShape->shape.vertices[i]);
+				}
+				convexShape.setFillColor(sf::Color(255, 0, 0, 127));
+
+				objectDraw(convexShape);
+			}
+			else if (entity.entityComponentHas<EntityComponents::ComponentCollisionShapeMulti>()) {
+				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShapeMulti>();
+
+				for (CollisionShape& shape : componentCollisionShapeMulti->shapes) {
+
+					sf::ConvexShape convexShape;
+					convexShape.setPointCount(shape.vertices.size());
+					for (uint16_t i = 0; i < shape.vertices.size(); i++) {
+						convexShape.setPoint(i, shape.vertices[i]);
+					}
+					convexShape.setFillColor(sf::Color(255, 0, 0, 127));
+
+					objectDraw(convexShape);
+				}
+			}
+		}
+		for (uint16_t i = 0; i < level->entitiesNoUpdate.size(); i++) {
+			Entity& entity = EntityManager::entityGet(level->entitiesNoUpdate[i]);
+
+			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
+				auto* componentCollisionShape = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
+				sf::ConvexShape convexShape;
+				convexShape.setPointCount(componentCollisionShape->shape.vertices.size());
+				for (uint16_t i = 0; i < componentCollisionShape->shape.vertices.size(); i++) {
+					convexShape.setPoint(i, componentCollisionShape->shape.vertices[i]);
+				}
+				convexShape.setFillColor(sf::Color(255, 0, 0, 127));
+
+				objectDraw(convexShape);
+			}
+			else if (entity.entityComponentHas<EntityComponents::ComponentCollisionShapeMulti>()) {
+				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShapeMulti>();
+				
+				for (CollisionShape& shape : componentCollisionShapeMulti->shapes) {
+
+					sf::ConvexShape convexShape;
+					convexShape.setPointCount(shape.vertices.size());
+					for (uint16_t i = 0; i < shape.vertices.size(); i++) {
+						convexShape.setPoint(i, shape.vertices[i]);
+					}
+					convexShape.setFillColor(sf::Color(255, 0, 0, 127));
+
+					objectDraw(convexShape);
+				}
+			}
+		}
+	}
 }
 void PanelHud::checkModeChange() {
 	if (InputInterface::inputGetActive("Toggle ObjectGrid Rendering")) {
@@ -284,6 +347,14 @@ void PanelHud::checkModeChange() {
 	if (InputInterface::inputGetActive("Toggle Paths Rendering")) {
 		if (mode != PathsRender) {
 			mode = PathsRender;
+		}
+		else {
+			mode = Normal;
+		}
+	}
+	if (InputInterface::inputGetActive("Toggle Collision Shapes Draw")) {
+		if (mode != CollisionShapesRender) {
+			mode = CollisionShapesRender;
 		}
 		else {
 			mode = Normal;
