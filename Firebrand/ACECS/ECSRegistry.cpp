@@ -317,10 +317,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollider>(),
 			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
-			sf::Vector2f(-24, -1), sf::Vector2f(24, -1), sf::Vector2f(24, 1), sf::Vector2f(-24, 1)
+			sf::Vector2f(-24, -4), sf::Vector2f(24, -4), sf::Vector2f(24, 4), sf::Vector2f(-24, 4)
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMass>(90.f),
+			createComponentPairFromType<ComponentMass>(50.f),
 			createComponentPairFromType<ComponentHingeOnPoint>(sf::Vector2f(-32, 0)),
 		}
 		);
@@ -866,6 +866,7 @@ void ComponentHingeOnPoint::system(Entity& entity) {
 	hingePointGlobal = position + hingeOffsetRotated;
 
 	entity.entityEventAddAndGet<EventMove>()->moveAxis = Vector2fMath::axis(hingePointGlobal, hingePoint);
+
 }
 void ComponentCollisionResponse::system(Entity& entity) {
 

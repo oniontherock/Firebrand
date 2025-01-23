@@ -62,82 +62,71 @@ bool CollisionProcessor::Collider::operator< (const Collider& other) {
 
 void CollisionProcessor::collisionsProcess() {
 
-	constexpr uint16_t substeps = 8;
+	for (Collider& collider : colliders) {
 
-	for (uint16_t substep = 0; substep < substeps; substep++) {
+		std::vector<Collider*> colliderPossibleCollidables;
 
-		std::unordered_map<EntityId, std::set<EntityId>> collisionExclusions;
+		for (Collider& collidable : collidables) {
+			// skip if i equals j
+			if (collider.entityId == collidable.entityId) continue;
 
-		for (Collider& collider : colliders) {
+			if (collider.shapes.size() <= 0 || collidable.shapes.size() <= 0) continue;
 
-			std::vector<Collider*> colliderPossibleCollidables;
+			// this isn't an amazing way of doing this, because it just assumes that every shape in a Collider has the same center,
+			// but it's really quick this way, and i think it'll be fine so i'm leaving it.
+			float centersDistSqrd = Vector2fMath::distSqrd(collider.shapes[0]->centerGet(), collidable.shapes[0]->centerGet());
+			// get the maximum distance that the two colliders can be away from each other while still colliding
+			float shapesVertexMaxDist = collider.shapesVertexMaxDist + collidable.shapesVertexMaxDist;
 
-			for (Collider& collidable : collidables) {
-				// skip if i equals j
-				if (collider.entityId == collidable.entityId) continue;
+			// skip if the shapes are farther than the farthest possible distance they can be while still colliding
+			if (centersDistSqrd > (shapesVertexMaxDist * shapesVertexMaxDist)) continue;
 
-				if (collisionExclusions[collider.entityId].contains(collidable.entityId)) continue;
+			for (CollisionShape* shapeCur : collider.shapes) {
+				for (CollisionShape* shapeOtherCur : collidable.shapes) {
 
-				if (collider.shapes.size() <= 0 || collidable.shapes.size() <= 0) continue;
+					if (!CollisionHandler::collisionCheck(*shapeCur, *shapeOtherCur)) continue;
 
-				// this isn't an amazing way of doing this, because it just assumes that every shape in a Collider has the same center,
-				// but it's really quick this way, and i think it'll be fine so i'm leaving it.
-				float centersDistSqrd = Vector2fMath::distSqrd(collider.shapes[0]->centerGet(), collidable.shapes[0]->centerGet());
-				// get the maximum distance that the two colliders can be away from each other while still colliding
-				float shapesVertexMaxDist = collider.shapesVertexMaxDist + collidable.shapesVertexMaxDist;
+					sf::Vector2f collisionAxis = CollisionHandler::collisionVectorGet(*shapeCur, *shapeOtherCur);
 
-				// skip if the shapes are farther than the farthest possible distance they can be while still colliding
-				if (centersDistSqrd > (shapesVertexMaxDist * shapesVertexMaxDist)) continue;
+					//float massRatio = 
+					Entity& entityI = EntityManager::entityGet(collider.entityId);
+					Entity& entityJ = EntityManager::entityGet(collidable.entityId);
 
-				for (CollisionShape* shapeCur : collider.shapes) {
-					for (CollisionShape* shapeOtherCur : collidable.shapes) {
+					float massI = 1000000.f;
+					float massJ = 1000000.f;
 
-						if (!CollisionHandler::collisionCheck(*shapeCur, *shapeOtherCur)) continue;
-
-						sf::Vector2f collisionAxis = CollisionHandler::collisionVectorGet(*shapeCur, *shapeOtherCur) / float(substeps);
-
-						//float massRatio = 
-						Entity& entityI = EntityManager::entityGet(collider.entityId);
-						Entity& entityJ = EntityManager::entityGet(collidable.entityId);
-
-						float massI = 1000000.f;
-						float massJ = 1000000.f;
-
-						if (entityI.entityComponentHas<EntityComponents::ComponentMass>()) {
-							massI = entityI.entityComponentGet<EntityComponents::ComponentMass>()->mass;
-						}
-						if (entityJ.entityComponentHas<EntityComponents::ComponentMass>()) {
-							massJ = entityJ.entityComponentGet<EntityComponents::ComponentMass>()->mass;
-						}
-
-						bool iHigherMass = massI > massJ;
-
-						float massRatio = iHigherMass ? (massI / massJ) : (massJ / massI);
-
-						float movementRatio = 0.5f / massRatio;
-
-						float movementAmountI = iHigherMass ? (movementRatio) : (1.f - movementRatio);
-						float movementAmountJ = iHigherMass ? (1.f - movementRatio) : (movementRatio);
-
-						auto* eventCollisionI = entityI.entityEventAddAndGet<EntityEvents::EventCollision>();
-						eventCollisionI->colliderId = collidable.entityId;
-						eventCollisionI->collisionAxis = (-collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountI;
-
-						auto* eventCollisionJ = entityJ.entityEventAddAndGet<EntityEvents::EventCollision>();
-						eventCollisionJ->colliderId = collider.entityId;
-						eventCollisionJ->collisionAxis = (collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountJ;
-
-						if (entityI.entityComponentHas<EntityComponents::ComponentCollisionResponse>()) entityI.entityComponentGet<EntityComponents::ComponentCollisionResponse>()->system(entityI);
-						if (entityJ.entityComponentHas<EntityComponents::ComponentCollisionResponse>()) entityJ.entityComponentGet<EntityComponents::ComponentCollisionResponse>()->system(entityJ);
-
-						entityI.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityI);
-						entityJ.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityJ);
-
-						entityI.entityComponentGet<EntityComponents::ComponentCollisionShape>()->system(entityI);
-						entityJ.entityComponentGet<EntityComponents::ComponentCollisionShape>()->system(entityJ);
-
-						collisionExclusions[collidable.entityId].insert(collider.entityId);
+					if (entityI.entityComponentHas<EntityComponents::ComponentMass>()) {
+						massI = entityI.entityComponentGet<EntityComponents::ComponentMass>()->mass;
 					}
+					if (entityJ.entityComponentHas<EntityComponents::ComponentMass>()) {
+						massJ = entityJ.entityComponentGet<EntityComponents::ComponentMass>()->mass;
+					}
+
+					bool iHigherMass = massI > massJ;
+
+					float massRatio = iHigherMass ? (massI / massJ) : (massJ / massI);
+
+					float movementRatio = 0.5f / massRatio;
+
+					float movementAmountI = iHigherMass ? (movementRatio) : (1.f - movementRatio);
+					float movementAmountJ = iHigherMass ? (1.f - movementRatio) : (movementRatio);
+
+					auto* eventCollisionI = entityI.entityEventAddAndGet<EntityEvents::EventCollision>();
+					eventCollisionI->colliderId = collidable.entityId;
+					eventCollisionI->collisionAxis = (-collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountI;
+
+					auto* eventCollisionJ = entityJ.entityEventAddAndGet<EntityEvents::EventCollision>();
+					eventCollisionJ->colliderId = collider.entityId;
+					eventCollisionJ->collisionAxis = (collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountJ;
+
+					if (entityI.entityComponentHas<EntityComponents::ComponentCollisionResponse>()) entityI.entityComponentGet<EntityComponents::ComponentCollisionResponse>()->system(entityI);
+					if (entityJ.entityComponentHas<EntityComponents::ComponentCollisionResponse>()) entityJ.entityComponentGet<EntityComponents::ComponentCollisionResponse>()->system(entityJ);
+
+					entityI.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityI);
+					entityJ.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityJ);
+
+					entityI.entityComponentGet<EntityComponents::ComponentCollisionShape>()->system(entityI);
+					entityJ.entityComponentGet<EntityComponents::ComponentCollisionShape>()->system(entityJ);
 				}
 			}
 		}
