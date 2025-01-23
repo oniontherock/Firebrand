@@ -243,20 +243,12 @@ void EntityComponents::ComponentObjectGridInhabiterRectangles::load(std::ifstrea
 	str >> rectangles;
 }
 void EntityComponents::ComponentCollisionShape::save(std::ofstream& str) {
-	str << shape;
-	str << shapeBoundingRect;
+	str << shapes;
+	str << shapesVertexMaxDist;
 }
 void EntityComponents::ComponentCollisionShape::load(std::ifstream& str) {
-	str >> shape;
-	str >> shapeBoundingRect;
-}
-void EntityComponents::ComponentCollisionShapeMulti::save(std::ofstream& str) {
-	str << shapes;
-	str << shapeBoundingRect;
-}
-void EntityComponents::ComponentCollisionShapeMulti::load(std::ifstream& str) {
 	str >> shapes;
-	str >> shapeBoundingRect;
+	str >> shapesVertexMaxDist;
 }
 
 #pragma endregion

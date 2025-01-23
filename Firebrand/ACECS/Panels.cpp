@@ -277,18 +277,7 @@ void PanelHud::panelUpdate() {
 			Entity& entity = EntityManager::entityGet(level->entities[i]);
 
 			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
-				auto* componentCollisionShape = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
-				sf::ConvexShape convexShape;
-				convexShape.setPointCount(componentCollisionShape->shape.vertices.size());
-				for (uint16_t i = 0; i < componentCollisionShape->shape.vertices.size(); i++) {
-					convexShape.setPoint(i, componentCollisionShape->shape.vertices[i]);
-				}
-				convexShape.setFillColor(sf::Color(255, 0, 0, 127));
-
-				objectDraw(convexShape);
-			}
-			else if (entity.entityComponentHas<EntityComponents::ComponentCollisionShapeMulti>()) {
-				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShapeMulti>();
+				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
 
 				for (CollisionShape& shape : componentCollisionShapeMulti->shapes) {
 
@@ -305,20 +294,9 @@ void PanelHud::panelUpdate() {
 		}
 		for (uint16_t i = 0; i < level->entitiesNoUpdate.size(); i++) {
 			Entity& entity = EntityManager::entityGet(level->entitiesNoUpdate[i]);
-
+			
 			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
-				auto* componentCollisionShape = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
-				sf::ConvexShape convexShape;
-				convexShape.setPointCount(componentCollisionShape->shape.vertices.size());
-				for (uint16_t i = 0; i < componentCollisionShape->shape.vertices.size(); i++) {
-					convexShape.setPoint(i, componentCollisionShape->shape.vertices[i]);
-				}
-				convexShape.setFillColor(sf::Color(255, 0, 0, 127));
-
-				objectDraw(convexShape);
-			}
-			else if (entity.entityComponentHas<EntityComponents::ComponentCollisionShapeMulti>()) {
-				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShapeMulti>();
+				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
 				
 				for (CollisionShape& shape : componentCollisionShapeMulti->shapes) {
 

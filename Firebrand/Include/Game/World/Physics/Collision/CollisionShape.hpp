@@ -30,11 +30,14 @@ struct CollisionShape {
 	sf::Vector2f centerGet() const;
 	float rotationGet() const;
 
+	float vertexMaxDistGet() const;
 
 private:
 	float rotation = 0.f;
 
 	sf::Vector2f center = sf::Vector2f(0, 0);
+	// the distance to the furthest vertex in vertices
+	float vertexMaxDist;
 };
 
 

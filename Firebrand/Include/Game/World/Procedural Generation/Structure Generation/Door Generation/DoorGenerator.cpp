@@ -125,7 +125,7 @@ void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D
 			if (!(isOnEdgeX || isOnEdgeY)) continue;
 
 			// skip if cell is corner cell
-			if (isOnEdgeX && isOnEdgeY) continue;
+			if ((x <= 1 || x >= structureSize.x - 2) && (y <= 1 || y >= structureSize.y - 2)) continue;
 
 			for (int16_t offsetX = -1; offsetX <= 1; offsetX++) {
 				for (int16_t offsetY = -1; offsetY <= 1; offsetY++) {

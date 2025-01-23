@@ -2,6 +2,7 @@
 #include "CollisionShape.hpp"
 #include "queue"
 #include <Auxiliary/ConsoleHandler.hpp>
+#include <iostream>
 
 CollisionShape::CollisionShape() {
 }
@@ -13,6 +14,20 @@ CollisionShape::CollisionShape(CollisionPolygon _vertices) {
 	}
 
 	vertices = _vertices;
+
+
+	float maxDistSqrd = -INFINITY;
+	for (uint16_t i = 0; i < vertices.size(); i++) {
+
+		const sf::Vector2f& vertex = vertices[i];
+
+		float distSqrd = Vector2fMath::lengthSqrd(vertex);
+
+		if (distSqrd > vertexMaxDist) {
+			vertexMaxDist = distSqrd;
+		}
+	}
+	vertexMaxDist = sqrt(maxDistSqrd);
 }
 
 void CollisionShape::centerSet(sf::Vector2f centerNew) {
@@ -75,16 +90,21 @@ float CollisionShape::rotationGet() const {
 }
 
 sf::Vector2f CollisionShape::supportPointGet(sf::Vector2f direction) {
-	float bestDot = -INFINITY;
+	float bestDot = -1234567.f;
 	uint16_t bestInd = UINT16_MAX;
+
 
 	for (uint16_t i = 0; i < vertices.size(); i++) {
 		float dot = Vector2fMath::dot(vertices[i], direction);
-		if (dot > bestDot) {
+		if (dot > bestDot || bestInd >= UINT16_MAX) {
 			bestDot = dot;
 			bestInd = i;
 		}
 	}
 
 	return vertices[bestInd];
+}
+
+float CollisionShape::vertexMaxDistGet() const {
+	return vertexMaxDist;
 }

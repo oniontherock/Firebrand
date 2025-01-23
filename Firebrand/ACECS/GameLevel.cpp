@@ -73,17 +73,6 @@ const std::vector<std::set<EntityId>>& GameLevel::entitiesDrawableDynamicGet() {
 	return entitiesDrawableDynamic;
 }
 
-bool GameLevel::entityIsCollidable(EntityId entityId) {
-	return collidableEntities.contains(entityId);
-}
-void GameLevel::entityMarkCollidable(EntityId entityId) {
-	collidableEntities.insert(entityId);
-}
-void GameLevel::entityUnmarkCollidable(EntityId entityId) {
-	collidableEntities.erase(entityId);
-}
-
-
 void GameLevel::textureGridsUpdateValidity(sf::FloatRect rect) {
 
 	backgroundRect = sf::FloatRect(rect.getPosition() - (rect.getSize() / 2.f), rect.getSize() * 2.f);

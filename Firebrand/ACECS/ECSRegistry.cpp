@@ -7,7 +7,7 @@
 
 uint32_t MAX_ENTITIES = 10000;
 uint16_t MAX_EVENT_TYPES = 5;
-uint16_t MAX_COMPONENT_TYPES = 22;
+uint16_t MAX_COMPONENT_TYPES = 23;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -73,21 +73,21 @@ void EntityComponents::componentIDsInitialize() {
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectTypeAssigner>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollidable>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollider>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMoveByInput>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotateToMouse>>();
 
-	// physics
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentMass>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentHingeOnPoint>>();
-	// collision
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollisionShape>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollisionShapeMulti>>();
+	// collision response
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollisionResponse>>();
+	// physics
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentHingeOnPoint>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentMass>>();
 	// transform
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentPosition>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotation>>();
-	
+	// collision
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollisionShape>>();
 
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
 	//ComponentRegistry::typeRegister<ComponentIDs<COMPONENT_GOES_HERE>>();
@@ -155,7 +155,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, 50u),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud }),
-			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollider>(),
 			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
 			sf::Vector2f(-12, -24), sf::Vector2f(12, -24), sf::Vector2f(12, 24), sf::Vector2f(-12, 24)
 				})),
@@ -180,8 +180,9 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
 			sf::Vector2f(-12, -12), sf::Vector2f(32, -12), sf::Vector2f(32, 12), sf::Vector2f(-12, 12)
 				})),
+			createComponentPairFromType<ComponentMass>(10000000000.f),
 		}
-		);
+	);
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
 		"Wall Straight",
@@ -198,8 +199,9 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
 			sf::Vector2f(-32, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(-32, 6)
 				})),
+			createComponentPairFromType<ComponentMass>(10000000000.f),
 		}
-		);
+	);
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
 		"Wall Corner",
@@ -214,16 +216,17 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 10, 38), sf::FloatRect(-5, -5, 38, 10) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 10, 38), sf::FloatRect(-5, -5, 38, 10) }),
 			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollisionShapeMulti>(std::vector{
+			createComponentPairFromType<ComponentCollisionShape>(std::vector{
 			CollisionShape(CollisionPolygon{
-			sf::Vector2f(-5, -5), sf::Vector2f(5, -5), sf::Vector2f(5, 33), sf::Vector2f(-5, 33)
+			sf::Vector2f(-6, -6), sf::Vector2f(6, -6), sf::Vector2f(6, 32), sf::Vector2f(-6, 32)
 				}),
 			CollisionShape(CollisionPolygon{
-			sf::Vector2f(-5, -5), sf::Vector2f(33, -5), sf::Vector2f(33, 5), sf::Vector2f(-5, 5)
+			sf::Vector2f(6, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(6, 6)
 				})
 			}),
+			createComponentPairFromType<ComponentMass>(10000000000.f),
 		}
-		);
+	);
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
 		"Wall Junction T",
@@ -237,6 +240,15 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 38, 10), sf::FloatRect(-5, -32, 10, 65) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 38, 10), sf::FloatRect(-5, -32, 10, 65) }),
 			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollisionShape>(std::vector{
+			CollisionShape(CollisionPolygon{
+			sf::Vector2f(-6, -32), sf::Vector2f(6, -32), sf::Vector2f(6, 32), sf::Vector2f(-6, 32)
+				}),
+			CollisionShape(CollisionPolygon{
+			sf::Vector2f(6, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(6, 6)
+				})
+			}),
+			createComponentPairFromType<ComponentMass>(10000000000.f),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -252,6 +264,15 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 10), sf::FloatRect(-5, -32, 10, 64) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 10), sf::FloatRect(-5, -32, 10, 64) }),
 			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollisionShape>(std::vector{
+			CollisionShape(CollisionPolygon{
+			sf::Vector2f(-6, -32), sf::Vector2f(6, -32), sf::Vector2f(6, 32), sf::Vector2f(-6, 32)
+				}),
+			CollisionShape(CollisionPolygon{
+			sf::Vector2f(-32, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(-32, 6)
+				})
+			}),
+			createComponentPairFromType<ComponentMass>(10000000000.f),
 		}
 		);
 #pragma endregion Wall Templates
@@ -293,6 +314,14 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 60),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -2, 64, 4) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -2, 64, 4) }),
+			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollider>(),
+			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
+			sf::Vector2f(-24, -6), sf::Vector2f(24, -6), sf::Vector2f(24, 6), sf::Vector2f(-24, 6)
+				})),
+			createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentMass>(30.f),
+			createComponentPairFromType<ComponentHingeOnPoint>(sf::Vector2f(-32, 0)),
 		}
 		);
 
@@ -322,6 +351,7 @@ using namespace EntityEvents;
 // if you need to include a certain file for a system, include it here.
 #include <iostream>
 #include "../Include/Game/World/Objects/ObjectRegistry.hpp"
+#include "../Include/Game/World/Physics/Collision/Collision Processor/CollisionProcessor.hpp"
 
 // if the system is not using the entity parameter, remove it's name to avoid a C4100 error
 
@@ -769,117 +799,16 @@ void ComponentOcclusionRectangles::system(Entity& entity) {
 	positionPrev = position;
 	rotationPrev = rotation;
 }
-void ComponentCollidable::system(Entity& entity) {
-	// mark the entity as collidable if the entity was just created
-	if (entity.entityEventHas<EventInitialize>()) {
-		GameLevel* entityLevel = GameLevelGrid::levelGet(entity.levelId);
-
-		entityLevel->entityMarkCollidable(entity.Id);
-	}
-}
 void ComponentCollisionShape::system(Entity& entity) {
-
-	// check that entity has ComponentPosition
-	if (!entity.entityComponentHas<ComponentPosition>()) {
-		ConsoleHandler::consolePrintErr("ComponentCollisionShape assigned to an entity without a ComponentPosition!");
+	// check that entity has correct components
+	try {
+		if (!entity.entityComponentHas<ComponentPosition>()) throw std::string("ComponentCollisionShapeMulti assigned to an entity without a ComponentPosition!");
+		if (!entity.entityComponentHas<ComponentRotation>()) throw std::string("ComponentCollisionShapeMulti assigned to an entity without a ComponentRotation!");
+	}
+	catch (std::string e) {
+		ConsoleHandler::consolePrintErr(e);
 
 		entity.entityComponentTerminate<ComponentCollisionShape>();
-		return;
-	}
-
-	sf::Vector2f& position = entity.entityComponentGet<ComponentPosition>()->position;
-	float& rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
-
-	// change these two calls to a shape.transformSet(), not doing it right now because i haven't tested if it works, (almost certain it does)
-	shape.centerSet(position);
-	shape.rotationSet(rotation);
-
-	GameLevel* gameLevel = GameLevelGrid::levelGet(entity.levelId);
-
-	auto& objectGrid = gameLevel->objectGrid;
-
-	// set of EntityIds of entities we've already marked as being collided with, this is used so we don't send an EventCollision twice
-	std::set<EntityId> entitiesCollided;
-
-	if (entity.entityEventHas<EventCollision>()) {
-		auto eventCollisionAll = entity.entityEventGetAllOfType<EventCollision>();
-
-		for (uint16_t i = 0; i < eventCollisionAll.size(); i++) {
-			entitiesCollided.insert(eventCollisionAll[i]->colliderId);
-		}
-	}
-
-	for (uint16_t x = 0; x < shapeBoundingRect.width; x += uint16_t(trunc(objectGrid.cellsGetSizeX()))) {
-		for (uint16_t y = 0; y < shapeBoundingRect.height; y += uint16_t(trunc(objectGrid.cellsGetSizeY()))) {
-
-			int16_t offsetX = int16_t(shapeBoundingRect.left + x);
-			int16_t offsetY = int16_t(shapeBoundingRect.top + y);
-
-			sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotation);
-
-			// ensure position is in the grid, skip if not
-			if (!objectGrid.worldPosIsInGridFull(position.x + offset.x, position.y + offset.y)) continue;
-			// get objects at the position
-			const std::set<EntityId>& entityIds = objectGrid.cellIdsGetFromWorld(position.x + offset.x, position.y + offset.y);
-
-			for (auto itr = entityIds.begin(); itr != entityIds.end(); itr++) {
-
-				EntityId entityIdCur = *itr;
-
-				// skip if we already detected a collision with the entity
-				if (entitiesCollided.contains(entityIdCur)) continue;
-
-				// skip if the entity we're checking is us
-				if (entityIdCur == entity.Id) continue;
-				// check if the entity we're checking is collidable
-				if (gameLevel->entityIsCollidable(entityIdCur)) {
-
-					Entity& entityOther = EntityManager::entityGet(entityIdCur);
-
-					CollisionShape& entityOtherShape = entityOther.entityComponentGet<ComponentCollisionShape>()->shape;
-
-					if (!entityOther.entityComponentHas<ComponentCollisionShape>()) continue;
-
-					if (CollisionHandler::collisionCheck(shape, entityOtherShape)) {
-
-						sf::Vector2f collisionAxis = CollisionHandler::collisionVectorGet(shape, entityOtherShape);
-
-						float entityOtherMass = 10.f;
-						float mass = 10.f;
-
-						if (entityOther.entityComponentHas<ComponentMass>()) {
-							entityOtherMass = entityOther.entityComponentGet<ComponentMass>()->mass;
-						}
-						if (entity.entityComponentHas<ComponentMass>()) {
-							mass = entity.entityComponentGet<ComponentMass>()->mass;
-						}
-
-						// add collision event to colliding entity
-						EventCollision* collisionEvent = entityOther.entityEventAddAndGet<EventCollision>();
-						collisionEvent->collisionAxis = collisionAxis;
-						collisionEvent->colliderId = entity.Id;
-						collisionEvent->colliderMass = mass;
-
-						// add collision event to self
-						EventCollision* collisionEventSelf = entity.entityEventAddAndGet<EventCollision>();
-						collisionEventSelf->collisionAxis = -collisionAxis;
-						collisionEventSelf->colliderId = entityIdCur;
-						collisionEventSelf->colliderMass = entityOtherMass;
-
-						entitiesCollided.insert(entityIdCur);
-					}
-				}
-			}
-		}
-	}
-}
-void ComponentCollisionShapeMulti::system(Entity& entity) {
-	// check that entity has ComponentPosition
-	if (!entity.entityComponentHas<ComponentPosition>()) {
-		ConsoleHandler::consolePrintErr("ComponentCollisionShape assigned to an entity without a ComponentPosition!");
-
-		entity.entityComponentTerminate<ComponentCollisionShape>();
-		return;
 	}
 
 	sf::Vector2f& position = entity.entityComponentGet<ComponentPosition>()->position;
@@ -891,86 +820,13 @@ void ComponentCollisionShapeMulti::system(Entity& entity) {
 		shape.rotationSet(rotation);
 	}
 
-	GameLevel* gameLevel = GameLevelGrid::levelGet(entity.levelId);
-
-	auto& objectGrid = gameLevel->objectGrid;
-
-	// set of EntityIds of entities we've already marked as being collided with, this is used so we don't send an EventCollision twice
-	std::set<EntityId> entitiesCollided;
-
-	if (entity.entityEventHas<EventCollision>()) {
-		auto eventCollisionAll = entity.entityEventGetAllOfType<EventCollision>();
-
-		for (uint16_t i = 0; i < eventCollisionAll.size(); i++) {
-			entitiesCollided.insert(eventCollisionAll[i]->colliderId);
+	if (entity.entityEventHas<EventInitialize>()) {
+		if (entity.entityComponentHas<ComponentCollidable>()) {
+			CollisionProcessor::entityMarkCollidable(entity.Id, shapesPtrs, shapesVertexMaxDist);
 		}
 	}
-
-	for (uint16_t x = 0; x < shapeBoundingRect.width; x += uint16_t(trunc(objectGrid.cellsGetSizeX()))) {
-		for (uint16_t y = 0; y < shapeBoundingRect.height; y += uint16_t(trunc(objectGrid.cellsGetSizeY()))) {
-
-			int16_t offsetX = int16_t(shapeBoundingRect.left + x);
-			int16_t offsetY = int16_t(shapeBoundingRect.top + y);
-
-			sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotation);
-
-			// ensure position is in the grid, skip if not
-			if (!objectGrid.worldPosIsInGridFull(position.x + offset.x, position.y + offset.y)) continue;
-			// get objects at the position
-			const std::set<EntityId>& entityIds = objectGrid.cellIdsGetFromWorld(position.x + offset.x, position.y + offset.y);
-
-			for (auto itr = entityIds.begin(); itr != entityIds.end(); itr++) {
-
-				EntityId entityIdCur = *itr;
-
-				// skip if we already detected a collision with the entity
-				if (entitiesCollided.contains(entityIdCur)) continue;
-
-				// skip if the entity we're checking is us
-				if (entityIdCur == entity.Id) continue;
-				// check if the entity we're checking is collidable
-				if (gameLevel->entityIsCollidable(entityIdCur)) {
-
-					Entity& entityOther = EntityManager::entityGet(entityIdCur);
-
-					CollisionShape& entityOtherShape = entityOther.entityComponentGet<ComponentCollisionShape>()->shape;
-
-					if (!entityOther.entityComponentHas<ComponentCollisionShape>()) continue;
-
-					for (CollisionShape& shape : shapes) {
-						if (CollisionHandler::collisionCheck(shape, entityOtherShape)) {
-
-							sf::Vector2f collisionAxis = CollisionHandler::collisionVectorGet(shape, entityOtherShape);
-
-							float entityOtherMass = 10.f;
-							float mass = 10.f;
-
-							if (entityOther.entityComponentHas<ComponentMass>()) {
-								entityOtherMass = entityOther.entityComponentGet<ComponentMass>()->mass;
-							}
-							if (entity.entityComponentHas<ComponentMass>()) {
-								mass = entity.entityComponentGet<ComponentMass>()->mass;
-							}
-
-							// add collision event to colliding entity
-							EventCollision* collisionEvent = entityOther.entityEventAddAndGet<EventCollision>();
-							collisionEvent->collisionAxis = collisionAxis;
-							collisionEvent->colliderId = entity.Id;
-							collisionEvent->colliderMass = mass;
-
-							// add collision event to self
-							EventCollision* collisionEventSelf = entity.entityEventAddAndGet<EventCollision>();
-							collisionEventSelf->collisionAxis = -collisionAxis;
-							collisionEventSelf->colliderId = entityIdCur;
-							collisionEventSelf->colliderMass = entityOtherMass;
-
-							entitiesCollided.insert(entityIdCur);
-							break;
-						}
-					}
-				}
-			}
-		}
+	if (entity.entityComponentHas<ComponentCollider>()) {
+		CollisionProcessor::colliderRequestProcess(entity.Id, shapesPtrs, shapesVertexMaxDist);
 	}
 }
 void ComponentHingeOnPoint::system(Entity& entity) {
@@ -983,8 +839,8 @@ void ComponentHingeOnPoint::system(Entity& entity) {
 	}
 
 
-	sf::Vector2f& position = entity.entityComponentGet<ComponentPosition>()->position;
-	float& rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
+	const sf::Vector2f& position = entity.entityComponentGet<ComponentPosition>()->position;
+	const float& rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
 
 	sf::Vector2f hingeOffsetRotated = Vector2fMath::rotate(hingeOffset, rotation);
 
@@ -993,22 +849,28 @@ void ComponentHingeOnPoint::system(Entity& entity) {
 		hingePoint = position + hingeOffsetRotated;
 	}
 
-	sf::Vector2f hingeAxis = Vector2fMath::axis(position + hingeOffsetRotated, hingePoint);
+	sf::Vector2f hingePointGlobal = position + hingeOffsetRotated;
+	sf::Vector2f hingePointGlobalInverted = position - hingeOffsetRotated;
 
-	if (Vector2fMath::lengthSqrd(hingeAxis) > 2.f * 2.f) {
+	sf::Vector2f hingeAxis = Vector2fMath::axis(hingePointGlobalInverted, hingePointGlobal);
+	sf::Vector2f hingeAxisInverted = Vector2fMath::axis(hingePointGlobalInverted, hingePoint);
 
-		rotation = atan2(hingeAxis.y, hingeAxis.x);
+	float angleAxis = atan2(hingeAxis.y, hingeAxis.x);
+	float angleAxisInverted = atan2(hingeAxisInverted.y, hingeAxisInverted.x);
 
-		hingeOffsetRotated = Vector2fMath::rotate(hingeOffset, rotation);
+	entity.entityEventAddAndGet<EventRotate>()->rotateAmount = angleAxisInverted - angleAxis;
 
-		auto* eventMove = entity.entityEventAddAndGet<EventMove>();
+	float updatedRotation = rotation + (angleAxisInverted - angleAxis);
 
-		eventMove->moveAxis = Vector2fMath::axis(position + hingeOffsetRotated, hingePoint);
-	}
+	hingeOffsetRotated = Vector2fMath::rotate(hingeOffset, updatedRotation);
+	hingePointGlobal = position + hingeOffsetRotated;
+
+	entity.entityEventAddAndGet<EventMove>()->moveAxis = Vector2fMath::axis(hingePointGlobal, hingePoint);
 }
 void ComponentCollisionResponse::system(Entity& entity) {
 
 	if (entity.entityEventHas<EventCollision>()) {
+
 		auto eventCollisionAll = entity.entityEventGetAllOfType<EventCollision>();
 
 		for (uint16_t i = 0; i < eventCollisionAll.size(); i++) {

@@ -534,17 +534,26 @@ namespace EntityComponents {
 	// marks an entity as collidable in the GameLevel
 	struct ComponentCollidable final : public Component {
 
-		void system(Entity& entity) final;
-
 		ComponentCollidable() {
-			hasSystem = true;
+			hasSystem = false;
 		};
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentCollidable());
 		};
 	};
-	// checks for collisions with collidable entities and sends EventCollisions if collisions are detected
+	// marks an entity as collidable in the GameLevel
+	struct ComponentCollider final : public Component {
+
+		ComponentCollider() {
+			hasSystem = false;
+		};
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentCollider());
+		};
+	};
+	// basically the same as ComponentCollisionShape but can have multiple shapes
 	struct ComponentCollisionShape final : public Component {
 
 		void system(Entity& entity) final;
@@ -552,97 +561,38 @@ namespace EntityComponents {
 		ComponentCollisionShape() {
 			hasSystem = true;
 		};
-		ComponentCollisionShape(CollisionShape _shape) :
+		ComponentCollisionShape(std::vector<CollisionShape> _shapes) :
 			ComponentCollisionShape()
 		{
-			shape = _shape;
-
-			float minX = 0.f;
-			float minY = 0.f;
-			float maxX = 0.f;
-			float maxY = 0.f;
-
-
-			for (uint16_t i = 0; i < shape.vertices.size(); i++) {
-				
-				const sf::Vector2f& vertex = shape.vertices[i];
-
-				// create bounding rect from the vertices
-				if (vertex.x < minX) minX = vertex.x;
-				else if ((vertex.x + 1) > maxX) maxX = (vertex.x + 1);
-				if (vertex.y < minY) minY = vertex.y;
-				else if ((vertex.y + 1) > maxY) maxY = (vertex.y + 1);
-			}
-
-			shapeBoundingRect.left = minX;
-			shapeBoundingRect.top = minY;
-
-			shapeBoundingRect.width = maxX - minX;
-			shapeBoundingRect.height = maxY - minY;
-		};
-
-		CollisionShape shape;
-
-		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentCollisionShape(shape));
-		};
-
-		void save(std::ofstream& str) override;
-		void load(std::ifstream& str) override;
-	private:
-		// bounding rect of shape, used for determine where to check for objects we could collide with
-		sf::FloatRect shapeBoundingRect;
-	};
-	// basically the same as ComponentCollisionShape but can have multiple shapes
-	struct ComponentCollisionShapeMulti final : public Component {
-
-		void system(Entity& entity) final;
-
-		ComponentCollisionShapeMulti() {
-			hasSystem = true;
-		};
-		ComponentCollisionShapeMulti(std::vector<CollisionShape> _shapes) :
-			ComponentCollisionShapeMulti()
-		{
 			shapes = _shapes;
+			shapesPtrs.resize(shapes.size());
 
-			float minX = 0.f;
-			float minY = 0.f;
-			float maxX = 0.f;
-			float maxY = 0.f;
-
-			for (CollisionShape& shape : shapes) {
-
-				for (uint16_t i = 0; i < shape.vertices.size(); i++) {
-
-					const sf::Vector2f& vertex = shape.vertices[i];
-
-					// create bounding rect from the vertices
-					if (vertex.x < minX) minX = vertex.x;
-					else if ((vertex.x + 1) > maxX) maxX = (vertex.x + 1);
-					if (vertex.y < minY) minY = vertex.y;
-					else if ((vertex.y + 1) > maxY) maxY = (vertex.y + 1);
+			for (uint16_t i = 0; i < shapes.size(); i++) {
+				if (shapes[i].vertexMaxDistGet() > shapesVertexMaxDist) {
+					shapesVertexMaxDist = shapes[i].vertexMaxDistGet();
 				}
 
-				shapeBoundingRect.left = minX;
-				shapeBoundingRect.top = minY;
-
-				shapeBoundingRect.width = maxX - minX;
-				shapeBoundingRect.height = maxY - minY;
+				shapesPtrs[i] = &shapes[i];
 			}
+		};
+		ComponentCollisionShape(CollisionShape _shape) :
+			ComponentCollisionShape(std::vector{ _shape })
+		{
 		};
 
 		std::vector<CollisionShape> shapes;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentCollisionShapeMulti(shapes));
+			return std::unique_ptr<Duplicatable>(new ComponentCollisionShape(shapes));
 		};
 
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
 	private:
-		// bounding rect of shape, used for determine where to check for objects we could collide with
-		sf::FloatRect shapeBoundingRect;
+		// maximum distance to a vertex local to the origin in the given shapes
+		float shapesVertexMaxDist = 0.f;
+		// pointers to every shape in shapes, we have this because the CollisionProcessor needs pointers instead of instances
+		std::vector<CollisionShape*> shapesPtrs;
 	};
 	// if this entity collides with another collidable object, it moves itself 
 	struct ComponentCollisionResponse final : public Component {

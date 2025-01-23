@@ -8,6 +8,7 @@
 #include <Auxiliary/TimeHandler.hpp>
 #include <fstream>
 #include <iostream>
+#include "../Include/Game/GameData.hpp"
 #include <Saving/SaveHandler.hpp>
 #include <SFML/Window.hpp>
 
@@ -36,9 +37,11 @@ int main() {
 		Engine::engineInputUpdate(WindowHolder::windowGet());
 		Engine::engineUpdate();
 
-		WindowHolder::windowGet().clear(sf::Color::Black);
-		Engine::engineDraw(WindowHolder::windowGet());
-		WindowHolder::windowGet().display();
+		//if (GameData::renderTimer.updateAutoReset(TimeHandler::deltaRealGet())) {
+			WindowHolder::windowGet().clear(sf::Color::Black);
+			Engine::engineDraw(WindowHolder::windowGet());
+			WindowHolder::windowGet().display();
+		//}
 
 		frames++;
 		frameTimer += TimeHandler::deltaRealGet();

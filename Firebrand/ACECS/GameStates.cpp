@@ -1,4 +1,5 @@
 #include "../Include/Game/GameData.hpp"
+#include "../Include/Game/World/Physics/Collision/Collision Processor/CollisionProcessor.hpp"
 #include "ECSRegistry.hpp"
 #include "GameLevel.hpp"
 #include "GameStates.hpp"
@@ -36,6 +37,10 @@ void GameStatePlay::gameStateUpdate() {
 	EntityManager::entitiesIntangibleUpdate();
 	EntityManager::entitiesQueuedUpdate();
 	LevelUpdater::levelsUpdate();
+
+	//if (GameData::physicsTimer.updateAutoReset(TimeHandler::deltaRealGet())) {
+	CollisionProcessor::collisionsProcess();
+	//}
 }
 
 void GameStatePlay::gameStateStart() {
@@ -52,9 +57,9 @@ void GameStatePlay::gameStateStart() {
 	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(2048-900, 2048);
 
 	// create player and assign the level's playerId to the id of the newly created player
-	EntityId testId = EntityManager::entityCreate(level->levelPosition, "Test Object");
+	EntityId testId = EntityManager::entityCreate(level->levelPosition, "Door Wooden");
 	Entity& test = EntityManager::entityGet(testId);
-	test.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(path[0]->position);
+	test.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(2048 - 1200, 2048);
 }
 
 void GameStatePlay::worldClockUpdate() {
