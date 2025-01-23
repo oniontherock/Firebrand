@@ -23,8 +23,8 @@ CollisionShape::CollisionShape(CollisionPolygon _vertices) {
 
 		float distSqrd = Vector2fMath::lengthSqrd(vertex);
 
-		if (distSqrd > vertexMaxDist) {
-			vertexMaxDist = distSqrd;
+		if (distSqrd > maxDistSqrd) {
+			maxDistSqrd = distSqrd;
 		}
 	}
 	vertexMaxDist = sqrt(maxDistSqrd);

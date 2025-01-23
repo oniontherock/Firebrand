@@ -317,10 +317,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollider>(),
 			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
-			sf::Vector2f(-24, -6), sf::Vector2f(24, -6), sf::Vector2f(24, 6), sf::Vector2f(-24, 6)
+			sf::Vector2f(-24, -1), sf::Vector2f(24, -1), sf::Vector2f(24, 1), sf::Vector2f(-24, 1)
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMass>(30.f),
+			createComponentPairFromType<ComponentMass>(90.f),
 			createComponentPairFromType<ComponentHingeOnPoint>(sf::Vector2f(-32, 0)),
 		}
 		);

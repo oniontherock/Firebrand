@@ -13,6 +13,8 @@ class CollisionProcessor {
 		EntityId entityId;
 		float shapesVertexMaxDist;
 		std::vector<CollisionShape*> shapes;
+
+		bool operator< (const Collider& other);
 	};
 
 	// vector of Colliders, whenever an entity requests that it's collisions be processed, it goes in this queue
