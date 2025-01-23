@@ -55,11 +55,6 @@ void GameStatePlay::gameStateStart() {
 	GameData::playerId = EntityManager::entityCreate(level->levelPosition, "Player");
 	Entity& player = EntityManager::entityGet(GameData::playerId);
 	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(2048-900, 2048);
-
-	// create player and assign the level's playerId to the id of the newly created player
-	EntityId testId = EntityManager::entityCreate(level->levelPosition, "Door Wooden");
-	Entity& test = EntityManager::entityGet(testId);
-	test.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(2048 - 1200, 2048);
 }
 
 void GameStatePlay::worldClockUpdate() {

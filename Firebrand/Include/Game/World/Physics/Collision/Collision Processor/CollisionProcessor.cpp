@@ -82,65 +82,48 @@ void CollisionProcessor::collisionsProcess() {
 			// skip if the shapes are farther than the farthest possible distance they can be while still colliding
 			if (centersDistSqrd > (shapesVertexMaxDist * shapesVertexMaxDist)) continue;
 
-			colliderPossibleCollidables.push_back(&collidable);
-		}
+			for (CollisionShape* shapeCur : collider.shapes) {
+				for (CollisionShape* shapeOtherCur : collidable.shapes) {
 
-		sf::Vector2f greatestCollisionAxis;
-		float greatestCollisionAxisLenSqrd = -999999.f;
-		EntityId greatestId = 0;
-
-		for (CollisionShape* shapeCur : collider.shapes) {
-			for (Collider* possibleCollidable : colliderPossibleCollidables) {
-				for (CollisionShape* shapeOtherCur : possibleCollidable->shapes) {
-
-					// skip if the current two shapes are not colliding
 					if (!CollisionHandler::collisionCheck(*shapeCur, *shapeOtherCur)) continue;
 
 					sf::Vector2f collisionAxis = CollisionHandler::collisionVectorGet(*shapeCur, *shapeOtherCur);
 
-					float collisionAxisLenSqrd = Vector2fMath::lengthSqrd(collisionAxis);
+					//float massRatio = 
+					Entity& entityI = EntityManager::entityGet(collider.entityId);
+					Entity& entityJ = EntityManager::entityGet(collidable.entityId);
 
-					if (collisionAxisLenSqrd > greatestCollisionAxisLenSqrd) {
-						greatestCollisionAxis = collisionAxis;
-						greatestCollisionAxisLenSqrd = collisionAxisLenSqrd;
-						greatestId = possibleCollidable->entityId;
+					float massI = 1000000.f;
+					float massJ = 1000000.f;
+
+					if (entityI.entityComponentHas<EntityComponents::ComponentMass>()) {
+						massI = entityI.entityComponentGet<EntityComponents::ComponentMass>()->mass;
 					}
+					if (entityJ.entityComponentHas<EntityComponents::ComponentMass>()) {
+						massJ = entityJ.entityComponentGet<EntityComponents::ComponentMass>()->mass;
+					}
+
+					bool iHigherMass = massI > massJ;
+
+					float massRatio = iHigherMass ? (massI / massJ) : (massJ / massI);
+
+					float movementRatio = 0.5f / massRatio;
+
+					float movementAmountI = iHigherMass ? (movementRatio) : (1.f - movementRatio);
+					float movementAmountJ = iHigherMass ? (1.f - movementRatio) : (movementRatio);
+
+					auto* eventCollisionI = entityI.entityEventAddAndGet<EntityEvents::EventCollision>();
+					eventCollisionI->colliderId = collidable.entityId;
+					eventCollisionI->collisionAxis = (-collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountI;
+
+					auto* eventCollisionJ = entityJ.entityEventAddAndGet<EntityEvents::EventCollision>();
+					eventCollisionJ->colliderId = collider.entityId;
+					eventCollisionJ->collisionAxis = (collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountJ;
+
+					collisionExclusions[collidable.entityId].insert(collider.entityId);
 				}
 			}
 		}
-		
-		//float massRatio = 
-		Entity& entityI = EntityManager::entityGet(collider.entityId);
-		Entity& entityJ = EntityManager::entityGet(greatestId);
-
-		float massI = 1000000.f;
-		float massJ = 1000000.f;
-
-		if (entityI.entityComponentHas<EntityComponents::ComponentMass>()) {
-			massI = entityI.entityComponentGet<EntityComponents::ComponentMass>()->mass;
-		}
-		if (entityJ.entityComponentHas<EntityComponents::ComponentMass>()) {
-			massJ = entityJ.entityComponentGet<EntityComponents::ComponentMass>()->mass;
-		}
-
-		bool iHigherMass = massI > massJ;
-
-		float massRatio = iHigherMass ? (massI / massJ) : (massJ / massI);
-
-		float movementRatio = 0.5f / massRatio;
-
-		float movementAmountI = iHigherMass ? (movementRatio) : (1.f - movementRatio);
-		float movementAmountJ = iHigherMass ? (1.f - movementRatio) : (movementRatio);
-
-		auto* eventCollisionI = entityI.entityEventAddAndGet<EntityEvents::EventCollision>();
-		eventCollisionI->colliderId = greatestId;
-		eventCollisionI->collisionAxis = (-greatestCollisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountI;
-
-		auto* eventCollisionJ = entityJ.entityEventAddAndGet<EntityEvents::EventCollision>();
-		eventCollisionJ->colliderId = collider.entityId;
-		eventCollisionJ->collisionAxis = (greatestCollisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountJ;
-		
-		collisionExclusions[greatestId].insert(collider.entityId);
 	}
 
 	colliders.clear();

@@ -50,6 +50,7 @@ void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGri
 				// skip if cell is corner cell
 				if (isOnEdgeX && isOnEdgeY) continue;
 
+
 				uint16_t cellX = uint16_t(roomRectCur.left) + x;
 				uint16_t cellY = uint16_t(roomRectCur.top) + y;
 
