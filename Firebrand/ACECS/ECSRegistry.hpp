@@ -553,16 +553,15 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentCollider());
 		};
 	};
-	// basically the same as ComponentCollisionShape but can have multiple shapes
-	struct ComponentCollisionShape final : public Component {
+	struct ComponentCollisionPolygons final : public Component {
 
 		void system(Entity& entity) final;
 
-		ComponentCollisionShape() {
+		ComponentCollisionPolygons() {
 			hasSystem = true;
 		};
-		ComponentCollisionShape(std::vector<CollisionShapePolygon> _shapes) :
-			ComponentCollisionShape()
+		ComponentCollisionPolygons(std::vector<CollisionShapePolygon> _shapes) :
+			ComponentCollisionPolygons()
 		{
 			shapes = _shapes;
 			shapesPtrs.resize(shapes.size());
@@ -575,15 +574,15 @@ namespace EntityComponents {
 				shapesPtrs[i] = &shapes[i];
 			}
 		};
-		ComponentCollisionShape(CollisionShapePolygon _shape) :
-			ComponentCollisionShape(std::vector{ _shape })
+		ComponentCollisionPolygons(CollisionShapePolygon _shape) :
+			ComponentCollisionPolygons(std::vector{ _shape })
 		{
 		};
 
 		std::vector<CollisionShapePolygon> shapes;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentCollisionShape(shapes));
+			return std::unique_ptr<Duplicatable>(new ComponentCollisionPolygons(shapes));
 		};
 
 		void save(std::ofstream& str) override;

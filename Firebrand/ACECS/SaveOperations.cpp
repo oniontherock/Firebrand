@@ -242,11 +242,11 @@ void EntityComponents::ComponentObjectGridInhabiterRectangles::save(std::ofstrea
 void EntityComponents::ComponentObjectGridInhabiterRectangles::load(std::ifstream& str) {
 	str >> rectangles;
 }
-void EntityComponents::ComponentCollisionShape::save(std::ofstream& str) {
+void EntityComponents::ComponentCollisionPolygons::save(std::ofstream& str) {
 	str << shapes;
 	str << shapesMaxDist;
 }
-void EntityComponents::ComponentCollisionShape::load(std::ifstream& str) {
+void EntityComponents::ComponentCollisionPolygons::load(std::ifstream& str) {
 	str >> shapes;
 	str >> shapesMaxDist;
 }

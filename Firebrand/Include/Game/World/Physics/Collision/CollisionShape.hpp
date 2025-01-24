@@ -42,20 +42,19 @@ struct CollisionShapePolygon : CollisionShapeBase {
 	CollisionPolygon vertices;
 
 	// returns the support point in a given direction
-	sf::Vector2f supportPointGet(sf::Vector2f direction);
+	sf::Vector2f supportPointGet(sf::Vector2f direction) final;
 
 	// sets a new center and updates vertices
-	void centerSet(sf::Vector2f centerNew);
+	void centerSet(sf::Vector2f centerNew) final;
 	// offsets the center and updates vertices
-	void centerAdd(sf::Vector2f centerOffset);
+	void centerAdd(sf::Vector2f centerOffset) final;
 	// sets a new rotation and updates vertices
-	void rotationSet(float rotationNew);
+	void rotationSet(float rotationNew) final;
 	// adds to the rotation and updates vertices
-	void rotationAdd(float rotationOffset);
+	void rotationAdd(float rotationOffset) final;
 	// sets a new center and rotation and updates vertices,
 	// faster than calling centerSet and rotationSet independently, since it only has to update vertices once
-	void transformSet(sf::Vector2f centerNew, float rotationNew);
+	void transformSet(sf::Vector2f centerNew, float rotationNew) final;
 };
-
 
 #endif

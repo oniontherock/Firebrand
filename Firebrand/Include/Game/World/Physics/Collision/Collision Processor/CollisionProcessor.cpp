@@ -125,8 +125,8 @@ void CollisionProcessor::collisionsProcess() {
 					entityI.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityI);
 					entityJ.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityJ);
 
-					entityI.entityComponentGet<EntityComponents::ComponentCollisionShape>()->system(entityI);
-					entityJ.entityComponentGet<EntityComponents::ComponentCollisionShape>()->system(entityJ);
+					entityI.entityComponentGet<EntityComponents::ComponentCollisionPolygons>()->system(entityI);
+					entityJ.entityComponentGet<EntityComponents::ComponentCollisionPolygons>()->system(entityJ);
 				}
 			}
 		}

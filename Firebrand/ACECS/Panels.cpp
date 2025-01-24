@@ -276,8 +276,8 @@ void PanelHud::panelUpdate() {
 		for (uint16_t i = 0; i < level->entities.size(); i++) {
 			Entity& entity = EntityManager::entityGet(level->entities[i]);
 
-			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
-				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
+			if (entity.entityComponentHas<EntityComponents::ComponentCollisionPolygons>()) {
+				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionPolygons>();
 
 				for (CollisionShapeBase& shape : componentCollisionShapeMulti->shapes) {
 
@@ -303,11 +303,10 @@ void PanelHud::panelUpdate() {
 		for (uint16_t i = 0; i < level->entitiesNoUpdate.size(); i++) {
 			Entity& entity = EntityManager::entityGet(level->entitiesNoUpdate[i]);
 			
-			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
-				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
+			if (entity.entityComponentHas<EntityComponents::ComponentCollisionPolygons>()) {
+				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionPolygons>();
 				
 				for (CollisionShapeBase& shape : componentCollisionShapeMulti->shapes) {
-
 
 					try {
 						CollisionShapePolygon& polygon = dynamic_cast<CollisionShapePolygon&>(shape);
