@@ -2,6 +2,7 @@
 #include <Auxiliary/VectorMath.hpp>
 #include <ECS/Entities/EntityManager.hpp>
 #include "../include/Game/GameData.hpp"
+#include <unordered_map>
 #include "../ACECS/ECSRegistry.hpp"
 
 std::vector<CollisionProcessor::Collider> CollisionProcessor::colliders{};
@@ -62,10 +63,10 @@ bool CollisionProcessor::Collider::operator< (const Collider& other) {
 
 void CollisionProcessor::collisionsProcess() {
 
+	std::unordered_map<EntityId, sf::Vector2f> entityCollisionAxes;
+
+#pragma region Collision Detection
 	for (Collider& collider : colliders) {
-
-		std::vector<Collider*> colliderPossibleCollidables;
-
 		for (Collider& collidable : collidables) {
 			// skip if i equals j
 			if (collider.entityId == collidable.entityId) continue;
@@ -111,26 +112,13 @@ void CollisionProcessor::collisionsProcess() {
 					float movementAmountI = iHigherMass ? (movementRatio) : (1.f - movementRatio);
 					float movementAmountJ = iHigherMass ? (1.f - movementRatio) : (movementRatio);
 
-					auto* eventCollisionI = entityI.entityEventAddAndGet<EntityEvents::EventCollision>();
-					eventCollisionI->colliderId = collidable.entityId;
-					eventCollisionI->collisionAxis = (-collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountI;
-
-					auto* eventCollisionJ = entityJ.entityEventAddAndGet<EntityEvents::EventCollision>();
-					eventCollisionJ->colliderId = collider.entityId;
-					eventCollisionJ->collisionAxis = (collisionAxis / GameData::physicsTimer.target) * float(TimeHandler::deltaRealGet()) * movementAmountJ;
-
-					if (entityI.entityComponentHas<EntityComponents::ComponentCollisionResponse>()) entityI.entityComponentGet<EntityComponents::ComponentCollisionResponse>()->system(entityI);
-					if (entityJ.entityComponentHas<EntityComponents::ComponentCollisionResponse>()) entityJ.entityComponentGet<EntityComponents::ComponentCollisionResponse>()->system(entityJ);
-
-					entityI.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityI);
-					entityJ.entityComponentGet<EntityComponents::ComponentPosition>()->system(entityJ);
-
-					entityI.entityComponentGet<EntityComponents::ComponentCollisionPolygons>()->system(entityI);
-					entityJ.entityComponentGet<EntityComponents::ComponentCollisionPolygons>()->system(entityJ);
+					entityI.entityEventAddAndGet<EntityEvents::EventCollision>()->collisionAxis = (-collisionAxis * movementAmountI);
+					entityJ.entityEventAddAndGet<EntityEvents::EventCollision>()->collisionAxis = (collisionAxis * movementAmountJ);
 				}
 			}
 		}
 	}
+#pragma endregion Collision Detection
 
 	colliders.clear();
 }

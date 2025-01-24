@@ -74,15 +74,9 @@ namespace EntityEvents {
 
 		// axis of collision
 		sf::Vector2f collisionAxis;
-		// id of the collider
-		EntityId colliderId;
-		// mass of the collider
-		float colliderMass;
 
 		void clear() final {
 			collisionAxis = sf::Vector2f(0, 0);
-			colliderId = UINT32_MAX;
-			colliderMass = 10.f;
 		}
 
 		std::unique_ptr<Duplicatable> duplicate() override {

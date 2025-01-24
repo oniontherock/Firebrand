@@ -38,9 +38,7 @@ void GameStatePlay::gameStateUpdate() {
 	EntityManager::entitiesQueuedUpdate();
 	LevelUpdater::levelsUpdate();
 
-	//if (GameData::physicsTimer.updateAutoReset(TimeHandler::deltaRealGet())) {
 	CollisionProcessor::collisionsProcess();
-	//}
 }
 
 void GameStatePlay::gameStateStart() {

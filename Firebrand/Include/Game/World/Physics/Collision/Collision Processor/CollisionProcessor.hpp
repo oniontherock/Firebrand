@@ -18,10 +18,10 @@ class CollisionProcessor {
 	};
 
 	// vector of Colliders, whenever an entity requests that it's collisions be processed, it goes in this queue
-	static std::vector<Collider> colliders;
 	// vector of Colliders, colliders that are added to this list are always processed in collisionsProcess, this is used for things like walls, that don't update but need their collisions checked
 	static std::vector<Collider> collidables;
 public:
+	static std::vector<Collider> colliders;
 	static void colliderRequestProcess(EntityId entityId, std::vector<CollisionShapeBase*> shapes, float shapesMaxVertexDist);
 	static void colliderRequestProcess(EntityId entityId, CollisionShapeBase* shape, float shapeMaxVertexDist);
 

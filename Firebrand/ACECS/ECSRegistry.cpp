@@ -362,7 +362,7 @@ void ComponentMoveByInput::system(Entity& entity) {
 
 	if (inputAxis.x != 0 || inputAxis.y != 0) {
 
-		inputAxis = Vector2fMath::normalize(inputAxis) * moveSpeed * static_cast<float>(TimeHandler::deltaSimulatedGet());
+		inputAxis = Vector2fMath::normalize(inputAxis) * float(double(moveSpeed * TimeHandler::deltaSimulatedGet()));
 
 		auto* moveEvent = entity.entityEventAddAndGet<EventMove>();
 		moveEvent->moveAxis = inputAxis;
@@ -370,9 +370,7 @@ void ComponentMoveByInput::system(Entity& entity) {
 }
 void ComponentRotateToMouse::system(Entity& entity) {
 	if (entity.entityComponentHas<ComponentPosition>() && entity.entityComponentHas<ComponentRotation>()) {
-		const float delta = float(TimeHandler::deltaSimulatedGet());
-
-		const float turnSpeedDelta = turnSpeed * delta;
+		const float turnSpeedDelta = float(double(turnSpeed) * TimeHandler::deltaSimulatedGet());
 
 		auto& gameViewPanel = PanelManager::panelGet(PanelName::StaticView);
 
@@ -870,16 +868,19 @@ void ComponentHingeOnPoint::system(Entity& entity) {
 }
 void ComponentCollisionResponse::system(Entity& entity) {
 
+	sf::Vector2f collisionAxisTotal;
+
 	if (entity.entityEventHas<EventCollision>()) {
 
 		auto eventCollisionAll = entity.entityEventGetAllOfType<EventCollision>();
 
 		for (uint16_t i = 0; i < eventCollisionAll.size(); i++) {
-			auto* eventMove = entity.entityEventAddAndGet<EventMove>();
-
-			eventMove->moveAxis = eventCollisionAll[i]->collisionAxis;
+			collisionAxisTotal += eventCollisionAll[i]->collisionAxis;
 		}
+
+		entity.entityEventAddAndGet<EventMove>()->moveAxis = collisionAxisTotal;
 	}
+
 }
 
 #pragma endregion Systems
