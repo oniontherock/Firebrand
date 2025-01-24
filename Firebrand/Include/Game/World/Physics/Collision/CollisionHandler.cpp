@@ -2,9 +2,9 @@
 #include "EPA/EPACollisionHandler.hpp"
 #include "GJK/GJKCollisionHandler.hpp"
 
-bool CollisionHandler::collisionCheck(CollisionShape& shapeA, CollisionShape& shapeB) {
+bool CollisionHandler::collisionCheck(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB) {
 	return GJKCollisionHandler::collisionsCheck(shapeA, shapeB);
 }
-sf::Vector2f CollisionHandler::collisionVectorGet(CollisionShape& shapeA, CollisionShape& shapeB) {
+sf::Vector2f CollisionHandler::collisionVectorGet(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB) {
 	return EPACollisionHandler::collisionVectorGet(shapeA, shapeB, GJKCollisionHandler::simplex);
 }

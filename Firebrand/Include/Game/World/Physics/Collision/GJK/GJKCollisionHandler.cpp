@@ -62,9 +62,9 @@ bool GJKCollisionHandler::simplexProcess() {
 	return triangleProcess();
 }
 
-bool GJKCollisionHandler::collisionsCheck(CollisionShape& shapeA, CollisionShape& shapeB) {
+bool GJKCollisionHandler::collisionsCheck(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB) {
 
-	direction = Vector2fMath::dir(shapeA.centerGet(), shapeB.centerGet());
+	direction = Vector2fMath::dir(shapeA->centerGet(), shapeB->centerGet());
 
 	simplex = { CollisionMath::supportGet(shapeA, shapeB, direction) };
 

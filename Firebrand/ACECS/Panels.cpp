@@ -279,16 +279,24 @@ void PanelHud::panelUpdate() {
 			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
 				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
 
-				for (CollisionShape& shape : componentCollisionShapeMulti->shapes) {
+				for (CollisionShapeBase& shape : componentCollisionShapeMulti->shapes) {
 
-					sf::ConvexShape convexShape;
-					convexShape.setPointCount(shape.vertices.size());
-					for (uint16_t i = 0; i < shape.vertices.size(); i++) {
-						convexShape.setPoint(i, shape.vertices[i]);
+					try {
+						CollisionShapePolygon& polygon = dynamic_cast<CollisionShapePolygon&>(shape);
+
+						sf::ConvexShape convexShape;
+						convexShape.setPointCount(polygon.vertices.size());
+						for (uint16_t i = 0; i < polygon.vertices.size(); i++) {
+							convexShape.setPoint(i, polygon.vertices[i]);
+						}
+						convexShape.setFillColor(sf::Color(255, 0, 0, 127));
+
+						objectDraw(convexShape);
 					}
-					convexShape.setFillColor(sf::Color(255, 0, 0, 127));
+					catch (const std::bad_cast& e) {
+						continue;
+					}
 
-					objectDraw(convexShape);
 				}
 			}
 		}
@@ -298,16 +306,24 @@ void PanelHud::panelUpdate() {
 			if (entity.entityComponentHas<EntityComponents::ComponentCollisionShape>()) {
 				auto* componentCollisionShapeMulti = entity.entityComponentGet<EntityComponents::ComponentCollisionShape>();
 				
-				for (CollisionShape& shape : componentCollisionShapeMulti->shapes) {
+				for (CollisionShapeBase& shape : componentCollisionShapeMulti->shapes) {
 
-					sf::ConvexShape convexShape;
-					convexShape.setPointCount(shape.vertices.size());
-					for (uint16_t i = 0; i < shape.vertices.size(); i++) {
-						convexShape.setPoint(i, shape.vertices[i]);
+
+					try {
+						CollisionShapePolygon& polygon = dynamic_cast<CollisionShapePolygon&>(shape);
+
+						sf::ConvexShape convexShape;
+						convexShape.setPointCount(polygon.vertices.size());
+						for (uint16_t i = 0; i < polygon.vertices.size(); i++) {
+							convexShape.setPoint(i, polygon.vertices[i]);
+						}
+						convexShape.setFillColor(sf::Color(255, 0, 0, 127));
+
+						objectDraw(convexShape);
 					}
-					convexShape.setFillColor(sf::Color(255, 0, 0, 127));
-
-					objectDraw(convexShape);
+					catch (const std::bad_cast& e) {
+						continue;
+					}
 				}
 			}
 		}

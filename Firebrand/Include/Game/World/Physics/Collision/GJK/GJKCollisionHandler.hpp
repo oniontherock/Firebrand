@@ -19,7 +19,7 @@ class GJKCollisionHandler {
 
 
 public:
-	static bool collisionsCheck(CollisionShape& shapeA, CollisionShape& shapeB);
+	static bool collisionsCheck(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB);
 	
 	friend class CollisionHandler;
 };

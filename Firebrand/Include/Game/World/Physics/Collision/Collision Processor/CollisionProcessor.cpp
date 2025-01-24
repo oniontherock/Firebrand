@@ -7,17 +7,17 @@
 std::vector<CollisionProcessor::Collider> CollisionProcessor::colliders{};
 std::vector<CollisionProcessor::Collider> CollisionProcessor::collidables{};
 
-void CollisionProcessor::colliderRequestProcess(EntityId entityId, std::vector<CollisionShape*> shapes, float shapesMaxVertexDist) {
+void CollisionProcessor::colliderRequestProcess(EntityId entityId, std::vector<CollisionShapeBase*> shapes, float shapesMaxVertexDist) {
 	colliders.push_back(Collider(entityId, shapesMaxVertexDist, shapes));
 }
-void CollisionProcessor::colliderRequestProcess(EntityId entityId, CollisionShape* shape, float shapeMaxVertexDist) {
-	colliderRequestProcess(entityId, std::vector<CollisionShape*>{ shape }, shapeMaxVertexDist);
+void CollisionProcessor::colliderRequestProcess(EntityId entityId, CollisionShapeBase* shape, float shapeMaxVertexDist) {
+	colliderRequestProcess(entityId, std::vector<CollisionShapeBase*>{ shape }, shapeMaxVertexDist);
 }
-void CollisionProcessor::colliderRequestProcess(EntityId entityId, std::vector<CollisionShape*> shapes) {
+void CollisionProcessor::colliderRequestProcess(EntityId entityId, std::vector<CollisionShapeBase*> shapes) {
 	float distMax = -INFINITY;
 
-	for (CollisionShape* shape : shapes) {
-		float distCur = shape->vertexMaxDistGet();
+	for (CollisionShapeBase* shape : shapes) {
+		float distCur = shape->shapeMaxDistGet();
 		if (distCur > distMax) {
 			distMax = distCur;
 		}
@@ -25,21 +25,21 @@ void CollisionProcessor::colliderRequestProcess(EntityId entityId, std::vector<C
 
 	colliderRequestProcess(entityId, shapes, distMax);
 }
-void CollisionProcessor::colliderRequestProcess(EntityId entityId, CollisionShape* shape) {
-	colliderRequestProcess(entityId, { shape }, shape->vertexMaxDistGet());
+void CollisionProcessor::colliderRequestProcess(EntityId entityId, CollisionShapeBase* shape) {
+	colliderRequestProcess(entityId, { shape }, shape->shapeMaxDistGet());
 }
 
-void CollisionProcessor::entityMarkCollidable(EntityId entityId, std::vector<CollisionShape*> shapes, float shapesMaxVertexDist) {
+void CollisionProcessor::entityMarkCollidable(EntityId entityId, std::vector<CollisionShapeBase*> shapes, float shapesMaxVertexDist) {
 	collidables.push_back(Collider(entityId, shapesMaxVertexDist, shapes));
 }
-void CollisionProcessor::entityMarkCollidable(EntityId entityId, CollisionShape* shape, float shapeMaxVertexDist) {
-	entityMarkCollidable(entityId, std::vector<CollisionShape*>{ shape }, shapeMaxVertexDist);
+void CollisionProcessor::entityMarkCollidable(EntityId entityId, CollisionShapeBase* shape, float shapeMaxVertexDist) {
+	entityMarkCollidable(entityId, std::vector<CollisionShapeBase*>{ shape }, shapeMaxVertexDist);
 }
-void CollisionProcessor::entityMarkCollidable(EntityId entityId, std::vector<CollisionShape*> shapes) {
+void CollisionProcessor::entityMarkCollidable(EntityId entityId, std::vector<CollisionShapeBase*> shapes) {
 	float distMax = -INFINITY;
 
-	for (CollisionShape* shape : shapes) {
-		float distCur = shape->vertexMaxDistGet();
+	for (CollisionShapeBase* shape : shapes) {
+		float distCur = shape->shapeMaxDistGet();
 		if (distCur > distMax) {
 			distMax = distCur;
 		}
@@ -47,8 +47,8 @@ void CollisionProcessor::entityMarkCollidable(EntityId entityId, std::vector<Col
 
 	entityMarkCollidable(entityId, shapes, distMax);
 }
-void CollisionProcessor::entityMarkCollidable(EntityId entityId, CollisionShape* shape) {
-	entityMarkCollidable(entityId, { shape }, shape->vertexMaxDistGet());
+void CollisionProcessor::entityMarkCollidable(EntityId entityId, CollisionShapeBase* shape) {
+	entityMarkCollidable(entityId, { shape }, shape->shapeMaxDistGet());
 }
 
 struct PairComparator {
@@ -81,12 +81,12 @@ void CollisionProcessor::collisionsProcess() {
 			// skip if the shapes are farther than the farthest possible distance they can be while still colliding
 			if (centersDistSqrd > (shapesVertexMaxDist * shapesVertexMaxDist)) continue;
 
-			for (CollisionShape* shapeCur : collider.shapes) {
-				for (CollisionShape* shapeOtherCur : collidable.shapes) {
+			for (CollisionShapeBase* shapeCur : collider.shapes) {
+				for (CollisionShapeBase* shapeOtherCur : collidable.shapes) {
 
-					if (!CollisionHandler::collisionCheck(*shapeCur, *shapeOtherCur)) continue;
+					if (!CollisionHandler::collisionCheck(shapeCur, shapeOtherCur)) continue;
 
-					sf::Vector2f collisionAxis = CollisionHandler::collisionVectorGet(*shapeCur, *shapeOtherCur);
+					sf::Vector2f collisionAxis = CollisionHandler::collisionVectorGet(shapeCur, shapeOtherCur);
 
 					//float massRatio = 
 					Entity& entityI = EntityManager::entityGet(collider.entityId);

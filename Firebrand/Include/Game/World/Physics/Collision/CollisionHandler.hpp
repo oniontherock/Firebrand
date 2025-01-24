@@ -5,9 +5,9 @@
 
 class CollisionHandler {
 public:
-	static bool collisionCheck(CollisionShape& shapeA, CollisionShape& shapeB);
+	static bool collisionCheck(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB);
 	// returns the collision vector of the last collision that was checked
-	static sf::Vector2f collisionVectorGet(CollisionShape& shapeA, CollisionShape& shapeB);
+	static sf::Vector2f collisionVectorGet(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB);
 };
 
 

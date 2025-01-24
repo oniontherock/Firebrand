@@ -156,7 +156,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, 50u),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud }),
 			createComponentPairFromType<ComponentCollider>(),
-			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
+			createComponentPairFromType<ComponentCollisionShape>(CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-12, -24), sf::Vector2f(12, -24), sf::Vector2f(12, 24), sf::Vector2f(-12, 24)
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
@@ -177,7 +177,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 48, 24) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 48, 24) }),
 			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
+			createComponentPairFromType<ComponentCollisionShape>(CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-12, -12), sf::Vector2f(32, -12), sf::Vector2f(32, 12), sf::Vector2f(-12, 12)
 				})),
 			createComponentPairFromType<ComponentMass>(10000000000.f),
@@ -196,7 +196,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
 			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
+			createComponentPairFromType<ComponentCollisionShape>(CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-32, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(-32, 6)
 				})),
 			createComponentPairFromType<ComponentMass>(10000000000.f),
@@ -217,10 +217,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 10, 38), sf::FloatRect(-5, -5, 38, 10) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionShape>(std::vector{
-			CollisionShape(CollisionPolygon{
+			CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-6, -6), sf::Vector2f(6, -6), sf::Vector2f(6, 32), sf::Vector2f(-6, 32)
 				}),
-			CollisionShape(CollisionPolygon{
+			CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(6, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(6, 6)
 				})
 			}),
@@ -241,10 +241,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 38, 10), sf::FloatRect(-5, -32, 10, 65) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionShape>(std::vector{
-			CollisionShape(CollisionPolygon{
+			CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-6, -32), sf::Vector2f(6, -32), sf::Vector2f(6, 32), sf::Vector2f(-6, 32)
 				}),
-			CollisionShape(CollisionPolygon{
+			CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(6, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(6, 6)
 				})
 			}),
@@ -265,10 +265,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 10), sf::FloatRect(-5, -32, 10, 64) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionShape>(std::vector{
-			CollisionShape(CollisionPolygon{
+			CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-6, -32), sf::Vector2f(6, -32), sf::Vector2f(6, 32), sf::Vector2f(-6, 32)
 				}),
-			CollisionShape(CollisionPolygon{
+			CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-32, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(-32, 6)
 				})
 			}),
@@ -316,11 +316,11 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -2, 64, 4) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollider>(),
-			createComponentPairFromType<ComponentCollisionShape>(CollisionShape(CollisionPolygon{
+			createComponentPairFromType<ComponentCollisionShape>(CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-24, -4), sf::Vector2f(24, -4), sf::Vector2f(24, 4), sf::Vector2f(-24, 4)
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMass>(50.f),
+			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentHingeOnPoint>(sf::Vector2f(-32, 0)),
 		}
 		);
@@ -814,7 +814,7 @@ void ComponentCollisionShape::system(Entity& entity) {
 	sf::Vector2f& position = entity.entityComponentGet<ComponentPosition>()->position;
 	float& rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
 
-	for (CollisionShape& shape : shapes) {
+	for (CollisionShapePolygon& shape : shapes) {
 		// change these two calls to a shape.transformSet(), not doing it right now because i haven't tested if it works, (almost certain it does)
 		shape.centerSet(position);
 		shape.rotationSet(rotation);
@@ -822,11 +822,11 @@ void ComponentCollisionShape::system(Entity& entity) {
 
 	if (entity.entityEventHas<EventInitialize>()) {
 		if (entity.entityComponentHas<ComponentCollidable>()) {
-			CollisionProcessor::entityMarkCollidable(entity.Id, shapesPtrs, shapesVertexMaxDist);
+			CollisionProcessor::entityMarkCollidable(entity.Id, shapesPtrs, shapesMaxDist);
 		}
 	}
 	if (entity.entityComponentHas<ComponentCollider>()) {
-		CollisionProcessor::colliderRequestProcess(entity.Id, shapesPtrs, shapesVertexMaxDist);
+		CollisionProcessor::colliderRequestProcess(entity.Id, shapesPtrs, shapesMaxDist);
 	}
 }
 void ComponentHingeOnPoint::system(Entity& entity) {

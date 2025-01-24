@@ -12,7 +12,7 @@ class CollisionProcessor {
 	struct Collider {
 		EntityId entityId;
 		float shapesVertexMaxDist;
-		std::vector<CollisionShape*> shapes;
+		std::vector<CollisionShapeBase*> shapes;
 
 		bool operator< (const Collider& other);
 	};
@@ -22,18 +22,18 @@ class CollisionProcessor {
 	// vector of Colliders, colliders that are added to this list are always processed in collisionsProcess, this is used for things like walls, that don't update but need their collisions checked
 	static std::vector<Collider> collidables;
 public:
-	static void colliderRequestProcess(EntityId entityId, std::vector<CollisionShape*> shapes, float shapesMaxVertexDist);
-	static void colliderRequestProcess(EntityId entityId, CollisionShape* shape, float shapeMaxVertexDist);
+	static void colliderRequestProcess(EntityId entityId, std::vector<CollisionShapeBase*> shapes, float shapesMaxVertexDist);
+	static void colliderRequestProcess(EntityId entityId, CollisionShapeBase* shape, float shapeMaxVertexDist);
 
-	static void colliderRequestProcess(EntityId entityId, std::vector<CollisionShape*> shapes);
-	static void colliderRequestProcess(EntityId entityId, CollisionShape* shape);
+	static void colliderRequestProcess(EntityId entityId, std::vector<CollisionShapeBase*> shapes);
+	static void colliderRequestProcess(EntityId entityId, CollisionShapeBase* shape);
 
 
-	static void entityMarkCollidable(EntityId entityId, std::vector<CollisionShape*> shapes, float shapesMaxVertexDist);
-	static void entityMarkCollidable(EntityId entityId, CollisionShape* shape, float shapeMaxVertexDist);
+	static void entityMarkCollidable(EntityId entityId, std::vector<CollisionShapeBase*> shapes, float shapesMaxVertexDist);
+	static void entityMarkCollidable(EntityId entityId, CollisionShapeBase* shape, float shapeMaxVertexDist);
 
-	static void entityMarkCollidable(EntityId entityId, std::vector<CollisionShape*> shapes);
-	static void entityMarkCollidable(EntityId entityId, CollisionShape* shape);
+	static void entityMarkCollidable(EntityId entityId, std::vector<CollisionShapeBase*> shapes);
+	static void entityMarkCollidable(EntityId entityId, CollisionShapeBase* shape);
 
 
 	static void collisionsProcess();

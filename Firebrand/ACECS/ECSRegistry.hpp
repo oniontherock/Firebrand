@@ -561,26 +561,26 @@ namespace EntityComponents {
 		ComponentCollisionShape() {
 			hasSystem = true;
 		};
-		ComponentCollisionShape(std::vector<CollisionShape> _shapes) :
+		ComponentCollisionShape(std::vector<CollisionShapePolygon> _shapes) :
 			ComponentCollisionShape()
 		{
 			shapes = _shapes;
 			shapesPtrs.resize(shapes.size());
 
 			for (uint16_t i = 0; i < shapes.size(); i++) {
-				if (shapes[i].vertexMaxDistGet() > shapesVertexMaxDist) {
-					shapesVertexMaxDist = shapes[i].vertexMaxDistGet();
+				if (shapes[i].shapeMaxDistGet() > shapesMaxDist) {
+					shapesMaxDist = shapes[i].shapeMaxDistGet();
 				}
 
 				shapesPtrs[i] = &shapes[i];
 			}
 		};
-		ComponentCollisionShape(CollisionShape _shape) :
+		ComponentCollisionShape(CollisionShapePolygon _shape) :
 			ComponentCollisionShape(std::vector{ _shape })
 		{
 		};
 
-		std::vector<CollisionShape> shapes;
+		std::vector<CollisionShapePolygon> shapes;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentCollisionShape(shapes));
@@ -590,9 +590,9 @@ namespace EntityComponents {
 		void load(std::ifstream& str) override;
 	private:
 		// maximum distance to a vertex local to the origin in the given shapes
-		float shapesVertexMaxDist = 0.f;
+		float shapesMaxDist = 0.f;
 		// pointers to every shape in shapes, we have this because the CollisionProcessor needs pointers instead of instances
-		std::vector<CollisionShape*> shapesPtrs;
+		std::vector<CollisionShapeBase*> shapesPtrs;
 	};
 	// if this entity collides with another collidable object, it moves itself 
 	struct ComponentCollisionResponse final : public Component {

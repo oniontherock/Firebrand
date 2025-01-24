@@ -3,7 +3,7 @@
 #include "Auxiliary/VectorMath.hpp"
 #include "EPACollisionHandler.hpp"
 
-sf::Vector2f EPACollisionHandler::collisionVectorGet(CollisionShape& shapeA, CollisionShape& shapeB, const std::vector<sf::Vector2f>& simplex) {
+sf::Vector2f EPACollisionHandler::collisionVectorGet(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB, const std::vector<sf::Vector2f>& simplex) {
 
 	uint16_t minInd = 0;
 	float minDist = INFINITY;

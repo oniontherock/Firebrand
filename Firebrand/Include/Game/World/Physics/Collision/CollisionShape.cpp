@@ -4,10 +4,57 @@
 #include <Auxiliary/ConsoleHandler.hpp>
 #include <iostream>
 
-CollisionShape::CollisionShape() {
+CollisionShapeBase::CollisionShapeBase() {
 }
 
-CollisionShape::CollisionShape(CollisionPolygon _vertices) {
+void CollisionShapeBase::centerSet(sf::Vector2f centerNew) {
+	center = centerNew;
+}
+void CollisionShapeBase::centerAdd(sf::Vector2f centerOffset) {
+	center += centerOffset;
+}
+void CollisionShapeBase::rotationSet(float rotationNew) {
+	rotation = rotationNew;
+}
+void CollisionShapeBase::rotationAdd(float rotationOffset) {
+	rotation += rotationOffset;
+}
+void CollisionShapeBase::transformSet(sf::Vector2f centerNew, float rotationNew) {
+	center = centerNew;
+	rotation = rotationNew;
+}
+
+sf::Vector2f CollisionShapeBase::centerGet() const {
+	return center;
+}
+
+float CollisionShapeBase::shapeMaxDistGet() const {
+	return shapeMaxDist;
+}
+
+float CollisionShapeBase::rotationGet() const {
+	return rotation;
+}
+
+sf::Vector2f CollisionShapePolygon::supportPointGet(sf::Vector2f direction) {
+	float bestDot = -1234567.f;
+	uint16_t bestInd = UINT16_MAX;
+
+
+	for (uint16_t i = 0; i < vertices.size(); i++) {
+		float dot = Vector2fMath::dot(vertices[i], direction);
+		if (dot > bestDot || bestInd >= UINT16_MAX) {
+			bestDot = dot;
+			bestInd = i;
+		}
+	}
+
+	return vertices[bestInd];
+}
+
+CollisionShapePolygon::CollisionShapePolygon() {
+}
+CollisionShapePolygon::CollisionShapePolygon(CollisionPolygon _vertices) {
 	if (_vertices.size() <= 2) {
 		ConsoleHandler::consolePrintErr("CollisionShape created with less than 3 vertices!");
 		return;
@@ -27,10 +74,10 @@ CollisionShape::CollisionShape(CollisionPolygon _vertices) {
 			maxDistSqrd = distSqrd;
 		}
 	}
-	vertexMaxDist = sqrt(maxDistSqrd);
+	shapeMaxDist = sqrt(maxDistSqrd);
 }
 
-void CollisionShape::centerSet(sf::Vector2f centerNew) {
+void CollisionShapePolygon::centerSet(sf::Vector2f centerNew) {
 
 	for (uint16_t i = 0; i < vertices.size(); i++) {
 		// update the current vertex by moving it by the axis from the old center to the new center
@@ -39,7 +86,7 @@ void CollisionShape::centerSet(sf::Vector2f centerNew) {
 
 	center = centerNew;
 }
-void CollisionShape::centerAdd(sf::Vector2f centerOffset) {
+void CollisionShapePolygon::centerAdd(sf::Vector2f centerOffset) {
 	for (uint16_t i = 0; i < vertices.size(); i++) {
 		// update the current vertex by moving it by centerOffset
 		vertices[i] += centerOffset;
@@ -47,7 +94,7 @@ void CollisionShape::centerAdd(sf::Vector2f centerOffset) {
 
 	center += centerOffset;
 }
-void CollisionShape::rotationSet(float rotationNew) {
+void CollisionShapePolygon::rotationSet(float rotationNew) {
 
 	for (uint16_t i = 0; i < vertices.size(); i++) {
 		// update the current vertex by localizing it with the center,
@@ -58,7 +105,7 @@ void CollisionShape::rotationSet(float rotationNew) {
 
 	rotation = rotationNew;
 }
-void CollisionShape::rotationAdd(float rotationOffset) {
+void CollisionShapePolygon::rotationAdd(float rotationOffset) {
 
 	for (uint16_t i = 0; i < vertices.size(); i++) {
 		// update the current vertex by localizing it with the center,
@@ -69,7 +116,7 @@ void CollisionShape::rotationAdd(float rotationOffset) {
 
 	rotation += rotationOffset;
 }
-void CollisionShape::transformSet(sf::Vector2f centerNew, float rotationNew) {
+void CollisionShapePolygon::transformSet(sf::Vector2f centerNew, float rotationNew) {
 
 	for (uint16_t i = 0; i < vertices.size(); i++) {
 		// update the current vertex by localizing it with the old center,
@@ -80,31 +127,4 @@ void CollisionShape::transformSet(sf::Vector2f centerNew, float rotationNew) {
 
 	center = centerNew;
 	rotation = rotationNew;
-}
-
-sf::Vector2f CollisionShape::centerGet() const {
-	return center;
-}
-float CollisionShape::rotationGet() const {
-	return rotation;
-}
-
-sf::Vector2f CollisionShape::supportPointGet(sf::Vector2f direction) {
-	float bestDot = -1234567.f;
-	uint16_t bestInd = UINT16_MAX;
-
-
-	for (uint16_t i = 0; i < vertices.size(); i++) {
-		float dot = Vector2fMath::dot(vertices[i], direction);
-		if (dot > bestDot || bestInd >= UINT16_MAX) {
-			bestDot = dot;
-			bestInd = i;
-		}
-	}
-
-	return vertices[bestInd];
-}
-
-float CollisionShape::vertexMaxDistGet() const {
-	return vertexMaxDist;
 }

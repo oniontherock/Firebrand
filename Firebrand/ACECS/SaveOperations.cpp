@@ -244,11 +244,11 @@ void EntityComponents::ComponentObjectGridInhabiterRectangles::load(std::ifstrea
 }
 void EntityComponents::ComponentCollisionShape::save(std::ofstream& str) {
 	str << shapes;
-	str << shapesVertexMaxDist;
+	str << shapesMaxDist;
 }
 void EntityComponents::ComponentCollisionShape::load(std::ifstream& str) {
 	str >> shapes;
-	str >> shapesVertexMaxDist;
+	str >> shapesMaxDist;
 }
 
 #pragma endregion

@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 namespace CollisionMath {
-	sf::Vector2f supportGet(CollisionShape& shapeA, CollisionShape& shapeB, sf::Vector2f supportDirection);
+	sf::Vector2f supportGet(CollisionShapeBase* shapeA, CollisionShapeBase* shapeB, sf::Vector2f supportDirection);
 }
 
 #endif
