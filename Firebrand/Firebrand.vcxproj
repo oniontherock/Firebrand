@@ -276,6 +276,8 @@
     <Image Include="Art\Structures\Floors\Floor Debug.png" />
     <Image Include="Art\Structures\Floors\Floor Plank.png" />
     <Image Include="Art\Structures\Floors\Floor Tile.png" />
+    <Image Include="Art\Structures\Props\Dresser.png" />
+    <Image Include="Art\Structures\Props\Table Wooden.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Corner.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Junction Plus.png" />
     <Image Include="Art\Structures\Walls\Wall Wooden Junction T.png" />
