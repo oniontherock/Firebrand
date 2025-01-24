@@ -320,7 +320,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			sf::Vector2f(-24, -4), sf::Vector2f(24, -4), sf::Vector2f(24, 4), sf::Vector2f(-24, 4)
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMass>(120.f),
+			createComponentPairFromType<ComponentMass>(20.f),
 			createComponentPairFromType<ComponentHingeOnPoint>(sf::Vector2f(-32, 0)),
 		}
 		);
