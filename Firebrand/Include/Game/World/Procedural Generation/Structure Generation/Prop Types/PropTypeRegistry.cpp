@@ -1,6 +1,7 @@
 #include "PropTypeRegistry.hpp"
-#include <set>
+#include <Auxiliary/Math.hpp>
 #include <iostream>
+#include <set>
 
 using enum PropType;
 
@@ -24,6 +25,9 @@ void PropTypeRegistry::propTypesRegister() {
 	roomTypeInstance = PropTypeInstance(PropType::Dresser);
 	roomTypeInstance.name = "Dresser";
 	roomTypeInstance.constraints.dataSet("IsOffCenter", NULL);
+	roomTypeInstance.constraints.dataSet("IsWallAdjacent", NULL);
+	roomTypeInstance.constraints.dataSet("IsFlushWithWall", NULL); // rotates the prop away from the nearest wall and moves the prop so that it is flush with the wall, requires the object to be adjacent to a wall to take affect
+	roomTypeInstance.distToBeWallFlush = 48.f;
 	propInstanceAdd(roomTypeInstance);
 
 	roomTypeInstance = PropTypeInstance(PropType::Table);

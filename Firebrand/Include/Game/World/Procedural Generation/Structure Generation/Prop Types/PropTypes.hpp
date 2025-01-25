@@ -17,7 +17,13 @@ enum class PropType {
 	PropTypeSize,
 };
 
-typedef std::vector<std::string> PropTypeGrid1D;
+struct PropCell {
+	std::string name;
+	float rotation;
+	sf::Vector2f offset;
+};
+
+typedef std::vector<PropCell> PropTypeGrid1D;
 typedef std::vector<PropTypeGrid1D> PropTypeGrid2D;
 
 typedef DataCache PropConstraints;
@@ -32,5 +38,8 @@ struct PropTypeInstance {
 	PropConstraints constraints;
 	// the name of the template that this prop corresponds to 
 	std::string name;
+	// the distance required for an object to be moved towards a wall to be considered flush
+	float distToBeWallFlush = 0.f;
 };
+
 #endif

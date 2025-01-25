@@ -44,7 +44,7 @@ Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType
 
 	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y);
 
-	PropTypeGrid2D propTypeGrid = PropGenerator::propsGenerate(wallGrid, roomTypeGrid, structureSize, roomRectsVector);
+	PropTypeGrid2D propTypeGrid = PropGenerator::propsGenerate(wallGrid, doorGrid, roomTypeGrid, structureSize, roomRectsVector);
 
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {
@@ -94,8 +94,10 @@ Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType
 				//		cell.type = "Misc Marker";
 				//}
 			}
-			else if (propTypeGrid[x][y] != "Null") {
-				cell.type = propTypeGrid[x][y];
+			else if (propTypeGrid[x][y].name != "Null") {
+				cell.type = propTypeGrid[x][y].name;
+				cell.rotation = propTypeGrid[x][y].rotation;
+				cell.offset = propTypeGrid[x][y].offset;
 			} 
 
 			structureGrid.cellSet(x, y, cell);

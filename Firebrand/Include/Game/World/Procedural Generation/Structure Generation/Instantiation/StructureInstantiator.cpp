@@ -18,7 +18,7 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			sf::Vector2f cellPosition = sf::Vector2f(0, 0);
 
 			// cell's position local to the structure's origin
-			sf::Vector2f cellPositionLocal = sf::Vector2f(float(x) * structureGridCellSize, float(y) * structureGridCellSize) - (structure.structureGrid.gridGetSizeFull() / 2.f);
+			sf::Vector2f cellPositionLocal = (sf::Vector2f(float(x) * structureGridCellSize, float(y) * structureGridCellSize) + cell.offset) - (structure.structureGrid.gridGetSizeFull() / 2.f);
 
 			EntityUpdateType updateType = EntityUpdateType::Frame;
 
