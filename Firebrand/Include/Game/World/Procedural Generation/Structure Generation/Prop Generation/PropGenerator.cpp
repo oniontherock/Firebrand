@@ -97,7 +97,7 @@ PropTypeGrid2D PropGenerator::propsGenerate(const WallGrid2D& wallGrid, const Do
                         propTypeGrid[cell.x][cell.y].rotation = -Mathf::PI / 2.f;
                     }
 
-                    propTypeGrid[cell.x][cell.y].offset = Vector2fMath::rotate(sf::Vector2f(propTypeInstance.distToBeWallFlush, 0), -propTypeGrid[cell.x][cell.y].rotation);
+                    propTypeGrid[cell.x][cell.y].offset = Vector2fMath::rotate(sf::Vector2f(propTypeInstance.distToBeWallFlush, 0), propTypeGrid[cell.x][cell.y].rotation + Mathf::PI);
                 }
 
                 if (RNGf::probability(0.9f)) {

@@ -32,6 +32,7 @@ void PropTypeRegistry::propTypesRegister() {
 
 	roomTypeInstance = PropTypeInstance(PropType::Table);
 	roomTypeInstance.name = "Table";
+	roomTypeInstance.constraints.dataSet("IsOffEdge", NULL);
 	propInstanceAdd(roomTypeInstance);
 };
 
