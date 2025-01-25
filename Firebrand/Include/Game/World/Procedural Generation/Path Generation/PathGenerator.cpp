@@ -226,9 +226,9 @@ void PathGenerator::pathGenerate(sf::Vector2f pointStartPosition, sf::Vector2f p
 	pointGenerate(pointStart, pointEnd, 0, 12);
 }
 
-const std::vector<PathPoint*>& PathGenerator::pathGet() {
+const std::vector<PathPoint*>& PathGenerator::pathGet() const {
 	return pathPoints;
 }
-const std::vector<PointConnection>& PathGenerator::connectionsGet() {
+const std::vector<PointConnection>& PathGenerator::connectionsGet() const {
 	return connections;
 }

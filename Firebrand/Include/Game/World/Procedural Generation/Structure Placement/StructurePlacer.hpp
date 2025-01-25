@@ -1,0 +1,19 @@
+#ifndef __STRUCTURE_PLACER_H__
+#define __STRUCTURE_PLACER_H__
+
+#include "../ACECS/GameLevel.hpp"
+#include "../Path Generation/PathGenerator.hpp"
+#include <cstdint>
+#include <map>
+#include <set>
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include <SFML/Graphics/Rect.hpp>
+
+typedef sf::FloatRect StructureRect;
+
+namespace StructurePlacer {
+	std::vector<StructureRect> structureRectsGenerate(const PathGenerator& pathGenerator, GameLevel* level);
+};
+
+#endif

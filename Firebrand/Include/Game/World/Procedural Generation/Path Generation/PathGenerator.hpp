@@ -70,8 +70,8 @@ public:
 
 	sf::FloatRect generationBounds;
 
-	const std::vector<PathPoint*>& pathGet();
-	const std::vector<PointConnection>& connectionsGet();
+	const std::vector<PathPoint*>& pathGet() const;
+	const std::vector<PointConnection>& connectionsGet() const;
 };
 
 

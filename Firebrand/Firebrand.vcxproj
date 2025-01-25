@@ -188,6 +188,8 @@
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Sections\WallSectionGenerator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Placement\Grid\StructurePlacementGrid.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Placement\StructurePlacer.cpp" />
     <ClCompile Include="Include\Game\World\World Clock\WorldClock.cpp" />
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
@@ -268,6 +270,8 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Sections\WallSectionGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Structure.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Placement\Grid\StructurePlacementGrid.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Placement\StructurePlacer.hpp" />
     <ClInclude Include="Include\Game\World\World Clock\WorldClock.hpp" />
   </ItemGroup>
   <ItemGroup>

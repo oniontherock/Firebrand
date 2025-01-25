@@ -1,11 +1,12 @@
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Instantiation/StructureInstantiator.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Structure Types/StructureTypeRegistry.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/StructureGenerator.hpp"
+#include "../Include/Game/World/Procedural Generation/Structure Placement/StructurePlacer.hpp"
 #include "GameLevel.hpp"
 #include <Graphics/Stores/GraphicsStore.hpp>
 
 GameLevel::GameLevel() :
-	levelSize(sf::Vector2u(4096 * 1, 4096 * 1)),
+	levelSize(sf::Vector2u(4096 * 2, 4096 * 2)),
 	aStarGrid(AStarGrid(levelSize.x / 64, levelSize.y / 64, 64.f, 64.f)),
 	objectGrid(levelSize.x / 16, levelSize.y / 16, 16.f, 16.f),
 	pathGenerator(PathGenerator()),
@@ -155,8 +156,21 @@ void GameLevel::pathsGenerate() {
 }
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
-	Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), RNGf::getFullRange(0), sf::Vector2u(24, 24));
-	StructureInstantiator::structureInstantiate(levelPosition, structure);
+
+	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);
+
+	for (StructureRect& rectCur : structureRects) {
+
+		sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f);
+
+		sf::Vector2u rectCellCount = sf::Vector2u(rectCur.getSize() / structureGridCellSize);
+
+		Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCenter, RNGf::getFullRange(Mathf::PI), rectCellCount);
+		StructureInstantiator::structureInstantiate(levelPosition, structure);
+	}
+
+	//Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), sf::Vector2f(2048, 2048), RNGf::getFullRange(Mathf::PI), sf::Vector2u(24, 24));
+	//StructureInstantiator::structureInstantiate(levelPosition, structure);
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Completed");
 }
 
