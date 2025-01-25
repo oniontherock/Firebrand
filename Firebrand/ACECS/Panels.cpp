@@ -40,9 +40,10 @@ void PanelStaticView::panelApplyGrayscale() {
 	sf::Shader grayscaleShader;
 	grayscaleShader.loadFromFile("Include/Shaders/Grayscale.glsl", sf::Shader::Fragment);
 	grayscaleShader.setUniform("texture", sf::Shader::CurrentTexture);
-	grayscaleShader.setUniform("divider", 1.1f);
+	grayscaleShader.setUniform("divider", 1.4f);
 	grayscaleShader.setUniform("lerp", 0.9f);
-	
+	//panelSprite.setColor()
+
 	// clear panel texture
 	texture.clear();
 	// draw panelSprite to the panel with grayscaling applied

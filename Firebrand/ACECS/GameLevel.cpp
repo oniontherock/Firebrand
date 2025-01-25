@@ -34,7 +34,7 @@ void GameLevel::backgroundDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 	textureGridsUpdateValidity(rect);
 
-	//grassDraw(rect, drawIterationsMax);
+	grassDraw(rect, drawIterationsMax);
 	pathsDraw(rect, drawIterationsMax);
 }
 
