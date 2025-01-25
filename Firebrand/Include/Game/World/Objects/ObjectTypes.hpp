@@ -8,6 +8,8 @@ enum class ObjectType : uint16_t {
 	Player,
 	SquadMember,
 	Door,
+	Dresser,
+	Table,
 	Wall,
 	SIZE, // size of the ObjectTypes enum
 };

@@ -6,6 +6,7 @@
 #include <vector>
 #include <SFML/System.hpp>
 #include "../include/Common/DataCache.hpp"
+#include "../Prop Types/PropTypes.hpp"
 
 enum class RoomType {
 	// extras
@@ -37,12 +38,12 @@ struct RoomTypeInstance {
 
 	// the type of room this is
 	RoomType type = RoomType::Null;
-
 	// constraints for this room
 	RoomConstraints constraints;
-
 	// the type floor that is used in this room type
 	std::string floorType = "";
+	// prop types allowed in this room
+	std::vector<PropType> propTypes;
 };
 
 #endif

@@ -1,11 +1,11 @@
 #include "Door Generation/DoorGenerator.hpp"
 #include "Floor Generation/FloorGenerator.hpp"
+#include "Prop Generation/PropGenerator.hpp"
 #include "Room Designation/RoomDesignator.hpp"
 #include "StructureGenerator.hpp"
 #include "Wall Sections/WallSectionGenerator.hpp"
 #include <Auxiliary/Math.hpp>
 #include <Auxiliary/NumberGenerator.hpp>
-
 
 Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType, sf::Vector2f structurePosition, float structureRotation, sf::Vector2u structureSize) {
 
@@ -43,6 +43,8 @@ Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType
 	DoorGenerator::DoorGrid2D doorGrid = DoorGenerator::doorsGenerate(wallSectionGrid, roomTypeGrid, structureSize, roomRectsVector);
 
 	StructureGrid structureGrid = StructureGrid(structureSize.x, structureSize.y);
+
+	PropTypeGrid2D propTypeGrid = PropGenerator::propsGenerate(wallGrid, roomTypeGrid, structureSize, roomRectsVector);
 
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {
@@ -92,37 +94,9 @@ Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType
 				//		cell.type = "Misc Marker";
 				//}
 			}
-			else if (roomType != RoomType::Null) {
-
-				//const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(roomType);
-
-				//std::pair<:FloorType, float> floorData = FloorGenerator::floorDataGetFromSurroundings(wallStates);
-
-				//cell.type = FloorGenerator::cellTypeGetFromFloorType(floorData.first);
-				//cell.rotation = floorData.second;
-
-				//std::cout << "cell rotation: " << cell.rotation << "\n";
-
-				//cell.type += std::string(" ") + roomTypeInstance.floorType;
-
-				//switch (roomTypeGrid.cellGet(x, y).type) {
-				//case RoomType::Hallway:
-				//	cell.type = "Hallway Marker";
-				//	break;
-				//case RoomType::Bathroom:
-				//	cell.type = "Bathroom Marker";
-				//	break;
-				//case RoomType::Bedroom:
-				//	cell.type = "Bedroom Marker";
-				//	break;
-				//case RoomType::LivingRoom:
-				//	cell.type = "LivingRoom Marker";
-				//	break;
-				////case RoomType::Laboratory:
-				////	cell.type = "Laboratory Marker";
-				////	break;
-				//}
-			}
+			else if (propTypeGrid[x][y] != "Null") {
+				cell.type = propTypeGrid[x][y];
+			} 
 
 			structureGrid.cellSet(x, y, cell);
 		}

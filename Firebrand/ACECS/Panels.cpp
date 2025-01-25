@@ -320,7 +320,7 @@ void PanelHud::panelUpdate() {
 
 						objectDraw(convexShape);
 					}
-					catch (const std::bad_cast& e) {
+					catch (const std::bad_cast&) {
 						continue;
 					}
 				}

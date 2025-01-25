@@ -1,3 +1,4 @@
+#include "../Include/Game/World/Procedural Generation/Structure Generation/Prop Types/PropTypeRegistry.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Room Types/RoomTypeRegistry.hpp"
 #include "ACECS.hpp"
 #include "ECSRegistry.hpp"
@@ -169,6 +170,7 @@ void Engine::engineInitialize() {
 	RNGPoolsRegister();
 
 	RoomTypeRegistry::roomTypesRegister();
+	PropTypeRegistry::propTypesRegister();
 
 	GameLevelGrid::levelGridInitialize(1, 1, 1);
 	GameLevelGrid::levelAdd(new GameLevel(0, 0, 0), true);

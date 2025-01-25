@@ -5,3 +5,5 @@ RoomTypeInstance::RoomTypeInstance(RoomType _type) :
 	type(_type)
 {}
 
+
+
