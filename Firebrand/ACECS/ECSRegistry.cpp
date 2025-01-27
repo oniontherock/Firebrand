@@ -5,7 +5,7 @@
 #include <Graphics/PanelManager.hpp>
 #include <Input.hpp>
 
-uint32_t MAX_ENTITIES = 10000;
+uint32_t MAX_ENTITIES = 100000;
 uint16_t MAX_EVENT_TYPES = 5;
 uint16_t MAX_COMPONENT_TYPES = 24;
 

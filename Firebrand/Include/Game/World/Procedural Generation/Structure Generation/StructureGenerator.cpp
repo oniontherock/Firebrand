@@ -14,30 +14,32 @@ Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType
 	RoomTypeGrid roomTypeGrid = RoomTypeGrid(structureSize.x, structureSize.y);
 
 	RoomRectVector roomRectsVector;
-	for (uint16_t i = 0; i < 64; i ++) {
 
-		wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
+		for (uint16_t generationLoop = 0; generationLoop < 64; generationLoop ++) {
 
-		// get roomRects from wall generation
-		roomRectsVector = WallGenerator::roomsGetFromGeneration();
-		// shuffle roomRectsVector
-		for (int16_t j = int16_t(roomRectsVector.size()) - 1; j >= 0; j--) {
+			wallGrid = WallGenerator::wallsGenerate(structureType, structureSize);
 
-			// generate the random index 
-			uint16_t k = RNGu16::getUnder(j + 1);
+			// get roomRects from wall generation
+			roomRectsVector = WallGenerator::roomsGetFromGeneration();
+			// shuffle roomRectsVector
+			for (int16_t i = int16_t(roomRectsVector.size()) - 1; i >= 0; i--) {
 
-			RoomRect temp = roomRectsVector[j];
-			roomRectsVector[j] = roomRectsVector[k];
-			roomRectsVector[k] = temp;
+				// generate the random index 
+				uint16_t j = RNGu16::getUnder(i + 1);
+
+				RoomRect temp = roomRectsVector[i];
+				roomRectsVector[i] = roomRectsVector[j];
+				roomRectsVector[j] = temp;
+			}
+
+			bool roomTypeDesignationSucceeded = RoomDesignator::structureRoomTypesDesignate(wallGrid, roomTypeGrid, structureSize, roomRectsVector);
+
+			bool doorGenerationPossible = DoorGenerator::doorGenerationPossible(roomTypeGrid, structureSize);
+
+			if (roomTypeDesignationSucceeded && doorGenerationPossible) {
+				break;
+			}
 		}
-
-		bool generationSucceeded = RoomDesignator::structureRoomTypesDesignate(wallGrid, roomTypeGrid, structureSize, roomRectsVector);
-
-
-		if (generationSucceeded) {
-			break;
-		}
-	}
 	
 	WallSectionGenerator::WallSectionGrid2D wallSectionGrid = WallSectionGenerator::wallSectionsGet(wallGrid, roomTypeGrid, structureSize);
 	DoorGenerator::DoorGrid2D doorGrid = DoorGenerator::doorsGenerate(wallSectionGrid, roomTypeGrid, structureSize, roomRectsVector);

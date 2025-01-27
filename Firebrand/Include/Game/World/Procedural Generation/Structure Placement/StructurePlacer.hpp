@@ -10,7 +10,9 @@
 #include <vector>
 #include <SFML/Graphics/Rect.hpp>
 
-typedef sf::FloatRect StructureRect;
+struct StructureRect : sf::FloatRect {
+	float rotation;
+};
 
 namespace StructurePlacer {
 	std::vector<StructureRect> structureRectsGenerate(const PathGenerator& pathGenerator, GameLevel* level);

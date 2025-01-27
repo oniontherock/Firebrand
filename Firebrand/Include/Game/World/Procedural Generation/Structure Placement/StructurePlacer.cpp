@@ -10,7 +10,7 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 	const std::vector<PathPoint*>& path = pathGenerator.pathGet();
 	const std::vector<PointConnection>& connections = pathGenerator.connectionsGet();
 
-	constexpr float cellSize = 256;
+	constexpr float cellSize = 64;
 
 	StructurePlacementGrid structurePlacementGrid = StructurePlacementGrid(level->levelSize.x / uint16_t(cellSize), level->levelSize.y / uint16_t(cellSize), cellSize, cellSize);
 
@@ -25,79 +25,81 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 
 		while (Vector2fMath::distSqrd(point, pointB->position) > (cellSize * cellSize)) {
 
-			if (!structurePlacementGrid.worldPosIsInGridFull(point)) break;
 
-			structurePlacementGrid.cellSetFromWorld(pointA->position, true);
+			for (int16_t offsetX = -2; offsetX <= 2; offsetX++) {
+				for (int16_t offsetY = -2; offsetY <= 2; offsetY++) {
+
+					sf::Vector2f offsettedPoint = point + sf::Vector2f(float(offsetX) * cellSize, float(offsetY) * cellSize);
+
+					if (!structurePlacementGrid.worldPosIsInGridFull(offsettedPoint)) continue;
+
+					structurePlacementGrid.cellSetFromWorld(offsettedPoint, true);
+				}
+			}
+
 			point += axis;
 		}
 	}
 
-	for (const PointConnection& connectionCur : connections) {
-		PathPoint* pointA = path[connectionCur.first];
-		PathPoint* pointB = path[connectionCur.second];
+	for (const PathPoint* pointCur : path) {
+		while (RNGf::probability(1.f)) {
 
-		sf::Vector2f point = pointA->position;
+			sf::Vector2f point = pointCur->position;
 
-		sf::Vector2f axis = Vector2fMath::dir(pointA->position, pointB->position) * cellSize;
+			float randAngle = RNGf::getRange(Mathf::TAU);
 
-		while (Vector2fMath::distSqrd(point, pointB->position) > (cellSize * cellSize)) {
-			if (0.1f > RNGfPool::poolValueGet(PROBABILITY_POOL_ID)) {
-
-				sf::Vector2f placementAxis = Vector2fMath::normalize(Vector2fMath::rotate(axis, RNGfPool::poolValueGet(PROBABILITY_POOL_ID) ? (Mathf::PI / 2.f) : (-Mathf::PI / 2.f)));
+			sf::Vector2f placementAxis = sf::Vector2f(cos(randAngle), sin(randAngle));
 
 
-				StructureRect structureRect;
-				structureRect.width = RNGu16::getRange(8, 16) * structureGridCellSize;
-				structureRect.height = RNGu16::getRange(8, 16) * structureGridCellSize;
+			StructureRect structureRect;
+			structureRect.width = RNGu16::getRange(8, 24) * structureGridCellSize;
+			structureRect.height = RNGu16::getRange(8, 24) * structureGridCellSize;
 
-				float maxDist = std::max(structureRect.width, structureRect.height);
+			float maxDist = std::max(structureRect.width, structureRect.height);
 
-				placementAxis *= maxDist * RNGf::getRange(1.25f, 2.f);
+			placementAxis *= maxDist;
 
-				structureRect.left = (point.x + placementAxis.x) - (structureRect.width / 2.f);
-				structureRect.top = (point.y + placementAxis.y) - (structureRect.height / 2.f);
+			structureRect.left = (point.x + placementAxis.x) - (structureRect.width / 2.f);
+			structureRect.top = (point.y + placementAxis.y) - (structureRect.height / 2.f);
 
 
-				bool rectIsClear = true;
+			bool rectIsClear = true;
+			for (float x = 0; x < structureRect.width; x += cellSize) {
+				for (float y = 0; y < structureRect.height; y += cellSize) {
+
+					float worldX = structureRect.left + x;
+					float worldY = structureRect.top + y;
+
+					if (!structurePlacementGrid.worldPosIsInGridFull(worldX, worldY)) {
+						rectIsClear = false;
+						goto clearLoopEnd;
+					}
+
+					if (structurePlacementGrid.cellGetFromWorld(worldX, worldY)) {
+						rectIsClear = false;
+						goto clearLoopEnd;
+					}
+
+				}
+			}
+		clearLoopEnd:
+
+			if (rectIsClear) {
+
 				for (float x = 0; x < structureRect.width; x += cellSize) {
 					for (float y = 0; y < structureRect.height; y += cellSize) {
 
 						float worldX = structureRect.left + x;
 						float worldY = structureRect.top + y;
 
-						if (!structurePlacementGrid.worldPosIsInGridFull(worldX, worldY)) {
-							rectIsClear = false;
-							goto clearLoopEnd;
-						}
-
-						if (structurePlacementGrid.cellGetFromWorld(worldX, worldY)) {
-							rectIsClear = false;
-							goto clearLoopEnd;
-						}
-
+						structurePlacementGrid.cellSetFromWorld(worldX, worldY, true);
 					}
 				}
-			clearLoopEnd:
 
-				if (rectIsClear) {
+				structureRect.rotation = atan2(-placementAxis.y, -placementAxis.x);
 
-					for (float x = 0; x < structureRect.width; x += cellSize) {
-						for (float y = 0; y < structureRect.height; y += cellSize) {
-
-							float worldX = structureRect.left + x;
-							float worldY = structureRect.top + y;
-
-							structurePlacementGrid.cellSetFromWorld(worldX, worldY, true);
-						}
-					}
-
-					structureRects.push_back(structureRect);
-				}
-
-				break;
+				structureRects.push_back(structureRect);
 			}
-
-			point += axis;
 		}
 	}
 
