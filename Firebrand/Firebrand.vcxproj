@@ -166,6 +166,8 @@
     <ClCompile Include="Include\Game\World\Physics\Collision\CollisionShape.cpp" />
     <ClCompile Include="Include\Game\World\Physics\Collision\GJK\GJKCollisionHandler.cpp" />
     <ClCompile Include="Include\Game\World\Physics\Collision\EPA\EPACollisionHandler.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\Grid\PathAxisGrid.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathAxisGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.cpp" />
@@ -188,6 +190,7 @@
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Grid\Structure Grid\StructureGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Sections\WallSectionGenerator.cpp" />
+    <ClCompile Include="Include\Game\World\Procedural Generation\Structure Placement\Grid\Structure Placement Chance\StructurePlacementChanceGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Placement\Grid\StructurePlacementGrid.cpp" />
     <ClCompile Include="Include\Game\World\Procedural Generation\Structure Placement\StructurePlacer.cpp" />
     <ClCompile Include="Include\Game\World\World Clock\WorldClock.cpp" />
@@ -246,6 +249,8 @@
     <ClInclude Include="Include\Game\World\Physics\Collision\CollisionShape.hpp" />
     <ClInclude Include="Include\Game\World\Physics\Collision\GJK\GJKCollisionHandler.hpp" />
     <ClInclude Include="Include\Game\World\Physics\Collision\EPA\EPACollisionHandler.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\Grid\PathAxisGrid.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathAxisGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Path Generation\PathGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Door Generation\DoorGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Floor Generation\FloorGenerator.hpp" />
@@ -270,6 +275,7 @@
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Generation\WallGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Wall Sections\WallSectionGenerator.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Generation\Structure.hpp" />
+    <ClInclude Include="Include\Game\World\Procedural Generation\Structure Placement\Grid\Structure Placement Chance\StructurePlacementChanceGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Placement\Grid\StructurePlacementGrid.hpp" />
     <ClInclude Include="Include\Game\World\Procedural Generation\Structure Placement\StructurePlacer.hpp" />
     <ClInclude Include="Include\Game\World\World Clock\WorldClock.hpp" />

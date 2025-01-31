@@ -1,3 +1,4 @@
+#include "../Include/Game/World/Procedural Generation/Path Generation/PathAxisGenerator.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Instantiation/StructureInstantiator.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Structure Types/StructureTypeRegistry.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/StructureGenerator.hpp"
@@ -12,7 +13,8 @@ GameLevel::GameLevel() :
 	pathGenerator(PathGenerator()),
 	backgroundTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
 	pathsTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
-	occlusionGrid(levelSize.x / 1, levelSize.y / 1, 1.f, 1.f)
+	occlusionGrid(levelSize.x / 1, levelSize.y / 1, 1.f, 1.f),
+	structurePlacementChanceGrid(levelSize.x / 1, levelSize.y / 1, 1.f, 1.f)
 {
 	entities = std::vector<EntityId>();
 
@@ -131,7 +133,7 @@ void GameLevel::pathsGenerate() {
 		sf::Vector2f pointFrom = path[from]->position;
 		sf::Vector2f pointTo = path[to]->position;
 
-		constexpr float desiredDist = 16.f;
+		constexpr float desiredDist = 64;
 
 		pathPoints.push_back(pointFrom);
 
@@ -157,15 +159,9 @@ void GameLevel::pathsGenerate() {
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
 
-	std::vector<StructureRect> structureRects;
-
-	StructureRect structureRect;
-	structureRect.rotation = Mathf::PI / 4.f;
-	structureRect.left = 2048;
-	structureRect.top = 2048;
-	structureRect.width = 512;
-	structureRect.height = 512;
-	structureRects.push_back(structureRect);
+	PathAxisGenerator::pathAxisGridGenerate(pathPoints, this);
+	
+	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);
 
 	for (StructureRect& rectCur : structureRects) {
 

@@ -6,6 +6,7 @@
 #include "../Include/Game/Raycasting/Occlusion Grid/OcclusionGrid.hpp"
 #include "../Include/Game/World/Objects/Object Grid/ObjectGrid.hpp"
 #include "../Include/Game/World/Procedural Generation/Path Generation/PathGenerator.hpp"
+#include "../Include/Game/World/Procedural Generation/Structure Placement/Grid/Structure Placement Chance/StructurePlacementChanceGrid.hpp"
 #include <Auxiliary/Math.hpp>
 #include <Auxiliary/NumberGenerator.hpp>
 #include <Auxiliary/VectorMath.hpp>
@@ -40,6 +41,8 @@ struct GameLevel : public BaseLevel {
 	TextureGrid backgroundTexture;
 	// texture for the paths
 	TextureGrid pathsTexture;
+	
+	StructurePlacementChanceGrid structurePlacementChanceGrid;
 
 	void pathsGenerate();
 	void structuresGenerate();
