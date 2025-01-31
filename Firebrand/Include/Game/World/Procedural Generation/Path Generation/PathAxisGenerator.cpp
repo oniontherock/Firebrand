@@ -1,3 +1,4 @@
+#include "../Structure Generation/Grid/StructureGridTypes.hpp"
 #include "PathAxisGenerator.hpp"
 #include <Auxiliary/VectorMath.hpp>
 
@@ -21,9 +22,7 @@ sf::Vector2f PathAxisGenerator::pointGetAxisToPathPointClosest(std::vector<sf::V
 
 PathAxisGrid PathAxisGenerator::pathAxisGridGenerate(std::vector<sf::Vector2f> pathPoints, GameLevel* level) {
 
-	constexpr float cellSize = 64.f;
-
-	PathAxisGrid pathDistanceGrid(level->levelSize.x / cellSize, level->levelSize.y / cellSize, cellSize, cellSize);
+	PathAxisGrid pathDistanceGrid(level->levelSize.x / structureGridCellSize, level->levelSize.y / structureGridCellSize, structureGridCellSize, structureGridCellSize);
 
 	for (uint16_t x = 0; x < pathDistanceGrid.gridGetSizeX(); x++) {
 		for (uint16_t y = 0; y < pathDistanceGrid.gridGetSizeY(); y++) {
@@ -39,6 +38,6 @@ PathAxisGrid PathAxisGenerator::pathAxisGridGenerate(std::vector<sf::Vector2f> p
 		}
 	}
 
-	return PathAxisGrid(1, 1, 1, 1);
+	return pathDistanceGrid;
 }
 

@@ -7,6 +7,77 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 	
 	std::vector<StructureRect> structureRects;
 
+	PathAxisGrid& pathAxisGrid = level->pathAxisGrid;
+
+	constexpr float distanceToPlace = 256.f;
+
+	for (uint16_t x = 0; x < pathAxisGrid.gridGetSizeX(); x++) {
+		for (uint16_t y = 0; y < pathAxisGrid.gridGetSizeY(); y++) {
+
+			PathAxis& cell = pathAxisGrid.cellGet(x, y);
+
+			if (cell.dist > distanceToPlace) continue;
+
+			sf::Vector2f cellAxis = cell.dir * cell.dist;
+
+			StructureRect rect;
+			rect.width = RNGu16::getRange(8, 16) * structureGridCellSize;
+			rect.height = RNGu16::getRange(8, 16) * structureGridCellSize;
+			 
+			rect.left = (x * structureGridCellSize) - rect.width;
+			rect.top = (y * structureGridCellSize) - (rect.height / 2.f);
+
+			rect.rotation = atan2(cellAxis.y, cellAxis.x);
+
+			if (!(
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left), uint32_t(rect.top)) &&
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left + rect.width), uint32_t(rect.top)) &&
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left + rect.width), uint32_t(rect.top + rect.height)) &&
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left), uint32_t(rect.top + rect.height))
+				)) {
+				continue;
+			}
+
+			// check top face
+			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
+				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top).dist < distanceToPlace) {
+					rect.top += structureGridCellSize;
+					rect.height -= structureGridCellSize;
+					xOffset = 0;
+
+					if (rect.height <= structureGridCellSize) {
+						break;
+					}
+				}
+			}
+			// check left face
+			for (uint16_t yOffset = 0; yOffset < rect.height; yOffset++) {
+				if (pathAxisGrid.cellGetFromWorld(rect.left, rect.top + yOffset).dist < distanceToPlace) {
+					rect.left += structureGridCellSize;
+					rect.width -= structureGridCellSize;
+					yOffset = 0;
+
+					if (rect.width <= structureGridCellSize) {
+						break;
+					}
+				}
+			}
+			// check bottom face
+			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
+				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top + rect.height).dist < distanceToPlace) {
+					rect.top += structureGridCellSize;
+					rect.height -= structureGridCellSize;
+					xOffset = 0;
+
+					if (rect.height <= structureGridCellSize) {
+						break;
+					}
+				}
+			}
+
+			structureRects.push_back(rect);
+		}
+	}
+
 	return structureRects;
 }
-

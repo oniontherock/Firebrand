@@ -110,13 +110,13 @@ WallSectionGenerator::WallSectionGrid2D WallSectionGenerator::wallSectionsGet(co
 				// if cellFront has yet to be evaluated, queue it for evaluation
 				if ((!cellsEvaluated.contains(cellFront)) && (!cellFrontIsOnEdge)) {
 					cellsToEvaluate.push(cellFront);
-					//std::cout << "burger" << "\n";
+					////std::cout << "burger" << "\n";
 				}
 				// if cellBack has yet to be evaluated, queue it for evaluation
 				if ((!cellsEvaluated.contains(cellBack)) && (!cellBackIsOnEdge)) cellsToEvaluate.push(cellBack);
 			}
 
-			std::cout << "cells evaluated count: " << cellsEvaluated.size() << "\n";
+			//std::cout << "cells evaluated count: " << cellsEvaluated.size() << "\n";
 
 			wallSectionIdCur++;
 		}

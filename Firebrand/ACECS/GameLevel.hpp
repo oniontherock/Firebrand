@@ -5,6 +5,7 @@
 #include "../Include/Game/Pathfinding/AStar/Grid/AStarGrid.hpp"
 #include "../Include/Game/Raycasting/Occlusion Grid/OcclusionGrid.hpp"
 #include "../Include/Game/World/Objects/Object Grid/ObjectGrid.hpp"
+#include "../Include/Game/World/Procedural Generation/Path Generation/Grid/PathAxisGrid.hpp"
 #include "../Include/Game/World/Procedural Generation/Path Generation/PathGenerator.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Placement/Grid/Structure Placement Chance/StructurePlacementChanceGrid.hpp"
 #include <Auxiliary/Math.hpp>
@@ -42,6 +43,8 @@ struct GameLevel : public BaseLevel {
 	// texture for the paths
 	TextureGrid pathsTexture;
 	
+	PathAxisGrid pathAxisGrid;
+
 	StructurePlacementChanceGrid structurePlacementChanceGrid;
 
 	void pathsGenerate();

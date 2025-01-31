@@ -14,7 +14,8 @@ GameLevel::GameLevel() :
 	backgroundTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
 	pathsTexture(TextureGrid(uint16_t(ceil(float(levelSize.x) / 1280.f)), uint16_t(ceil(float(levelSize.y) / 720.f)), 1280, 720)),
 	occlusionGrid(levelSize.x / 1, levelSize.y / 1, 1.f, 1.f),
-	structurePlacementChanceGrid(levelSize.x / 1, levelSize.y / 1, 1.f, 1.f)
+	structurePlacementChanceGrid(levelSize.x / 1, levelSize.y / 1, 1.f, 1.f),
+	pathAxisGrid(0, 0, 0, 0)
 {
 	entities = std::vector<EntityId>();
 
@@ -154,12 +155,12 @@ void GameLevel::pathsGenerate() {
 		}
 	}
 
+	pathAxisGrid = PathAxisGenerator::pathAxisGridGenerate(pathPoints, this);
+
 	ConsoleHandler::consolePrintLoadingGame("Path Point Plotting Completed");
 }
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
-
-	PathAxisGenerator::pathAxisGridGenerate(pathPoints, this);
 	
 	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);
 

@@ -35,7 +35,7 @@ void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGri
 		// set of neighboring RoomTypes, later used for deciding which room to connect to in connectionTypesOr
 		std::set<RoomType> neighboringTypes;
 
-		std::cout << "section id count: " << WallSectionGenerator::sectionIdCount << "\n";
+		//std::cout << "section id count: " << WallSectionGenerator::sectionIdCount << "\n";
 
 		// iterate over dimensions of every roomRect
 		for (uint16_t x = 0; x < roomRectCur.width; x++) {

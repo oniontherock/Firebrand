@@ -367,13 +367,13 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 
 	std::vector<RoomRect> roomRectsVector;
 	for (uint16_t roomIndCur = 0; roomIndCur < roomsCount; roomIndCur++) {
-		std::cout << "\n";
+		//std::cout << "\n";
 		uint16_t breaker = 1000;
 
 		sf::Vector2u roomSize;
 		uint16_t roomContactCount;
 		do {
-			std::cout << breaker << "\n";
+			//std::cout << breaker << "\n";
 			roomSize = structureType->roomSizeInstanceGet();
 			roomContactCount = structureType->roomContactCountInstanceGet();
 
@@ -385,13 +385,13 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 			RoomRect roomRect = roomGenerate(wallGrid, structureSize, roomSize, roomContactCount, true, structureType->doubleWallTolerance);
 
 			if (roomRect == RoomRect(0, 0, 0, 0)) continue;
-			std::cout << "valid rect" << "\n";
+			//std::cout << "valid rect" << "\n";
 
 			bool roomRectPosIsValid = true;
 			for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
 				if (RoomRect(roomRect.left + 1, roomRect.top + 1, roomRect.width - 2, roomRect.height - 2).intersects(roomRectsVector[i])) {
 					roomRectPosIsValid = false;
-					std::cout << "invalid position" << "\n";
+					//std::cout << "invalid position" << "\n";
 					break;
 				}
 			}
