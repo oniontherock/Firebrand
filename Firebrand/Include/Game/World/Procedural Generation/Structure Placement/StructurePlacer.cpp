@@ -7,16 +7,20 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 	
 	std::vector<StructureRect> structureRects;
 
+	StructurePlacementGrid structurePlacementGrid(level->levelSize.x / structureGridCellSize, level->levelSize.y / structureGridCellSize, structureGridCellSize, structureGridCellSize);
+
 	PathAxisGrid& pathAxisGrid = level->pathAxisGrid;
 
-	constexpr float distanceToPlace = 256.f;
+	constexpr float distMin = 128.f;
+	constexpr float distMax = 512.f;
 
 	for (uint16_t x = 0; x < pathAxisGrid.gridGetSizeX(); x++) {
 		for (uint16_t y = 0; y < pathAxisGrid.gridGetSizeY(); y++) {
 
 			PathAxis& cell = pathAxisGrid.cellGet(x, y);
 
-			if (cell.dist > distanceToPlace) continue;
+			if (cell.dist < distMin || cell.dist > distMax) continue;
+
 
 			sf::Vector2f cellAxis = cell.dir * cell.dist;
 
@@ -40,7 +44,7 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 
 			// check top face
 			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
-				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top).dist < distanceToPlace) {
+				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top).dist < distMin) {
 					rect.top += structureGridCellSize;
 					rect.height -= structureGridCellSize;
 					xOffset = 0;
@@ -52,7 +56,7 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 			}
 			// check left face
 			for (uint16_t yOffset = 0; yOffset < rect.height; yOffset++) {
-				if (pathAxisGrid.cellGetFromWorld(rect.left, rect.top + yOffset).dist < distanceToPlace) {
+				if (pathAxisGrid.cellGetFromWorld(rect.left, rect.top + yOffset).dist < distMin) {
 					rect.left += structureGridCellSize;
 					rect.width -= structureGridCellSize;
 					yOffset = 0;
@@ -64,14 +68,34 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 			}
 			// check bottom face
 			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
-				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top + rect.height).dist < distanceToPlace) {
-					rect.top += structureGridCellSize;
+				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top + rect.height).dist < distMin) {
 					rect.height -= structureGridCellSize;
 					xOffset = 0;
 
 					if (rect.height <= structureGridCellSize) {
 						break;
 					}
+				}
+			}
+
+			if ((rect.width < (8.f * structureGridCellSize)) || (rect.height < (8.f * structureGridCellSize))) continue;
+
+			bool rectIsValid = true;
+			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
+				for (uint16_t yOffset = 0; yOffset < rect.height; yOffset++) {
+					if (structurePlacementGrid.cellGetFromWorld(rect.left + xOffset, rect.top + yOffset)) {
+						rectIsValid = false;
+						goto endPlacementCheck;
+					}
+				}
+			}
+			endPlacementCheck:
+
+			if (!rectIsValid) continue;
+
+			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
+				for (uint16_t yOffset = 0; yOffset < rect.height; yOffset++) {
+					structurePlacementGrid.cellSetFromWorld(rect.left + xOffset, rect.top + yOffset, true);
 				}
 			}
 

@@ -58,10 +58,7 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	backgroundRectangle.setTextureRect(sf::IntRect(viewRect));
 	backgroundRectangle.setPosition(viewRect.left, viewRect.top);
 
-
-
 	levelActive->backgroundDraw(sf::FloatRect(viewRect.getPosition() - (viewRect.getSize() / 2.f), viewRect.getSize() * 2.f), 256);
-
 
 	// draw base background color
 	objectDraw(backgroundRectangle);
@@ -71,14 +68,36 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	levelActive->pathsTexture.drawRectangleToTexture(viewRect, texture);
 }
 void PanelStaticView::charactersDraw(GameLevel* levelActive) {
-	for (const std::set<EntityId>& idSetCur : levelActive->entitiesDrawableStaticGet()) {
-		for (const EntityId& idCur : idSetCur) {
-			Entity& entityCur = EntityManager::entityGet(idCur);
+	
 
-			auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
+	static std::vector<EntityId> idsToDraw;
 
-			objectDraw(componentSprite->sprite);
+	static Cooldown cullCooldown(1.f);
+
+	constexpr float cullDist = 1280.f;
+
+	if (cullCooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
+
+		idsToDraw.clear();
+		
+		sf::Vector2f playerPosition = EntityManager::entityGet(GameData::playerId).entityComponentGet<EntityComponents::ComponentPosition>()->position;
+
+		for (const std::set<EntityId>& idSetCur : levelActive->entitiesDrawableStaticGet()) {
+			for (const EntityId& idCur : idSetCur) {
+				if (Vector2fMath::distSqrd(playerPosition, EntityManager::entityGet(idCur).entityComponentGet<EntityComponents::ComponentPosition>()->position) > cullDist * cullDist) continue;
+
+				idsToDraw.push_back(idCur);
+			}
 		}
+
+	}
+
+	for (uint32_t i = 0; i < idsToDraw.size(); i++) {
+		Entity& entityCur = EntityManager::entityGet(idsToDraw[i]);
+
+		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
+
+		objectDraw(componentSprite->sprite);
 	}
 }
 

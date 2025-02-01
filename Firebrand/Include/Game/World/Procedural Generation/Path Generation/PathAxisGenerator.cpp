@@ -4,13 +4,13 @@
 
 sf::Vector2f PathAxisGenerator::pointGetAxisToPathPointClosest(std::vector<sf::Vector2f> pathPoints, sf::Vector2f point) {
 	sf::Vector2f axisBest;
-	float distSqrdBest = 99999999;
+	float distSqrdBest = 99999999999999.f;
 
 	for (const sf::Vector2f& pointCur : pathPoints) {
-		sf::Vector2f axisCur = Vector2fMath::axis(pointCur, point);
+		sf::Vector2f axisCur = Vector2fMath::axis(point, pointCur);
 		float distSqrdCur = Vector2fMath::lengthSqrd(axisCur);
 
-		if (distSqrdCur > distSqrdBest) {
+		if (distSqrdCur <= distSqrdBest) {
 			axisBest = axisCur;
 			distSqrdBest = distSqrdCur;
 		}
@@ -32,9 +32,7 @@ PathAxisGrid PathAxisGenerator::pathAxisGridGenerate(std::vector<sf::Vector2f> p
 
 			float axisLen = Vector2fMath::length(axis);
 
-			PathAxis pathAxis(axis / axisLen, axisLen);
-
-			pathDistanceGrid.cellSet(x, y, pathAxis);
+			pathDistanceGrid.cellSet(x, y, PathAxis(axis / axisLen, axisLen));
 		}
 	}
 

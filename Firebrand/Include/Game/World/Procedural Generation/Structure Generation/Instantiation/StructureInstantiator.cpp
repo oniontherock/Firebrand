@@ -26,6 +26,13 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			if (cell.type.find("Wall") != std::string::npos) {
 				updateType = EntityUpdateType::Never;
 			}
+			//if (cell.type.find("Door") != std::string::npos) {
+			//	updateType = EntityUpdateType::Never;
+			//}
+
+			//if (updateType == EntityUpdateType::Frame) {
+			//	std::cout << cell.type << "\n";
+			//}
 
 			// cellPositionLocal with the transform of the structure applied
 			sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);
@@ -45,44 +52,37 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 		}
 	}
 
-	sf::Vector2f floorGridCellSize = structure.floorGrid.cellsGetSize();
+	//sf::Vector2f floorGridCellSize = structure.floorGrid.cellsGetSize();
 
-	for (uint16_t x = 0; x < structure.floorGrid.gridGetSizeX(); x++) {
-		for (uint16_t y = 0; y < structure.floorGrid.gridGetSizeY(); y++) {
+	//for (uint16_t x = 0; x < structure.floorGrid.gridGetSizeX(); x++) {
+	//	for (uint16_t y = 0; y < structure.floorGrid.gridGetSizeY(); y++) {
 
-			FloorCell cell = structure.floorGrid.cellGet(x, y);
+	//		FloorCell cell = structure.floorGrid.cellGet(x, y);
 
-			if (cell == FloorCell("Null")) continue;
-			if (cell == FloorCell("")) continue;
+	//		if (cell == FloorCell("Null")) continue;
+	//		if (cell == FloorCell("")) continue;
 
-			sf::Vector2f cellPosition = sf::Vector2f(0, 0);
+	//		sf::Vector2f cellPosition = sf::Vector2f(0, 0);
 
-			// cell's position local to the structure's origin
-			sf::Vector2f cellPositionLocal = (sf::Vector2f(float(x) * floorGridCellSize.x, float(y) * floorGridCellSize.y) - (structure.floorGrid.gridGetSizeFull() / 2.f)) - (floorGridCellSize / 2.f);
+	//		// cell's position local to the structure's origin
+	//		sf::Vector2f cellPositionLocal = (sf::Vector2f(float(x) * floorGridCellSize.x, float(y) * floorGridCellSize.y) - (structure.floorGrid.gridGetSizeFull() / 2.f)) - (floorGridCellSize / 2.f);
 
-			EntityUpdateType updateType = EntityUpdateType::Never;
+	//		// cellPositionLocal with the transform of the structure applied
+	//		sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);
 
-			//// if cell.type is a , set it's update type to frame
-			//if (std::strstr(cell.type, "Door")) {
-			//	updateType = EntityUpdateType::Frame;
-			//}
+	//		// cell's global position
+	//		cellPosition = structure.position + cellPositionLocalTransformed;
 
-			// cellPositionLocal with the transform of the structure applied
-			sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);
+	//		Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, "Floor " + cell, EntityUpdateType::Never);
 
-			// cell's global position
-			cellPosition = structure.position + cellPositionLocalTransformed;
+	//		auto* entityComponentPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>();
+	//		entityComponentPosition->position = cellPosition;
 
-			Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, "Floor " + cell, updateType);
-
-			auto* entityComponentPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>();
-			entityComponentPosition->position = cellPosition;
-
-			if (entity.entityComponentHas<EntityComponents::ComponentRotation>()) {
-				auto* entityComponentRotation = entity.entityComponentGet<EntityComponents::ComponentRotation>();
-				entityComponentRotation->rotation = structure.rotation;
-			}
-		}
-	}
+	//		if (entity.entityComponentHas<EntityComponents::ComponentRotation>()) {
+	//			auto* entityComponentRotation = entity.entityComponentGet<EntityComponents::ComponentRotation>();
+	//			entityComponentRotation->rotation = structure.rotation;
+	//		}
+	//	}
+	//}
 }
 
