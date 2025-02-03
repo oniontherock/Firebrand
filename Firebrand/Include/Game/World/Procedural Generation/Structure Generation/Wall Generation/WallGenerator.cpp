@@ -266,126 +266,119 @@ RoomRectVector WallGenerator::roomsGetFromGeneration() {
 	return roomRectVectorLast;
 }
 
-sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact, uint16_t doubleWallTolerance) {
-
-	// clamp room width to structure width
-	if (roomSize.x >= structureSize.x) {
-		roomSize.x = structureSize.x - 1;
-	}
-	// clamp room height to structure height
-	if (roomSize.y >= structureSize.y) {
-		roomSize.y = structureSize.y - 1;
-	}
-
-	// rectangle of the room inside the wallGrid
-	RoomRect roomRect = RoomRect(0, 0, roomSize.x, roomSize.y);
-
-	// the current amount of roomRect faces touching walls in the wallGrid
-	uint16_t contactCount = 0;
-
-	uint32_t breaker = 1000;
-	do {
-		// get position of room rect inside structure, always fits inside of structure
-		roomRect.left = RNGu16::getRange(0, uint16_t(structureSize.x - (roomSize.x - 1)));
-		roomRect.top = RNGu16::getRange(0, uint16_t(structureSize.y - (roomSize.y - 1)));
-
-		// the way we calculate contact depends on the fullContact variable, basically, true means we calculate by subtraction, false means we calculate by addition.
-		// so fullContact means we start assuming we are fully contacted on every side of the room, and we subtract by 1 every time we find a side which isn't contacted.
-		// and no fullContact assumes we are touching no walls, and adds by 1 every time it finds a wall on a side of the room
-		contactCount = fullContact ? 4 : 0;
-
-		bool doubleWallFixFailed = false;
-		for (uint16_t i = 0; i < 4; i++) {
-			roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect, roomSize, doubleWallTolerance);
-
-			if (roomRect == RoomRect(0, 0, 0, 0)) {
-				doubleWallFixFailed = true;
-				break;
-			}
-		}
-		// skip if the double wall fix failed
-		if (doubleWallFixFailed) continue;
-		// double check to make sure the roomRect has no double walls, skip if it does
-		if (roomRectHasDoubleWalls(wallGrid, structureSize, roomRect)) continue;
-
-		// iterate right face
-		for (uint16_t offsetY = 0; offsetY < roomRect.height; offsetY++) {
-			sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + (roomRect.width - 1), roomRect.top + offsetY);
-
-			bool isWall = wallGrid[cellPosition.x][cellPosition.y];
-
-			if ((!isWall && fullContact) || (isWall && !fullContact)) {
-				contactCount += fullContact ? -1 : +1;
-				break;
-			}
-		}
-		// iterate top face
-		for (uint16_t offsetX = 0; offsetX < roomRect.width; offsetX++) {
-			sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top);
-
-			bool isWall = wallGrid[cellPosition.x][cellPosition.y];
-
-			if ((!isWall && fullContact) || (isWall && !fullContact)) {
-				contactCount += fullContact ? -1 : +1;
-				break;
-			}
-		}
-		// iterate left face
-		for (uint16_t offsetY = 0; offsetY < roomRect.height; offsetY++) {
-			sf::Vector2u cellPosition = sf::Vector2u(roomRect.left, roomRect.top + offsetY);
-
-			bool isWall = wallGrid[cellPosition.x][cellPosition.y];
-
-			if ((!isWall && fullContact) || (isWall && !fullContact)) {
-				contactCount += fullContact ? -1 : +1;
-				break;
-			}
-		}
-		// iterate bottom face
-		for (uint16_t offsetX = 0; offsetX < roomRect.width; offsetX++) {
-			sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1));
-
-			bool isWall = wallGrid[cellPosition.x][cellPosition.y];
-
-			if ((!isWall && fullContact) || (isWall && !fullContact)) {
-				contactCount += fullContact ? -1 : +1;
-				break;
-			}
-		}
-
-	} while ((contactCount != roomContactCount) && ((--breaker) > 0));
-
-
-	// if we didn't find a valid location, return an error rect
-	if (breaker <= 0) return RoomRect(0, 0, 0, 0);
-
-	return roomRect;
-}
-
 RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeBase* structureType, sf::Vector2u structureSize) {
 	uint16_t roomsCount = structureType->roomCountInstanceGet();
 
 	std::vector<RoomRect> roomRectsVector;
 	for (uint16_t roomIndCur = 0; roomIndCur < roomsCount; roomIndCur++) {
 		//std::cout << "\n";
-		uint16_t breaker = 1000;
+		uint16_t breaker = 10000;
+
+		constexpr uint16_t contactCountRerollTicker = 1000;
 
 		sf::Vector2u roomSize;
 		uint16_t roomContactCount;
 		do {
-			//std::cout << breaker << "\n";
-			roomSize = structureType->roomSizeInstanceGet();
-			roomContactCount = structureType->roomContactCountInstanceGet();
 
-			// chance for roomContactCount to reroll depending on it's value
-			while (structureType->contactProbability[roomContactCount] > RNGfPool::poolValueGet(PROBABILITY_POOL_ID)) {
+			if (breaker % contactCountRerollTicker) {
+
+				roomSize = structureType->roomSizeInstanceGet();
 				roomContactCount = structureType->roomContactCountInstanceGet();
+
+				// chance for roomContactCount to reroll depending on it's value
+				while (structureType->contactProbability[roomContactCount] > RNGfPool::poolValueGet(PROBABILITY_POOL_ID)) {
+					roomContactCount = structureType->roomContactCountInstanceGet();
+				}
+			}
+			
+#pragma region Generate Room
+			// clamp room width to structure width
+			if (roomSize.x >= structureSize.x) {
+				roomSize.x = structureSize.x - 1;
+			}
+			// clamp room height to structure height
+			if (roomSize.y >= structureSize.y) {
+				roomSize.y = structureSize.y - 1;
 			}
 
-			RoomRect roomRect = roomGenerate(wallGrid, structureSize, roomSize, roomContactCount, true, structureType->doubleWallTolerance);
+			// rectangle of the room inside the wallGrid
+			RoomRect roomRect = RoomRect(0, 0, roomSize.x, roomSize.y);
 
-			if (roomRect == RoomRect(0, 0, 0, 0)) continue;
-			//std::cout << "valid rect" << "\n";
+			// the current amount of roomRect faces touching walls in the wallGrid
+			uint16_t contactCount = 0;
+
+			// get position of room rect inside structure, always fits inside of structure
+			roomRect.left = RNGu16::getRange(0, uint16_t(structureSize.x - (roomSize.x - 1)));
+			roomRect.top = RNGu16::getRange(0, uint16_t(structureSize.y - (roomSize.y - 1)));
+
+			bool fullContact = structureType->fullContact;
+
+			// the way we calculate contact depends on the fullContact variable, basically, true means we calculate by subtraction, false means we calculate by addition.
+			// so fullContact means we start assuming we are fully contacted on every side of the room, and we subtract by 1 every time we find a side which isn't contacted.
+			// and no fullContact assumes we are touching no walls, and adds by 1 every time it finds a wall on a side of the room
+			contactCount = fullContact ? 4 : 0;
+
+			bool doubleWallFixFailed = false;
+			for (uint16_t i = 0; i < 4; i++) {
+				roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect, roomSize, structureType->doubleWallTolerance);
+
+				if (roomRect == RoomRect(0, 0, 0, 0)) {
+					doubleWallFixFailed = true;
+					break;
+				}
+			}
+			// skip if the double wall fix failed
+			if (doubleWallFixFailed) continue;
+			// double check to make sure the roomRect has no double walls, skip if it does
+			if (roomRectHasDoubleWalls(wallGrid, structureSize, roomRect)) continue;
+
+			// iterate right face
+			for (uint16_t offsetY = 0; offsetY < roomRect.height; offsetY++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + (roomRect.width - 1), roomRect.top + offsetY);
+
+				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
+
+				if ((!isWall && fullContact) || (isWall && !fullContact)) {
+					contactCount += fullContact ? -1 : +1;
+					break;
+				}
+			}
+			// iterate top face
+			for (uint16_t offsetX = 0; offsetX < roomRect.width; offsetX++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top);
+
+				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
+
+				if ((!isWall && fullContact) || (isWall && !fullContact)) {
+					contactCount += fullContact ? -1 : +1;
+					break;
+				}
+			}
+			// iterate left face
+			for (uint16_t offsetY = 0; offsetY < roomRect.height; offsetY++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left, roomRect.top + offsetY);
+
+				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
+
+				if ((!isWall && fullContact) || (isWall && !fullContact)) {
+					contactCount += fullContact ? -1 : +1;
+					break;
+				}
+			}
+			// iterate bottom face
+			for (uint16_t offsetX = 0; offsetX < roomRect.width; offsetX++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1));
+
+				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
+
+				if ((!isWall && fullContact) || (isWall && !fullContact)) {
+					contactCount += fullContact ? -1 : +1;
+					break;
+				}
+			}
+
+			if (contactCount != roomContactCount) continue;
+#pragma endregion Generate Room
 
 			bool roomRectPosIsValid = true;
 			for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
