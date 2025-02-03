@@ -80,10 +80,24 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 
 			if ((rect.width < (8.f * structureGridCellSize)) || (rect.height < (8.f * structureGridCellSize))) continue;
 
+			sf::Vector2f structureCenter = sf::Vector2f(rect.left + (rect.width / 2.f), rect.top + rect.height / 2.f);
+
+			// check if there is already a structure here
 			bool rectIsValid = true;
-			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
-				for (uint16_t yOffset = 0; yOffset < rect.height; yOffset++) {
-					if (structurePlacementGrid.cellGetFromWorld(rect.left + xOffset, rect.top + yOffset)) {
+			for (float xOffset = 0; xOffset < rect.width; xOffset++) {
+				for (float yOffset = 0; yOffset < rect.height; yOffset++) {
+
+					sf::Vector2f posRotated = Vector2fMath::rotate(
+						(rect.left + xOffset) - structureCenter.x,
+						(rect.top + yOffset) - structureCenter.y,
+						rect.rotation) + structureCenter;
+
+					if (!structurePlacementGrid.worldPosIsInGridFull(posRotated.x, posRotated.y)) {
+						rectIsValid = false;
+						goto endPlacementCheck;
+					}
+
+					if (structurePlacementGrid.cellGetFromWorld(posRotated.x, posRotated.y)) {
 						rectIsValid = false;
 						goto endPlacementCheck;
 					}
@@ -93,9 +107,16 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 
 			if (!rectIsValid) continue;
 
-			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
-				for (uint16_t yOffset = 0; yOffset < rect.height; yOffset++) {
-					structurePlacementGrid.cellSetFromWorld(rect.left + xOffset, rect.top + yOffset, true);
+			// mark area as having a structure
+			for (float xOffset = 0; xOffset < rect.width; xOffset++) {
+				for (float yOffset = 0; yOffset < rect.height; yOffset++) {
+
+					sf::Vector2f posRotated = Vector2fMath::rotate(
+						(rect.left + xOffset) - structureCenter.x,
+						(rect.top + yOffset) - structureCenter.y,
+						rect.rotation) + structureCenter;
+
+					structurePlacementGrid.cellSetFromWorld(posRotated.x, posRotated.y, true);
 				}
 			}
 

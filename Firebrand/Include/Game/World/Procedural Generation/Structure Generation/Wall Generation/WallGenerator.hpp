@@ -53,7 +53,7 @@ class WallGenerator {
 	// @param roomSize: the size of the room that will be generated.
 	// @param roomContactCount: the amount of faces of the room that need to be touching / on other walls.
 	// @param fullContact: bool for how the contactCount is calculated, if true, a side of the room must have complete contact with other walls for it to count, if false, any contact on a side of the room counts
-	static RoomRect roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, sf::Vector2u roomSize, uint16_t roomContactCount, bool fullContact, uint16_t doubleWallTolerance);
+	static RoomRect roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, RoomSize roomSize, uint16_t roomContactCount, bool fullContact, uint16_t doubleWallTolerance);
 	// generates the rooms in a wallGrid depending on the structure type
 	static RoomRectVector roomsGenerate(WallGrid2D& wallGrid, StructureTypeBase* structureType, sf::Vector2u structureSize);
 

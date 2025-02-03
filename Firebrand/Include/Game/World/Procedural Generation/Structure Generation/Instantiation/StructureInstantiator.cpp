@@ -52,37 +52,37 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 		}
 	}
 
-	//sf::Vector2f floorGridCellSize = structure.floorGrid.cellsGetSize();
+	sf::Vector2f floorGridCellSize = structure.floorGrid.cellsGetSize();
 
-	//for (uint16_t x = 0; x < structure.floorGrid.gridGetSizeX(); x++) {
-	//	for (uint16_t y = 0; y < structure.floorGrid.gridGetSizeY(); y++) {
+	for (uint16_t x = 0; x < structure.floorGrid.gridGetSizeX(); x++) {
+		for (uint16_t y = 0; y < structure.floorGrid.gridGetSizeY(); y++) {
 
-	//		FloorCell cell = structure.floorGrid.cellGet(x, y);
+			FloorCell cell = structure.floorGrid.cellGet(x, y);
 
-	//		if (cell == FloorCell("Null")) continue;
-	//		if (cell == FloorCell("")) continue;
+			if (cell == FloorCell("Null")) continue;
+			if (cell == FloorCell("")) continue;
 
-	//		sf::Vector2f cellPosition = sf::Vector2f(0, 0);
+			sf::Vector2f cellPosition = sf::Vector2f(0, 0);
 
-	//		// cell's position local to the structure's origin
-	//		sf::Vector2f cellPositionLocal = (sf::Vector2f(float(x) * floorGridCellSize.x, float(y) * floorGridCellSize.y) - (structure.floorGrid.gridGetSizeFull() / 2.f)) - (floorGridCellSize / 2.f);
+			// cell's position local to the structure's origin
+			sf::Vector2f cellPositionLocal = (sf::Vector2f(float(x) * floorGridCellSize.x, float(y) * floorGridCellSize.y) - (structure.floorGrid.gridGetSizeFull() / 2.f)) - (floorGridCellSize / 2.f);
 
-	//		// cellPositionLocal with the transform of the structure applied
-	//		sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);
+			// cellPositionLocal with the transform of the structure applied
+			sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);
 
-	//		// cell's global position
-	//		cellPosition = structure.position + cellPositionLocalTransformed;
+			// cell's global position
+			cellPosition = structure.position + cellPositionLocalTransformed;
 
-	//		Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, "Floor " + cell, EntityUpdateType::Never);
+			Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, "Floor " + cell, EntityUpdateType::Never);
 
-	//		auto* entityComponentPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>();
-	//		entityComponentPosition->position = cellPosition;
+			auto* entityComponentPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>();
+			entityComponentPosition->position = cellPosition;
 
-	//		if (entity.entityComponentHas<EntityComponents::ComponentRotation>()) {
-	//			auto* entityComponentRotation = entity.entityComponentGet<EntityComponents::ComponentRotation>();
-	//			entityComponentRotation->rotation = structure.rotation;
-	//		}
-	//	}
-	//}
+			if (entity.entityComponentHas<EntityComponents::ComponentRotation>()) {
+				auto* entityComponentRotation = entity.entityComponentGet<EntityComponents::ComponentRotation>();
+				entityComponentRotation->rotation = structure.rotation;
+			}
+		}
+	}
 }
 

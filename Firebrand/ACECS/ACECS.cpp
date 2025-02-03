@@ -157,8 +157,17 @@ void Engine::texturesRegister() {
 	GraphicsStore::textureStore.objectAddFromInstance("Circle", circleTexture);
 }
 void Engine::RNGPoolsRegister() {
+
+	RNGf::initialize();
+
 	RNGfPool::poolCreate(10000);
 	RNGfPool::poolFillRange(PROBABILITY_POOL_ID, 0.f, 1.f);
+
+	RNGu16Pool::poolCreate(UINT16_MAX);
+	RNGu16Pool::poolFillRange(UINT_POOL_ID, 0, UINT16_MAX);
+
+	RNGi16Pool::poolCreate(32);
+	RNGi16Pool::poolFillRange(INT_SIGN_POOL_ID, -1, 2);
 }
 
 
@@ -166,7 +175,6 @@ void Engine::RNGPoolsRegister() {
 // of course, certain modules do not have to be initialized if the user does not want them to be
 void Engine::engineInitialize() {
 
-	RNGf::initialize();
 	RNGPoolsRegister();
 
 	RoomTypeRegistry::roomTypesRegister();
