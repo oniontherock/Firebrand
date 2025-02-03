@@ -162,49 +162,22 @@ void GameLevel::pathsGenerate() {
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
 	
-	std::vector<StructureRect> structureRects;// = StructurePlacer::structureRectsGenerate(pathGenerator, this);;
+	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);;
 
-	StructureRect rect;
-
-	rect.left = 2048;
-	rect.top = 2048;
-	rect.width = 24 * 64;
-	rect.height = 24 * 64;
-
-	rect.rotation = 0.f;
-
-	structureRects.push_back(rect);
-	
-	//if (structureRects.size() > 10) {
-		//structureRects.resize(10);
-	//}
 
 	constexpr uint16_t itr = 1;
 
 	float avgTime = 0.f;
 
-	//for (uint16_t i = 0; i < itr; i++) {
+	for (StructureRect& rectCur : structureRects) {
 
+		sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f);
 
-		uint32_t timeStart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		sf::Vector2u rectCellCount = sf::Vector2u(rectCur.getSize() / structureGridCellSize);
 
-		for (StructureRect& rectCur : structureRects) {
-
-			sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f);
-
-			sf::Vector2u rectCellCount = sf::Vector2u(rectCur.getSize() / structureGridCellSize);
-
-			Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCenter, rectCur.rotation, rectCellCount);
-			StructureInstantiator::structureInstantiate(levelPosition, structure);
-		}
-
-		uint32_t timeEnd = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-		avgTime += float(timeEnd - timeStart) / 1000.f;
-	//}
-
-
-	std::cout << "gen length: " << (avgTime / float(itr)) << "\n";
+		Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCenter, rectCur.rotation, rectCellCount);
+		StructureInstantiator::structureInstantiate(levelPosition, structure);
+	}
 
 	std::cout << "structures amount: " << structureRects.size() << "\n";
 
