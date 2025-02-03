@@ -162,7 +162,7 @@ void GameLevel::pathsGenerate() {
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
 	
-	std::vector<StructureRect> structureRects;
+	std::vector<StructureRect> structureRects;// = StructurePlacer::structureRectsGenerate(pathGenerator, this);;
 
 	StructureRect rect;
 
@@ -174,25 +174,36 @@ void GameLevel::structuresGenerate() {
 
 	structureRects.push_back(rect);
 	
-	//if (structureRects.size() > 10) {
-	//	structureRects.resize(10);
-	//}
-
-	uint32_t timeStart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
-	for (StructureRect& rectCur : structureRects) {
-
-		sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f);
-
-		sf::Vector2u rectCellCount = sf::Vector2u(rectCur.getSize() / structureGridCellSize);
-
-		Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCenter, rectCur.rotation, rectCellCount);
-		StructureInstantiator::structureInstantiate(levelPosition, structure);
+	if (structureRects.size() > 10) {
+		structureRects.resize(10);
 	}
 
-	uint32_t timeEnd = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	constexpr uint16_t itr = 1;
 
-	std::cout << "gen length: " << (float(timeEnd - timeStart) / 1000.f) << "\n";
+	float avgTime = 0.f;
+
+	for (uint16_t i = 0; i < itr; i++) {
+
+
+		uint32_t timeStart = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+		for (StructureRect& rectCur : structureRects) {
+
+			sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f);
+
+			sf::Vector2u rectCellCount = sf::Vector2u(rectCur.getSize() / structureGridCellSize);
+
+			Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCenter, rectCur.rotation, rectCellCount);
+			StructureInstantiator::structureInstantiate(levelPosition, structure);
+		}
+
+		uint32_t timeEnd = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+		avgTime += float(timeEnd - timeStart) / 1000.f;
+	}
+
+
+	std::cout << "gen length: " << (avgTime / float(itr)) << "\n";
 
 	std::cout << "structures amount: " << structureRects.size() << "\n";
 

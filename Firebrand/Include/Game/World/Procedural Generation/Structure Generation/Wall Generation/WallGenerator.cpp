@@ -295,7 +295,7 @@ sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u struc
 		contactCount = fullContact ? 4 : 0;
 
 		bool doubleWallFixFailed = false;
-		for (uint16_t i = 0; i < 512; i++) {
+		for (uint16_t i = 0; i < 4; i++) {
 			roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect, roomSize, doubleWallTolerance);
 
 			if (roomRect == RoomRect(0, 0, 0, 0)) {
