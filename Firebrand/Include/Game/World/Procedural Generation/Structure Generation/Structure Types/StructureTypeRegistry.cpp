@@ -4,7 +4,7 @@ StructureTypeHome::StructureTypeHome() {
 	// structure type
 	structureType = StructureType::Home;
 	// room size
-	roomSizeMin = RoomSize(4, 4), roomSizeMax = RoomSize(6, 6);
+	roomSizeMin = RoomSize(6, 6), roomSizeMax = RoomSize(6, 6);
 	// room count
 	roomCountMin = 16, roomCountMax = 24;
 	// room contact count

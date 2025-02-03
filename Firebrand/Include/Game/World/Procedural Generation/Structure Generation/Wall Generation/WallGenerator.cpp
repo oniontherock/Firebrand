@@ -267,45 +267,26 @@ RoomRectVector WallGenerator::roomsGetFromGeneration() {
 }
 
 sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u structureSize, RoomSize roomSize, uint16_t roomContactCount, bool fullContact, uint16_t doubleWallTolerance) {
+	// clamp room width to structure width
+	if (roomSize.x >= structureSize.x) {
+		roomSize.x = structureSize.x - 1;
+	}
+	// clamp room height to structure height
+	if (roomSize.y >= structureSize.y) {
+		roomSize.y = structureSize.y - 1;
+	}
 
 	// rectangle of the room inside the wallGrid
-	RoomRect roomRect = RoomRect(
-		RNGu16Pool::poolValueGet(UINT_POOL_ID) % uint16_t(structureSize.x - (roomSize.x - 1)),
-		RNGu16Pool::poolValueGet(UINT_POOL_ID) % uint16_t(structureSize.y - (roomSize.y - 1)),
-		roomSize.x, roomSize.y
-	);
-	
+	RoomRect roomRect = RoomRect(0, 0, roomSize.x, roomSize.y);
+
 	// the current amount of roomRect faces touching walls in the wallGrid
 	uint16_t contactCount = 0;
 
-	uint32_t breaker = 100;
+	uint32_t breaker = 1000;
 	do {
-
-		// shift position of roomRect
-		roomRect.left += RNGi16Pool::poolValueGet(INT_SIGN_POOL_ID);
-		roomRect.top += RNGi16Pool::poolValueGet(INT_SIGN_POOL_ID);
-
-		roomRect.width += RNGi16Pool::poolValueGet(INT_SIGN_POOL_ID);
-		roomRect.height += RNGi16Pool::poolValueGet(INT_SIGN_POOL_ID);
-
-		// clamp room width to structure width
-		if (roomRect.width >= structureSize.x) {
-			roomRect.width = structureSize.x - 1;
-		}
-		// clamp room height to structure height
-		if (roomRect.width >= structureSize.y) {
-			roomRect.width = structureSize.y - 1;
-		}
-
-		uint16_t roomRectRightFace = roomRect.left + roomRect.width;
-		uint16_t roomRectBottomFace = roomRect.top + roomRect.height;
-
-		if (roomRect.left < 0) roomRect.left = 0;
-		if (roomRect.top < 0) roomRect.top = 0;
-		// clamp room width to structure width
-		if (roomRectRightFace > structureSize.x) roomRect.left += structureSize.x - roomRectRightFace;
-		// clamp room width to structure width
-		if (roomRectBottomFace > structureSize.y) roomRect.top += structureSize.y - roomRectBottomFace;
+		// get position of room rect inside structure, always fits inside of structure
+		roomRect.left = RNGu16::getRange(0, uint16_t(structureSize.x - (roomSize.x - 1)));
+		roomRect.top = RNGu16::getRange(0, uint16_t(structureSize.y - (roomSize.y - 1)));
 
 		// the way we calculate contact depends on the fullContact variable, basically, true means we calculate by subtraction, false means we calculate by addition.
 		// so fullContact means we start assuming we are fully contacted on every side of the room, and we subtract by 1 every time we find a side which isn't contacted.
@@ -313,7 +294,7 @@ sf::IntRect WallGenerator::roomGenerate(WallGrid2D& wallGrid, sf::Vector2u struc
 		contactCount = fullContact ? 4 : 0;
 
 		bool doubleWallFixFailed = false;
-		for (uint16_t i = 0; i < 128; i++) {
+		for (uint16_t i = 0; i < 512; i++) {
 			roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect, roomSize, doubleWallTolerance);
 
 			if (roomRect == RoomRect(0, 0, 0, 0)) {
