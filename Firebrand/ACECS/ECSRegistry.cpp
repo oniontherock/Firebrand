@@ -311,7 +311,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Door),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 60),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 59),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -2, 64, 4) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -2, 64, 4) }),
 			createComponentPairFromType<ComponentCollidable>(),
@@ -332,17 +332,17 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Dresser),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Dresser", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
-			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollider>(),
-			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-				})),
-			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMass>(200.f),
+			//createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Dresser),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Dresser", false, 50),
+			//createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
+			//createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
+			//createComponentPairFromType<ComponentCollidable>(),
+			//createComponentPairFromType<ComponentCollider>(),
+			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+			//	})),
+			//createComponentPairFromType<ComponentCollisionResponse>(),
+			//createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -353,16 +353,16 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Table),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Table Wooden", false, 60),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
-			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollider>(),
-			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-				})),
-			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMass>(200.f),
+			//createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Table),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Table Wooden", false, 50),
+			//createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
+			//createComponentPairFromType<ComponentCollidable>(),
+			//createComponentPairFromType<ComponentCollider>(),
+			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+			//	})),
+			//createComponentPairFromType<ComponentCollisionResponse>(),
+			//createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(

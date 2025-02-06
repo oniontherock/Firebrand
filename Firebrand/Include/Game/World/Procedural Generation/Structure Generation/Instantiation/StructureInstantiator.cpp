@@ -26,6 +26,9 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			if (cell.type.find("Wall") != std::string::npos) {
 				updateType = EntityUpdateType::Never;
 			}
+			else {
+				std::cout << cell.type << "\n";
+			}
 			//if (cell.type.find("Door") != std::string::npos) {
 			//	updateType = EntityUpdateType::Never;
 			//}

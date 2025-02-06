@@ -164,14 +164,11 @@ void GameLevel::structuresGenerate() {
 	
 	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);;
 
-
-	constexpr uint16_t itr = 1;
-
 	float avgTime = 0.f;
 
 	for (StructureRect& rectCur : structureRects) {
 
-		sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f);
+		sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f); 
 
 		sf::Vector2u rectCellCount = sf::Vector2u(rectCur.getSize() / structureGridCellSize);
 

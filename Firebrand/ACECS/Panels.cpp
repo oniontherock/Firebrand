@@ -74,7 +74,7 @@ void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 
 	static Cooldown cullCooldown(1.f);
 
-	constexpr float cullDist = 1280.f;
+	constexpr float cullDist = 300.f;
 
 	if (cullCooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
 

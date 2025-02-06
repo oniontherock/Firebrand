@@ -181,7 +181,7 @@ void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D
 		possibleConnectionPoints[j] = temp;
 	}
 
-	const float minDist = std::min((float(structureSize.x) * 0.3333333f), (float(structureSize.y) * 0.3333333f));
+	const float minDist = std::max((float(structureSize.x) * 0.666667f), (float(structureSize.y) * 0.666667f));
 	
 
 	// iterate over possibleConnectionPoints and remove any points that are too close
@@ -215,8 +215,10 @@ void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D
 			doorPos = rightSideConnectionPoint;
 		}
 		else {
-			doorPos = possibleConnectionPoints.back();
-			possibleConnectionPoints.pop_back();
+			if (possibleConnectionPoints.size() > 0) {
+				doorPos = possibleConnectionPoints.back();
+				possibleConnectionPoints.pop_back();
+			}
 		}
 
 		doorGrid[doorPos.x][doorPos.y] = true;

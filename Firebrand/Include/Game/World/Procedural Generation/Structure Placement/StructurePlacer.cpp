@@ -21,12 +21,11 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 
 			if (cell.dist < distMin || cell.dist > distMax) continue;
 
-
 			sf::Vector2f cellAxis = cell.dir * cell.dist;
 
 			StructureRect rect;
-			rect.width = RNGu16::getRange(8, 16) * structureGridCellSize;
-			rect.height = RNGu16::getRange(8, 16) * structureGridCellSize;
+			rect.width = RNGu16::getRange(5, 24) * structureGridCellSize;
+			rect.height = RNGu16::getRange(5, 24) * structureGridCellSize;
 			 
 			rect.left = (x * structureGridCellSize) - rect.width;
 			rect.top = (y * structureGridCellSize) - (rect.height / 2.f);
