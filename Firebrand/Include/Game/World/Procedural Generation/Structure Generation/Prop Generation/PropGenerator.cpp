@@ -35,11 +35,11 @@ PropTypeGrid2D PropGenerator::propsGenerate(const WallGrid2D& wallGrid, const Do
 
             std::vector<sf::Vector2u> allowedPoints;
 
-            for (uint16_t x = 1; x < roomCur.width - 1; x++) {
-                for (uint16_t y = 1; y < roomCur.height - 1; y++) {
+            for (uint16_t x = 1; x < roomCur.size.x - 1; x++) {
+                for (uint16_t y = 1; y < roomCur.size.y - 1; y++) {
 
-                    bool isOnEdgeX = x <= 1 || x >= roomCur.width - 2;
-                    bool isOnEdgeY = y <= 1 || y >= roomCur.height - 2;
+                    bool isOnEdgeX = x <= 1 || x >= roomCur.size.x - 2;
+                    bool isOnEdgeY = y <= 1 || y >= roomCur.size.y - 2;
 
                     bool isOnEdge = isOnEdgeX || isOnEdgeY;
 
@@ -48,8 +48,8 @@ PropTypeGrid2D PropGenerator::propsGenerate(const WallGrid2D& wallGrid, const Do
                     // if we are on the center, and we aren't allowed on the center, continue
                     if (!isOnEdge && isOffCenter) continue;
 
-                    int16_t cellX = int16_t(roomCur.left) + int16_t(x);
-                    int16_t cellY = int16_t(roomCur.top) + int16_t(y);
+                    int16_t cellX = int16_t(roomCur.position.x) + int16_t(x);
+                    int16_t cellY = int16_t(roomCur.position.y) + int16_t(y);
 
                     sf::Vector2u cell(cellX, cellY);
 

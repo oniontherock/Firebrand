@@ -174,8 +174,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Single", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 48, 24) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-12, -12, 48, 24) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-12, -12), sf::Vector2f(48, 24)) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-12, -12), sf::Vector2f(48, 24)) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-12, -12), sf::Vector2f(32, -12), sf::Vector2f(32, 12), sf::Vector2f(-12, 12)
@@ -193,8 +193,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -6, 64, 12) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -6), sf::Vector2f(64, 12)) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -6), sf::Vector2f(64, 12)) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-32, -6), sf::Vector2f(32, -6), sf::Vector2f(32, 6), sf::Vector2f(-32, 6)
@@ -213,8 +213,8 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60),
 			createComponentPairFromType<ComponentSpriteOrigin>(12.f, 12.f),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 10, 38), sf::FloatRect(-5, -5, 38, 10) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 10, 38), sf::FloatRect(-5, -5, 38, 10) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(10, 38)), sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(10, 38)), sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(std::vector{
 			CollisionShapePolygon(CollisionPolygon{
@@ -237,8 +237,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),	
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 38, 10), sf::FloatRect(-5, -32, 10, 65) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-5, -5, 38, 10), sf::FloatRect(-5, -32, 10, 65) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 65)) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 65)) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(std::vector{
 			CollisionShapePolygon(CollisionPolygon{
@@ -261,8 +261,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false, 60),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 10), sf::FloatRect(-5, -32, 10, 64) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -5, 64, 10), sf::FloatRect(-5, -32, 10, 64) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -5), sf::Vector2f(64, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 64)) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -5), sf::Vector2f(64, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 64)) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(std::vector{
 			CollisionShapePolygon(CollisionPolygon{
@@ -312,8 +312,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Door),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 59),
-			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -2, 64, 4) }),
-			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-32, -2, 64, 4) }),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollider>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
@@ -462,33 +462,8 @@ void ComponentRotation::system(Entity& entity) {
 	}
 }
 void ComponentSprite::system(Entity& entity) {
-
-	if (!entity.entityComponentHas<ComponentPosition>()) return;
-
 	if (entity.entityEventHas<EventInitialize>()) {
 		GameLevelGrid::levelGet(entity.levelId)->entityMarkDrawable(entity.Id, isDynamic, drawOrder);
-	}
-
-	auto* positionComponent = entity.entityComponentGet<ComponentPosition>();
-
-	sf::Texture& texture = GraphicsStore::textureStore.objectGet(fileName);
-
-	sprite.setTexture(texture);
-
-	if (entity.entityComponentHas<ComponentSpriteColor>()) {
-		sprite.setColor(entity.entityComponentGet<ComponentSpriteColor>()->color);
-	}
-
-	if (!entity.entityComponentHas<ComponentSpriteOrigin>()) {
-		sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
-	}
-	else {
-		sprite.setOrigin(entity.entityComponentGet<ComponentSpriteOrigin>()->origin);
-	}
-	sprite.setPosition(positionComponent->position);
-
-	if (entity.entityComponentHas<ComponentRotation>()) {
-		sprite.setRotation(entity.entityComponentGet<ComponentRotation>()->rotation * 180.f / Mathf::PI);
 	}
 }
 void ComponentViewFollow::system(Entity& entity) {
@@ -499,7 +474,7 @@ void ComponentViewFollow::system(Entity& entity) {
 			auto& panel = PanelManager::panelGet(panelName);
 
 			// camera position prior to movement
-			sf::Vector2f cameraPositionPrev = panel.viewRect.getPosition();
+			sf::Vector2f cameraPositionPrev = panel.viewRect.position;
 			// camera position prior to movement,
 			sf::Vector2f cameraPositionPrevNaturalized = cameraPositionPrev;
 
@@ -613,11 +588,11 @@ void ComponentObjectGridInhabiterRectangles::system(Entity& entity) {
 	for (uint16_t i = 0; i < rectangles.size(); i++) {
 		sf::FloatRect& rectangle = rectangles[i];
 
-		for (uint16_t x = 0; x < rectangle.width; x++) {
-			for (uint16_t y = 0; y < rectangle.height; y++) {
+		for (uint16_t x = 0; x < rectangle.size.x; x++) {
+			for (uint16_t y = 0; y < rectangle.size.y; y++) {
 
-				int16_t offsetX = int16_t(rectangle.left + x);
-				int16_t offsetY = int16_t(rectangle.top + y);
+				int16_t offsetX = int16_t(rectangle.position.x + x);
+				int16_t offsetY = int16_t(rectangle.position.y + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationPrev);
 
@@ -632,11 +607,11 @@ void ComponentObjectGridInhabiterRectangles::system(Entity& entity) {
 	for (uint16_t i = 0; i < rectangles.size(); i++) {
 		sf::FloatRect& rectangle = rectangles[i];
 
-		for (uint16_t x = 0; x < rectangle.width; x++) {
-			for (uint16_t y = 0; y < rectangle.height; y++) {
+		for (uint16_t x = 0; x < rectangle.size.x; x++) {
+			for (uint16_t y = 0; y < rectangle.size.y; y++) {
 
-				int16_t offsetX = int16_t(rectangle.left + x);
-				int16_t offsetY = int16_t(rectangle.top + y);
+				int16_t offsetX = int16_t(rectangle.position.x + x);
+				int16_t offsetY = int16_t(rectangle.position.y + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotation);
 
@@ -799,11 +774,11 @@ void ComponentOcclusionRectangles::system(Entity& entity) {
 	for (uint16_t i = 0; i < rectangles.size(); i++) {
 		sf::FloatRect& rectangle = rectangles[i];
 
-		for (uint16_t x = 0; x < rectangle.width; x++) {
-			for (uint16_t y = 0; y < rectangle.height; y++) {
+		for (uint16_t x = 0; x < rectangle.size.x; x++) {
+			for (uint16_t y = 0; y < rectangle.size.y; y++) {
 
-				int16_t offsetX = int16_t(rectangle.left + x);
-				int16_t offsetY = int16_t(rectangle.top + y);
+				int16_t offsetX = int16_t(rectangle.position.x + x);
+				int16_t offsetY = int16_t(rectangle.position.y + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotationPrev);
 
@@ -818,11 +793,11 @@ void ComponentOcclusionRectangles::system(Entity& entity) {
 	for (uint16_t i = 0; i < rectangles.size(); i++) {
 		sf::FloatRect& rectangle = rectangles[i];
 
-		for (uint16_t x = 0; x < rectangle.width; x++) {
-			for (uint16_t y = 0; y < rectangle.height; y++) {
+		for (uint16_t x = 0; x < rectangle.size.x; x++) {
+			for (uint16_t y = 0; y < rectangle.size.y; y++) {
 
-				int16_t offsetX = int16_t(rectangle.left + x);
-				int16_t offsetY = int16_t(rectangle.top + y);
+				int16_t offsetX = int16_t(rectangle.position.x + x);
+				int16_t offsetY = int16_t(rectangle.position.y + y);
 
 				sf::Vector2f offset = Vector2fMath::rotate(offsetX, offsetY, rotation);
 

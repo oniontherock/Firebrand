@@ -26,14 +26,14 @@ void TextureGrid::cellInitialize(CellCoordinate cellX, CellCoordinate cellY) {
 	
 	GridTextureUniquePtr& cell = cellGet(cellX, cellY);
 
-	cell->create(uint32_t(cellSize.x), uint32_t(cellSize.y));
+	cell->resize(sf::Vector2u(uint32_t(cellSize.x), uint32_t(cellSize.y)));
 
 	sf::Vector2f cellPosition = sf::Vector2f(float(cellX) * cellSize.x, float(cellY) * cellSize.y);
 
 	cell->gridPosition = sf::Vector2u(cellX, cellY);
 	cell->position = cellPosition;
 
-	cell->setView(sf::View(sf::FloatRect(cellPosition.x, cellPosition.y, cellSize.x, cellSize.y)));
+	cell->setView(sf::View(sf::FloatRect(sf::Vector2f(cellPosition.x, cellPosition.y), sf::Vector2f(cellSize.x, cellSize.y))));
 }
 void TextureGrid::cellInitialize(CellVector cellPos) {
 	cellInitialize(cellPos.x, cellPos.y);
@@ -91,10 +91,10 @@ std::vector<GridTexture*> TextureGrid::texturesGetInRectangle(sf::FloatRect rect
 	std::vector<GridTexture*> textures;
 
 	// iterate over the rect
-	for (float xOffset = 0; xOffset <= rect.width; xOffset += cellSize.x) {
-		for (float yOffset = 0; yOffset <= rect.height; yOffset += cellSize.y) {
+	for (float xOffset = 0; xOffset <= rect.size.x; xOffset += cellSize.x) {
+		for (float yOffset = 0; yOffset <= rect.size.y; yOffset += cellSize.y) {
 			// get the coordinate of the current pixel in the rect by offset the rect's position by the offsets
-			sf::Vector2f rectCoordinate = sf::Vector2f(rect.left + xOffset, rect.top + yOffset);
+			sf::Vector2f rectCoordinate = sf::Vector2f(rect.position.x + xOffset, rect.position.y + yOffset);
 			// get the cell's position
 			sf::Vector2u cellPosition = coordinatesWorldToCell(rectCoordinate.x, rectCoordinate.y);
 
@@ -120,10 +120,10 @@ std::vector<sf::Vector2u> TextureGrid::texturePositionsGetInRectangle(sf::FloatR
 	std::set<sf::Vector2u, Vector2uLessThan> checkedCells;
 
 	// iterate over the rect
-	for (float xOffset = 0; xOffset <= rect.width; xOffset += cellSize.x) {
-		for (float yOffset = 0; yOffset <= rect.height; yOffset += cellSize.y) {
+	for (float xOffset = 0; xOffset <= rect.size.x; xOffset += cellSize.x) {
+		for (float yOffset = 0; yOffset <= rect.size.y; yOffset += cellSize.y) {
 			// get the coordinate of the current pixel in the rect by offset the rect's position by the offsets
-			sf::Vector2f rectCoordinate = sf::Vector2f(rect.left + xOffset, rect.top + yOffset);
+			sf::Vector2f rectCoordinate = sf::Vector2f(rect.position.x + xOffset, rect.position.y + yOffset);
 			// get the cell's position
 			sf::Vector2u cellPosition = coordinatesWorldToCell(rectCoordinate.x, rectCoordinate.y);
 
@@ -149,10 +149,10 @@ void TextureGrid::drawRectangleToTexture(sf::FloatRect rect, sf::RenderTexture& 
 	std::set<sf::Vector2u, Vector2uLessThan> drawnCells;
 
 	// iterate over the rect
-	for (float xOffset = 0; xOffset <= rect.width; xOffset += cellSize.x) {
-		for (float yOffset = 0; yOffset <= rect.height; yOffset += cellSize.y) {
+	for (float xOffset = 0; xOffset <= rect.size.x; xOffset += cellSize.x) {
+		for (float yOffset = 0; yOffset <= rect.size.y; yOffset += cellSize.y) {
 			// get the coordinate of the current pixel in the rect by offset the rect's position by the offsets
-			sf::Vector2f rectCoordinate = sf::Vector2f(rect.left + xOffset, rect.top + yOffset);
+			sf::Vector2f rectCoordinate = sf::Vector2f(rect.position.x + xOffset, rect.position.y + yOffset);
 			// get the cell's position
 			sf::Vector2u cellPosition = coordinatesWorldToCell(rectCoordinate.x, rectCoordinate.y);
 
@@ -171,9 +171,7 @@ void TextureGrid::drawRectangleToTexture(sf::FloatRect rect, sf::RenderTexture& 
 				GridTextureUniquePtr& cell = cellGet(cellPosition);
 				
 				// initialize sprite that will have the texture of the current cell
-				sf::Sprite cellSprite;
-				// set cellSprite's texture to the current cell's texture
-				cellSprite.setTexture(cell->getTexture());
+				sf::Sprite cellSprite(cell->getTexture());
 				// set cellSprite's position to the current cell's position
 				cellSprite.setPosition(cell->positionGet());
 				// draw the cellSprite to the renderTexture

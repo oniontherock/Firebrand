@@ -32,28 +32,28 @@ void Engine::inputsRegister() {
 void Engine::panelsRegister() {
 	using namespace PanelManager;
 	panelAdd(PanelTypes::StaticView, PanelPtr(new PanelStaticView(
-		PanelRect(0, 0, 1280, 720), // screen coordinates
-		PanelRect(0, 0, 1280, 720), // world coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // screen coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // world coordinates
 		sf::Color::Black
 	)));
 	panelAdd(PanelTypes::DynamicView, PanelPtr(new PanelDynamicView(
-		PanelRect(0, 0, 1280, 720), // screen coordinates
-		PanelRect(0, 0, 1280, 720), // world coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // screen coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // world coordinates
 		sf::Color::Transparent
 	)));
 	panelAdd(PanelTypes::Hud, PanelPtr(new PanelHud(
-		PanelRect(0, 0, 1280, 720), // screen coordinates
-		PanelRect(0, 0, 1280, 720), // world coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // screen coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // world coordinates
 		sf::Color::Transparent
 	)));
 	panelAdd(PanelTypes::WinScreen, PanelPtr(new PanelWinScreen(
-		PanelRect(0, 0, 1280, 720), // screen coordinates
-		PanelRect(0, 0, 1280, 720), // world coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // screen coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // world coordinates
 		sf::Color::Black
 	)));
 	panelAdd(PanelTypes::LoseScreen, PanelPtr(new PanelLoseScreen(
-		PanelRect(0, 0, 1280, 720), // screen coordinates
-		PanelRect(0, 0, 1280, 720), // world coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // screen coordinates
+		PanelRect(sf::Vector2f(0, 0), sf::Vector2f(1280, 720)), // world coordinates
 		sf::Color::Black
 	)));
 }
@@ -152,8 +152,7 @@ void Engine::imagesRegister() {
 	GraphicsStore::imageStore.fileLoadFromName("Art/Circle");
 }
 void Engine::texturesRegister() {
-	sf::Texture circleTexture;
-	circleTexture.loadFromImage(GraphicsStore::imageStore.objectGet("Art/Circle"));
+	sf::Texture circleTexture(GraphicsStore::imageStore.objectGet("Art/Circle"));
 	GraphicsStore::textureStore.objectAddFromInstance("Circle", circleTexture);
 }
 void Engine::RNGPoolsRegister() {
@@ -169,7 +168,6 @@ void Engine::RNGPoolsRegister() {
 	RNGi16Pool::poolCreate(32);
 	RNGi16Pool::poolFillRange(INT_SIGN_POOL_ID, -1, 2);
 }
-
 
 // initialize the ACECS engine by registering all inputs, initializing the ECS module, and registering game states.
 // of course, certain modules do not have to be initialized if the user does not want them to be

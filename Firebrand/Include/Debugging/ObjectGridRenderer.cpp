@@ -8,22 +8,21 @@ sf::Color encodedColorGet(ObjectType objectType) {
 	
 		//sf::Color(((i * 1000) % 127) * 2, (((i * 9999) % 255) * 72) % 255, (i * 99999) % 255, 255)
 	return sf::Color(
-		sf::Uint8(((objectTypeAsInt * 1000) % 127) * 2),
-		sf::Uint8((((objectTypeAsInt * 9999) % 255) * 72) % 255),
-		sf::Uint8((objectTypeAsInt * 99999) % 255),
+		uint8_t(((objectTypeAsInt * 1000) % 127) * 2),
+		uint8_t((((objectTypeAsInt * 9999) % 255) * 72) % 255),
+		uint8_t((objectTypeAsInt * 99999) % 255),
 		255
 	);
 }
 
 void ObjectGridRenderer::gridRender(ObjectGrid& objectGrid, PanelRect viewRect) {
 
-	sf::Image image;
-	image.create(objectGrid.gridGetSizeX(), objectGrid.gridGetSizeY());
+	sf::Image image(sf::Vector2u(objectGrid.gridGetSizeX(), objectGrid.gridGetSizeY()));
 
-	for (uint16_t x = 0; x < viewRect.width / objectGrid.cellsGetSizeX(); x++) {
-		for (uint16_t y = 0; y < viewRect.height / objectGrid.cellsGetSizeY(); y++) {
+	for (uint16_t x = 0; x < viewRect.size.x / objectGrid.cellsGetSizeX(); x++) {
+		for (uint16_t y = 0; y < viewRect.size.y / objectGrid.cellsGetSizeY(); y++) {
 
-			sf::Vector2f worldPos = viewRect.getPosition() + sf::Vector2f(x * objectGrid.cellsGetSizeX(), y * objectGrid.cellsGetSizeY());
+			sf::Vector2f worldPos = viewRect.position + sf::Vector2f(x * objectGrid.cellsGetSizeX(), y * objectGrid.cellsGetSizeY());
 
 
 			const std::set<EntityId>& ids = objectGrid.cellGetFromWorld(worldPos).idsGet();
@@ -43,11 +42,11 @@ void ObjectGridRenderer::gridRender(ObjectGrid& objectGrid, PanelRect viewRect) 
 				b += color.b;
 			}
 
-			sf::Uint8 rFinal = sf::Uint8(r / ids.size());
-			sf::Uint8 gFinal = sf::Uint8(g / ids.size());
-			sf::Uint8 bFinal = sf::Uint8(b / ids.size());
+			uint8_t rFinal = uint8_t(r / ids.size());
+			uint8_t gFinal = uint8_t(g / ids.size());
+			uint8_t bFinal = uint8_t(b / ids.size());
 
-			image.setPixel(x, y, sf::Color(rFinal, gFinal, bFinal, 255));
+			image.setPixel(sf::Vector2u(x, y), sf::Color(rFinal, gFinal, bFinal, 255));
 		}
 	}
 

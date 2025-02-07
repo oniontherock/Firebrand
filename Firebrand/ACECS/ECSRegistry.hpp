@@ -165,7 +165,7 @@ namespace EntityComponents {
 		{
 			color = _color;
 		};
-		ComponentSpriteColor(sf::Uint8 r, sf::Uint8 g, sf::Uint8 b, sf::Uint8 a) :
+		ComponentSpriteColor(std::uint8_t r, std::uint8_t g, std::uint8_t b, std::uint8_t a) :
 			ComponentSpriteColor(sf::Color(r, g, b, a))
 		{
 		};
@@ -209,15 +209,9 @@ namespace EntityComponents {
 
 		// whether this sprite should be drawn as a dynamic or static sprite, dynamic only draw when in vision, static draw in or out of vision
 		bool isDynamic = false;
-		//// origin of the sprite, note that this is relative to the center of the sprite, note the top left corner.
-		//sf::Vector2f origin;
-		//// color of the sprite
-		//sf::Color color;
 
 		// the draw order of the sprite
 		uint16_t drawOrder = 50;
-
-		sf::Sprite sprite;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentSprite(fileName, fileExtension, isDynamic, drawOrder));
@@ -233,8 +227,7 @@ namespace EntityComponents {
 
 				sf::Image& image = GraphicsStore::imageStore.fileGetOrLoadFromName(fileName, fileExtension);
 
-				sf::Texture texture;
-				texture.loadFromImage(image);
+				sf::Texture texture(image);
 
 				GraphicsStore::textureStore.objectAddFromInstance(fileName, texture);
 			}

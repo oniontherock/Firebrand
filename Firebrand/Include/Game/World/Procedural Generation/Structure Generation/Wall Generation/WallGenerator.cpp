@@ -25,7 +25,7 @@ std::pair<WallGenerator::WallType, float> WallGenerator::wallDataGetFromSurround
 		wallType = JunctionT;
 		wallRotation = -Mathf::PI / 2.f;
 	}
-	// check left facing T
+	// check position.x facing T
 	else if (wallStates[1] && wallStates[3] && wallStates[7]) {
 		wallType = JunctionT;
 		wallRotation = Mathf::PI;
@@ -53,17 +53,17 @@ std::pair<WallGenerator::WallType, float> WallGenerator::wallDataGetFromSurround
 		wallType = Corner;
 		wallRotation = 0;
 	}
-	// bottom and left
+	// bottom and position.x
 	else if (wallStates[3] && wallStates[7]) {
 		wallType = Corner;
 		wallRotation = Mathf::PI / 2.f;
 	}
-	// top and left
+	// position.y and position.x
 	else if (wallStates[1] && wallStates[3]) {
 		wallType = Corner;
 		wallRotation = Mathf::PI;
 	}
-	// top and right
+	// position.y and right
 	else if (wallStates[1] && wallStates[5]) {
 		wallType = Corner;
 		wallRotation = -Mathf::PI / 2.f;
@@ -75,12 +75,12 @@ std::pair<WallGenerator::WallType, float> WallGenerator::wallDataGetFromSurround
 		wallType = Single;
 		wallRotation = 0;
 	}
-	// top
+	// position.y
 	else if (wallStates[1]) {
 		wallType = Single;
 		wallRotation = -Mathf::PI / 2.f;
 	}
-	// left
+	// position.x
 	else if (wallStates[3]) {
 		wallType = Single;
 		wallRotation = Mathf::PI;
@@ -118,12 +118,12 @@ StructureCellType WallGenerator::cellTypeGetFromWallType(WallType wallType) {
 }
 
 void WallGenerator::roomWallsApplyToWallGrid(WallGrid2D& wallGrid, const sf::Vector2u, const RoomRect roomRect, const bool solid) {
-	for (uint32_t x = 0; x < uint32_t(roomRect.width); x++) {
-		for (uint32_t y = 0; y < uint32_t(roomRect.height); y++) {
+	for (uint32_t x = 0; x < uint32_t(roomRect.size.x); x++) {
+		for (uint32_t y = 0; y < uint32_t(roomRect.size.y); y++) {
 
-			sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + x, roomRect.top + y);
+			sf::Vector2i cellPosition = sf::Vector2i(roomRect.position.x + x, roomRect.position.y + y);
 
-			if (((x == 0 || x == uint32_t(roomRect.width) - 1) || (y == 0 || y == uint32_t(roomRect.height) - 1)) || solid) {
+			if (((x == 0 || x == uint32_t(roomRect.size.x) - 1) || (y == 0 || y == uint32_t(roomRect.size.y) - 1)) || solid) {
 				wallGrid[cellPosition.x][cellPosition.y] = true;
 			}
 		}
@@ -132,12 +132,12 @@ void WallGenerator::roomWallsApplyToWallGrid(WallGrid2D& wallGrid, const sf::Vec
 
 std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, const RoomRect roomRect) {
 	
-	// vector of 4 booleans for which faces have wall doubling, order is: right, top, left, bottom.
+	// vector of 4 booleans for which faces have wall doubling, order is: right, position.y, position.x, bottom.
 	std::vector<bool> doubleFaces(4, false);
 
 	// iterate right face
-	for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
-		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + (roomRect.width - 1) + 1, roomRect.top + offsetY);
+	for (uint16_t offsetY = 1; offsetY < roomRect.size.y - 1; offsetY++) {
+		sf::Vector2i cellPosition = sf::Vector2i(roomRect.position.x + (roomRect.size.x - 1) + 1, roomRect.position.y + offsetY);
 
 		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
@@ -148,9 +148,9 @@ std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGr
 			break;
 		}
 	}
-	// iterate top face
-	for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
-		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top - 1);
+	// iterate position.y face
+	for (uint16_t offsetX = 1; offsetX < roomRect.size.x - 1; offsetX++) {
+		sf::Vector2i cellPosition = sf::Vector2i(roomRect.position.x + offsetX, roomRect.position.y - 1);
 
 		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
@@ -161,9 +161,9 @@ std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGr
 			break;
 		}
 	}
-	// iterate left face
-	for (uint16_t offsetY = 1; offsetY < roomRect.height - 1; offsetY++) {
-		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left - 1, roomRect.top + offsetY);
+	// iterate position.x face
+	for (uint16_t offsetY = 1; offsetY < roomRect.size.y - 1; offsetY++) {
+		sf::Vector2i cellPosition = sf::Vector2i(roomRect.position.x - 1, roomRect.position.y + offsetY);
 
 		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
@@ -175,8 +175,8 @@ std::vector<bool> WallGenerator::roomRectGetDoubleWalls(const WallGrid2D& wallGr
 		}
 	}
 	// iterate bottom face
-	for (uint16_t offsetX = 1; offsetX < roomRect.width - 1; offsetX++) {
-		sf::Vector2i cellPosition = sf::Vector2i(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1) + 1);
+	for (uint16_t offsetX = 1; offsetX < roomRect.size.x - 1; offsetX++) {
+		sf::Vector2i cellPosition = sf::Vector2i(roomRect.position.x + offsetX, roomRect.position.y + (roomRect.size.y - 1) + 1);
 
 		if ((cellPosition.x < 0 || cellPosition.x >= uint16_t(structureSize.x)) || (cellPosition.y < 0 || cellPosition.y >= uint16_t(structureSize.y))) continue;
 
@@ -211,52 +211,52 @@ RoomRect WallGenerator::roomRectFixDoubleWalls(const WallGrid2D& wallGrid, const
 	// check right
 	if (doubleFaces[0]) {
 		if (RNGf::probability(mergeVsDodgeProbability)) {
-			roomRectAdjusted.width++;
+			roomRectAdjusted.size.x++;
 		}
 		else {
-			roomRectAdjusted.width--;
+			roomRectAdjusted.size.x--;
 		}
 	}
-	// check top
+	// check position.y
 	if (doubleFaces[1]) {
 		if (RNGf::probability(mergeVsDodgeProbability)) {
-			roomRectAdjusted.top--;
-			roomRectAdjusted.height++;
+			roomRectAdjusted.position.y--;
+			roomRectAdjusted.size.y++;
 		}
 		else {
-			roomRectAdjusted.top++;
-			roomRectAdjusted.height--;
+			roomRectAdjusted.position.y++;
+			roomRectAdjusted.size.y--;
 		}
 	}
-	// check left
+	// check position.x
 	if (doubleFaces[2]) {
 		if (RNGf::probability(mergeVsDodgeProbability)) {
-			roomRectAdjusted.left--;
-			roomRectAdjusted.width++;
+			roomRectAdjusted.position.x--;
+			roomRectAdjusted.size.x++;
 		}
 		else {
-			roomRectAdjusted.left++;
-			roomRectAdjusted.width--;
+			roomRectAdjusted.position.x++;
+			roomRectAdjusted.size.x--;
 		}
 	}
 	// check bottom
 	if (doubleFaces[3]) {
 		if (RNGf::probability(mergeVsDodgeProbability)) {
-			roomRectAdjusted.height++;
+			roomRectAdjusted.size.y++;
 		}
 		else {
-			roomRectAdjusted.height--;
+			roomRectAdjusted.size.y--;
 		}
 	}
 
-	// return error RoomRect if the width or height is too little
-	if (roomRectAdjusted.width <= 2 || roomRectAdjusted.height <= 2) return RoomRect(0, 0, 0, 0);
+	// return error RoomRect if the size.x or size.y is too little
+	if (roomRectAdjusted.size.x <= 2 || roomRectAdjusted.size.y <= 2) return RoomRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
 	// return error RoomRect if the roomRect's size has differed more than resizeTolerance allows
-	if (abs(int32_t(roomDesiredSize.x) - roomRectAdjusted.width) + abs(int32_t(roomDesiredSize.y) - roomRectAdjusted.height) > resizeTolerance) return RoomRect(0, 0, 0, 0);
+	if (abs(int32_t(roomDesiredSize.x) - roomRectAdjusted.size.x) + abs(int32_t(roomDesiredSize.y) - roomRectAdjusted.size.y) > resizeTolerance) return RoomRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
 	// return error RoomRect if roomRect exceeds level bounds
 	if (
-		(roomRectAdjusted.left < 0 || roomRectAdjusted.left + (roomRectAdjusted.width - 1) >= int32_t(structureSize.x)) ||
-		(roomRectAdjusted.top < 0 || roomRectAdjusted.top + (roomRectAdjusted.height - 1) >= int32_t(structureSize.y))) return RoomRect(0, 0, 0, 0);
+		(roomRectAdjusted.position.x < 0 || roomRectAdjusted.position.x + (roomRectAdjusted.size.x - 1) >= int32_t(structureSize.x)) ||
+		(roomRectAdjusted.position.y < 0 || roomRectAdjusted.position.y + (roomRectAdjusted.size.y - 1) >= int32_t(structureSize.y))) return RoomRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0));
 
 	return roomRectAdjusted;
 }
@@ -292,24 +292,24 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 			}
 			
 #pragma region Generate Room
-			// clamp room width to structure width
+			// clamp room size.x to structure size.x
 			if (roomSize.x >= structureSize.x) {
 				roomSize.x = structureSize.x - 1;
 			}
-			// clamp room height to structure height
+			// clamp room size.y to structure size.y
 			if (roomSize.y >= structureSize.y) {
 				roomSize.y = structureSize.y - 1;
 			}
 
 			// rectangle of the room inside the wallGrid
-			RoomRect roomRect = RoomRect(0, 0, roomSize.x, roomSize.y);
+			RoomRect roomRect = RoomRect(sf::Vector2i(0, 0), sf::Vector2i(roomSize.x, roomSize.y));
 
 			// the current amount of roomRect faces touching walls in the wallGrid
 			uint16_t contactCount = 0;
 
 			// get position of room rect inside structure, always fits inside of structure
-			roomRect.left = RNGu16::getRange(0, uint16_t(structureSize.x - (roomSize.x - 1)));
-			roomRect.top = RNGu16::getRange(0, uint16_t(structureSize.y - (roomSize.y - 1)));
+			roomRect.position.x = RNGu16::getRange(0, uint16_t(structureSize.x - (roomSize.x - 1)));
+			roomRect.position.y = RNGu16::getRange(0, uint16_t(structureSize.y - (roomSize.y - 1)));
 
 			bool fullContact = structureType->fullContact;
 
@@ -322,7 +322,7 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 			for (uint16_t i = 0; i < 4; i++) {
 				roomRect = roomRectFixDoubleWalls(wallGrid, structureSize, roomRect, roomSize, structureType->doubleWallTolerance);
 
-				if (roomRect == RoomRect(0, 0, 0, 0)) {
+				if (roomRect == RoomRect(sf::Vector2i(0, 0), sf::Vector2i(0, 0))) {
 					doubleWallFixFailed = true;
 					break;
 				}
@@ -333,8 +333,8 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 			if (roomRectHasDoubleWalls(wallGrid, structureSize, roomRect)) continue;
 
 			// iterate right face
-			for (uint16_t offsetY = 0; offsetY < roomRect.height; offsetY++) {
-				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + (roomRect.width - 1), roomRect.top + offsetY);
+			for (uint16_t offsetY = 0; offsetY < roomRect.size.y; offsetY++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.position.x + (roomRect.size.x - 1), roomRect.position.y + offsetY);
 
 				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -343,9 +343,9 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 					break;
 				}
 			}
-			// iterate top face
-			for (uint16_t offsetX = 0; offsetX < roomRect.width; offsetX++) {
-				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top);
+			// iterate position.y face
+			for (uint16_t offsetX = 0; offsetX < roomRect.size.x; offsetX++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.position.x + offsetX, roomRect.position.y);
 
 				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -354,9 +354,9 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 					break;
 				}
 			}
-			// iterate left face
-			for (uint16_t offsetY = 0; offsetY < roomRect.height; offsetY++) {
-				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left, roomRect.top + offsetY);
+			// iterate position.x face
+			for (uint16_t offsetY = 0; offsetY < roomRect.size.y; offsetY++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.position.x, roomRect.position.y + offsetY);
 
 				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -366,8 +366,8 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 				}
 			}
 			// iterate bottom face
-			for (uint16_t offsetX = 0; offsetX < roomRect.width; offsetX++) {
-				sf::Vector2u cellPosition = sf::Vector2u(roomRect.left + offsetX, roomRect.top + (roomRect.height - 1));
+			for (uint16_t offsetX = 0; offsetX < roomRect.size.x; offsetX++) {
+				sf::Vector2u cellPosition = sf::Vector2u(roomRect.position.x + offsetX, roomRect.position.y + (roomRect.size.y - 1));
 
 				bool isWall = wallGrid[cellPosition.x][cellPosition.y];
 
@@ -382,7 +382,7 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 
 			bool roomRectPosIsValid = true;
 			for (uint16_t i = 0; i < roomRectsVector.size(); i++) {
-				if (RoomRect(roomRect.left + 1, roomRect.top + 1, roomRect.width - 2, roomRect.height - 2).intersects(roomRectsVector[i])) {
+				if (RoomRect(sf::Vector2i(roomRect.position.x + 1, roomRect.position.y + 1), sf::Vector2i(roomRect.size.x - 2, roomRect.size.y - 2)).findIntersection(roomRectsVector[i])) {
 					roomRectPosIsValid = false;
 					//std::cout << "invalid position" << "\n";
 					break;
@@ -406,7 +406,7 @@ WallGrid2D WallGenerator::wallsGenerate(StructureTypeBase* structureType, sf::Ve
 	WallGrid2D wallGrid = WallGrid2D(structureSize.x, WallGrid1D(structureSize.y, false));
 
 	// solidify edges of wallGrid
-	roomWallsApplyToWallGrid(wallGrid, structureSize, RoomRect(0, 0, structureSize.x, structureSize.y));
+	roomWallsApplyToWallGrid(wallGrid, structureSize, RoomRect(sf::Vector2i(0, 0), sf::Vector2i(structureSize.x, structureSize.y)));
 
 	roomRectVectorLast = roomsGenerate(wallGrid, structureType, structureSize);
 

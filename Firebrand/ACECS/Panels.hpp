@@ -48,7 +48,7 @@ struct PanelDynamicView : public Panel {
 
 private:
 
-	sf::RenderTexture viewMaskTexture;
+	sf::RenderTexture viewMaskTexture = sf::RenderTexture(sf::Vector2u(1, 1));
 	std::vector<sf:: Vector2f> viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount);
 	void viewMaskCreate();
 	bool isFirstUpdate = true;

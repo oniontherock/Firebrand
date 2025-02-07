@@ -77,6 +77,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\SFMLInclude;C:\Users\dayna\Documents\Visual Studio Project\ACECS Engine\Engine Modules</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4275</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -94,6 +95,7 @@
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\SFMLInclude;C:\Users\dayna\Documents\Visual Studio Project\ACECS Engine\Engine Modules</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4275</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\SFMLLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -114,6 +116,8 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\SFMLInclude;C:\Users\dayna\Documents\Visual Studio Project\ACECS Engine\Engine Modules</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdcpp20</LanguageStandard>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4275</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4275</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -197,11 +201,6 @@
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\openal32.dll" />
-    <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\sfml-audio-d-2.dll" />
-    <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\sfml-graphics-d-2.dll" />
-    <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\sfml-system-d-2.dll" />
-    <None Include="..\..\..\SFML\SFML clear naming\bin\Debug\sfml-window-d-2.dll" />
     <None Include="Include\Shaders\Blur.glsl" />
     <None Include="Include\Shaders\Grayscale.glsl" />
     <None Include="packages.config" />

@@ -31,14 +31,15 @@ void PanelStaticView::panelApplyGrayscale() {
 	textureUngrayscaled = texture.getTexture();
 
 	// create sprite from textureUngrayscaled (we use textureUngrayscaled because using texture.getTexture() returns a reference, and we clear texture prior to drawing so we need a copy)
-	sf::Sprite panelSprite;
-	panelSprite.setTexture(textureUngrayscaled);
+	sf::Sprite panelSprite(textureUngrayscaled);
 	// set panelSprite's position to that of the view rect so things line up properly (if we don't do this, the panelSprite is drawn as if it were an object in the world, which is obviously no good)
-	panelSprite.setPosition(viewRect.getPosition());
+	panelSprite.setPosition(viewRect.position);
 
 	// load grayscale shader
 	sf::Shader grayscaleShader;
-	grayscaleShader.loadFromFile("Include/Shaders/Grayscale.glsl", sf::Shader::Fragment);
+	if (!grayscaleShader.loadFromFile("Include/Shaders/Grayscale.glsl", sf::Shader::Type::Fragment)) {
+		ConsoleHandler::consolePrintErr("Grayscale shader doesn't exist or path is incorrect!");
+	}
 	grayscaleShader.setUniform("texture", sf::Shader::CurrentTexture);
 	grayscaleShader.setUniform("divider", 1.4f);
 	grayscaleShader.setUniform("lerp", 0.9f);
@@ -53,12 +54,12 @@ void PanelStaticView::panelApplyGrayscale() {
 void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	// draw background base color
 	sf::RectangleShape backgroundRectangle;
-	backgroundRectangle.setSize(viewRect.getSize());
+	backgroundRectangle.setSize(viewRect.size);
 	backgroundRectangle.setFillColor(sf::Color(10, 75, 0, 255));
 	backgroundRectangle.setTextureRect(sf::IntRect(viewRect));
-	backgroundRectangle.setPosition(viewRect.left, viewRect.top);
+	backgroundRectangle.setPosition(viewRect.position);
 
-	levelActive->backgroundDraw(sf::FloatRect(viewRect.getPosition() - (viewRect.getSize() / 2.f), viewRect.getSize() * 2.f), 256);
+	levelActive->backgroundDraw(sf::FloatRect(viewRect.position - (viewRect.size / 2.f), viewRect.size * 2.f), 256);
 
 	// draw base background color
 	objectDraw(backgroundRectangle);
@@ -74,7 +75,7 @@ void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 
 	static Cooldown cullCooldown(1.f);
 
-	constexpr float cullDist = 300.f;
+	constexpr float cullDist = 1000.f;
 
 	if (cullCooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
 
@@ -97,7 +98,26 @@ void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 
 		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
 
-		objectDraw(componentSprite->sprite);
+		sf::Texture& textureCur = GraphicsStore::textureStore.objectGet(componentSprite->fileName);
+
+		sf::Sprite sprite(textureCur);
+
+		if (entityCur.entityComponentHas<EntityComponents::ComponentSpriteColor>()) {
+			sprite.setColor(entityCur.entityComponentGet<EntityComponents::ComponentSpriteColor>()->color);
+		}
+
+		if (!entityCur.entityComponentHas<EntityComponents::ComponentSpriteOrigin>()) {
+			sprite.setOrigin(sf::Vector2f(textureCur.getSize()) / 2.f);
+		}
+		else {
+			sprite.setOrigin(entityCur.entityComponentGet<EntityComponents::ComponentSpriteOrigin>()->origin);
+		}
+		sprite.setPosition(entityCur.entityComponentGet<EntityComponents::ComponentPosition>()->position);
+		if (entityCur.entityComponentHas<EntityComponents::ComponentRotation>()) {
+			sprite.setRotation(sf::radians(entityCur.entityComponentGet<EntityComponents::ComponentRotation>()->rotation));
+		}
+
+		objectDraw(sprite);
 	}
 }
 
@@ -177,7 +197,7 @@ void PanelDynamicView::viewMaskCreate() {
 
 	std::vector<sf::Vector2f> viewConePoints = viewMaskShapeCreate(1280.f, Mathf::PI / 2.f, 512);
 
-	sf::VertexArray coneVertexArray(sf::Lines, viewConePoints.size());
+	sf::VertexArray coneVertexArray(sf::PrimitiveType::Lines, viewConePoints.size());
 
 	for (uint32_t i = 0; i < viewConePoints.size(); i++) {
 		coneVertexArray[i].position = viewConePoints[i] + sf::Vector2f(viewMaskSize / 2u);
@@ -186,14 +206,16 @@ void PanelDynamicView::viewMaskCreate() {
 
 	std::vector<sf::Vector2f> viewAreaPoints = viewMaskShapeCreate(48.f, Mathf::TAU, 256);
 
-	sf::VertexArray areaVertexArray(sf::Lines, viewAreaPoints.size());
+	sf::VertexArray areaVertexArray(sf::PrimitiveType::Lines, viewAreaPoints.size());
 
 	for (uint32_t i = 0; i < viewAreaPoints.size(); i++) {
 		areaVertexArray[i].position = viewAreaPoints[i] + sf::Vector2f(viewMaskSize / 2u);
 		areaVertexArray[i].color = sf::Color(255, 255, 255, 255);
 	}
 
-	viewMaskTexture.create(viewMaskSize.x, viewMaskSize.y);
+	if (!viewMaskTexture.resize(viewMaskSize)) {
+		ConsoleHandler::consolePrintErr("viewMaskTexture resizing failed!");
+	}
 	viewMaskTexture.clear(sf::Color::Transparent);
 
 	viewMaskTexture.draw(coneVertexArray);
@@ -211,33 +233,71 @@ void PanelDynamicView::staticDraw() {
 
 	PanelStaticView& panelStaticView = static_cast<PanelStaticView&>(PanelManager::panelGet(PanelName::StaticView));
 
-	sf::Sprite staticSprite;
-	staticSprite.setTexture(panelStaticView.textureUngrayscaled);
-	staticSprite.setPosition(viewRect.getPosition());
+	sf::Sprite staticSprite(panelStaticView.textureUngrayscaled);
+	staticSprite.setPosition(viewRect.position);
 
 	objectDraw(staticSprite);
 }
 void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
-	for (const std::set<EntityId>& idSetCur : levelActive->entitiesDrawableDynamicGet()) {
-		for (const EntityId& idCur : idSetCur) {
-			Entity& entityCur = EntityManager::entityGet(idCur);
 
-			auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
+	static std::vector<EntityId> idsToDraw;
 
-			objectDraw(componentSprite->sprite);
+	static Cooldown cullCooldown(1.f);
+
+	constexpr float cullDist = 300.f;
+
+	if (cullCooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
+
+		idsToDraw.clear();
+
+		sf::Vector2f playerPosition = EntityManager::entityGet(GameData::playerId).entityComponentGet<EntityComponents::ComponentPosition>()->position;
+
+		for (const std::set<EntityId>& idSetCur : levelActive->entitiesDrawableDynamicGet()) {
+			for (const EntityId& idCur : idSetCur) {
+				if (Vector2fMath::distSqrd(playerPosition, EntityManager::entityGet(idCur).entityComponentGet<EntityComponents::ComponentPosition>()->position) > cullDist * cullDist) continue;
+
+				idsToDraw.push_back(idCur);
+			}
 		}
+
+	}
+
+	for (uint32_t i = 0; i < idsToDraw.size(); i++) {
+		Entity& entityCur = EntityManager::entityGet(idsToDraw[i]);
+
+		auto* componentSprite = entityCur.entityComponentGet<EntityComponents::ComponentSprite>();
+
+		sf::Texture& textureCur = GraphicsStore::textureStore.objectGet(componentSprite->fileName);
+
+		sf::Sprite sprite(textureCur);
+
+		if (entityCur.entityComponentHas<EntityComponents::ComponentSpriteColor>()) {
+			sprite.setColor(entityCur.entityComponentGet<EntityComponents::ComponentSpriteColor>()->color);
+		}
+
+		if (!entityCur.entityComponentHas<EntityComponents::ComponentSpriteOrigin>()) {
+			sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
+		}
+		else {
+			sprite.setOrigin(entityCur.entityComponentGet<EntityComponents::ComponentSpriteOrigin>()->origin);
+		}
+		if (entityCur.entityComponentHas<EntityComponents::ComponentRotation>()) {
+			sprite.setRotation(sf::radians(entityCur.entityComponentGet<EntityComponents::ComponentRotation>()->rotation));
+		}
+
+		sprite.setPosition(entityCur.entityComponentGet<EntityComponents::ComponentPosition>()->position);
+
+		objectDraw(sprite);
 	}
 }
 void PanelDynamicView::viewMaskApply() {
 	// render texture used for drawing a clipped section of the panel that works as a "view"
-	sf::RenderTexture viewRenderTexture;
-	viewRenderTexture.create(uint16_t(screenRect.getSize().x), uint16_t(screenRect.getSize().y));
+	sf::RenderTexture viewRenderTexture(sf::Vector2u(screenRect.size));
 
 	// sprite using the view mask's texture
-	sf::Sprite viewMaskSprite;
-	viewMaskSprite.setTexture(viewMaskTexture.getTexture());
+	sf::Sprite viewMaskSprite(viewMaskTexture.getTexture());
 	// set view mask sprite origin to the center of it's texture
-	viewMaskSprite.setOrigin(viewMaskTexture.getTexture().getSize().x / 2.f, viewMaskTexture.getTexture().getSize().y / 2.f);
+	viewMaskSprite.setOrigin(sf::Vector2f(viewMaskTexture.getTexture().getSize()) / 2.f);
 
 	// get player
 	Entity& player = EntityManager::entityGet(GameData::playerId);
@@ -245,15 +305,14 @@ void PanelDynamicView::viewMaskApply() {
 	sf::Vector2f playerPosition = player.entityComponentGet<EntityComponents::ComponentPosition>()->position;
 
 	// set position to the player's position relative to the viewRect
-	viewMaskSprite.setPosition(playerPosition - viewRect.getPosition());
+	viewMaskSprite.setPosition(playerPosition - viewRect.position);
 
 	viewRenderTexture.draw(viewMaskSprite);
 	viewRenderTexture.display();
 
-	sf::Sprite viewSprite;
-	viewSprite.setTexture(viewRenderTexture.getTexture());
+	sf::Sprite viewSprite(viewRenderTexture.getTexture());
 	// set viewSprite position to align with the viewRect
-	viewSprite.setPosition(viewRect.getPosition());
+	viewSprite.setPosition(viewRect.position);
 
 	texture.draw(viewSprite, sf::BlendMultiply);
 }
@@ -275,7 +334,7 @@ void PanelHud::panelUpdate() {
 
 		sf::Sprite objectGridSprite(objectGridRenderer.texture);
 		objectGridSprite.setScale(objectGrid.cellsGetSize());
-		objectGridSprite.setPosition(viewRect.getPosition());
+		objectGridSprite.setPosition(viewRect.position);
 		objectGridSprite.setColor(sf::Color(255, 255, 255, 200));
 
 		objectDraw(objectGridSprite);
@@ -388,13 +447,16 @@ void PanelWinScreen::checkModeChange() {
 void PanelWinScreen::backgroundDraw() {
 }
 void PanelWinScreen::textDraw() {
-	sf::Text text;
 	sf::Font font;
-	font.loadFromFile("Art/Basic bitmap.ttf");
+	if (!font.openFromFile("Art/Basic bitmap.ttf")) {
+		ConsoleHandler::consolePrintErr("Font loading failed");
+	}
+
+	sf::Text text(font);
 	text.setFont(font);
 	text.setString("You Win!");
 
-	text.setPosition(500, 500);
+	text.setPosition(sf::Vector2f(500, 500));
 	objectDraw(text);
 }
 
@@ -410,13 +472,16 @@ void PanelLoseScreen::checkModeChange() {
 void PanelLoseScreen::backgroundDraw() {
 }
 void PanelLoseScreen::textDraw() {
-	sf::Text text;
 	sf::Font font;
-	font.loadFromFile("Art/Basic bitmap.ttf");
+	if (!font.openFromFile("Art/Basic bitmap.ttf")) {
+		ConsoleHandler::consolePrintErr("Font loading failed");
+	}
+
+	sf::Text text(font);
 	text.setFont(font);
 	text.setString("You Lose!");
 
-	text.setPosition(500, 500);
+	text.setPosition(sf::Vector2f(500, 500));
 	objectDraw(text);
 }
 

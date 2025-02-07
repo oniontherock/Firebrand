@@ -79,7 +79,7 @@ const std::vector<std::set<EntityId>>& GameLevel::entitiesDrawableDynamicGet() {
 
 void GameLevel::textureGridsUpdateValidity(sf::FloatRect rect) {
 
-	backgroundRect = sf::FloatRect(rect.getPosition() - (rect.getSize() / 2.f), rect.getSize() * 2.f);
+	backgroundRect = sf::FloatRect(rect.position - (rect.size / 2.f), rect.size * 2.f);
 
 	textureUpdateValidity(backgroundTexture);
 	textureUpdateValidity(pathsTexture);
@@ -92,7 +92,7 @@ void GameLevel::pathsGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Path Generation Started");
 
 	constexpr float boundOffset = 64.f;
-	pathGenerator.generationBounds = sf::FloatRect(boundOffset, boundOffset, levelSize.x - boundOffset, levelSize.y - boundOffset);
+	pathGenerator.generationBounds = sf::FloatRect(sf::Vector2f(boundOffset, boundOffset), sf::Vector2f(levelSize.x - boundOffset, levelSize.y - boundOffset));
 
 	constexpr float levelSizeDivider = 1.2f;
 
@@ -168,11 +168,9 @@ void GameLevel::structuresGenerate() {
 
 	for (StructureRect& rectCur : structureRects) {
 
-		sf::Vector2f rectCenter = rectCur.getPosition() + (rectCur.getSize() / 2.f); 
+		sf::Vector2u rectCellCount = sf::Vector2u(rectCur.size / structureGridCellSize);
 
-		sf::Vector2u rectCellCount = sf::Vector2u(rectCur.getSize() / structureGridCellSize);
-
-		Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCenter, rectCur.rotation, rectCellCount);
+		Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCur.getCenter(), rectCur.rotation, rectCellCount);
 		StructureInstantiator::structureInstantiate(levelPosition, structure);
 	}
 
@@ -199,7 +197,7 @@ void GameLevel::grassDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 		if (texture->displayCountGet() >= drawIterationsMax) continue;
 
 		sf::VertexArray lines;
-		lines.setPrimitiveType(sf::Lines);
+		lines.setPrimitiveType(sf::PrimitiveType::Lines);
 
 		for (uint32_t grassBladeCur = 0; grassBladeCur < grassBladePerTextureCount; grassBladeCur++) {
 			sf::Color color = sf::Color(RNGu8::getRange(50, 125), RNGu8::getRange(100, 255), RNGu8::getRange(0, 25), 85);
@@ -271,11 +269,11 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 		sf::FloatRect textureRect = sf::FloatRect(texture->positionGet() - (sf::Vector2f(texture->getSize()) / 2.f), sf::Vector2f(texture->getSize()) * 2.f);
 
 		sf::VertexArray lines;
-		lines.setPrimitiveType(sf::Lines);
+		lines.setPrimitiveType(sf::PrimitiveType::Lines);
 
 		// we use this quad array to batch draw circles by drawing a quad with the texture of a circle
 		sf::VertexArray quads;
-		quads.setPrimitiveType(sf::Quads);
+		quads.setPrimitiveType(sf::PrimitiveType::Triangles);
 
 		// get the points in pathPoints that are near the texture
 		std::vector<sf::Vector2f> points;
@@ -316,25 +314,24 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 				float offsetDistFromCenter = 1.f - (sqrt(distToNearestPointSqrd) / circleSize);
 				float colorMult = offsetDistFromCenter * offsetDistFromCenter * offsetDistFromCenter;
 
-				sf::Color color = sf::Color(sf::Uint8(RNGf::getRange(25, 70) * colorMult), sf::Uint8(RNGf::getRange(20, 60) * colorMult), sf::Uint8(RNGf::getRange(0, 6) * colorMult), sf::Uint8(85 * colorMult));
+				sf::Color color = sf::Color(uint8_t(RNGf::getRange(25, 70) * colorMult), uint8_t(RNGf::getRange(20, 60) * colorMult), uint8_t(RNGf::getRange(0, 6) * colorMult), uint8_t(85 * colorMult));
 
-				sf::FloatRect circleDimensions = sf::FloatRect(circlePosition.x, circlePosition.y, RNGf::getRange(1.f, 16.f), RNGf::getRange(1.f, 16.f));
-				circleDimensions.left -= (circleDimensions.width / 2.f);
-				circleDimensions.top -= (circleDimensions.height / 2.f);
+				sf::FloatRect circleDimensions = sf::FloatRect(sf::Vector2f(circlePosition.x, circlePosition.y), sf::Vector2f(RNGf::getRange(1.f, 16.f), RNGf::getRange(1.f, 16.f)));
+				circleDimensions.position -= (circleDimensions.size / 2.f);
 
 
 				// top left corner
 				sf::Vertex cornerTopLeft;
-				cornerTopLeft.position = sf::Vector2f(circleDimensions.left, circleDimensions.top);
+				cornerTopLeft.position = circleDimensions.position;
 				// top right corner
 				sf::Vertex cornerTopRight;
-				cornerTopRight.position = sf::Vector2f(circleDimensions.left + circleDimensions.width, circleDimensions.top);
+				cornerTopRight.position = circleDimensions.position + sf::Vector2f(circleDimensions.size.x, 0);
 				// bottom right corner
 				sf::Vertex cornerBottomRight;
-				cornerBottomRight.position = sf::Vector2f(circleDimensions.left + circleDimensions.width, circleDimensions.top + circleDimensions.height);
+				cornerBottomRight.position = circleDimensions.position + sf::Vector2f(circleDimensions.size.x, circleDimensions.size.y);
 				// bottom left corner
 				sf::Vertex cornerBottomLeft;
-				cornerBottomLeft.position = sf::Vector2f(circleDimensions.left, circleDimensions.top + circleDimensions.height);
+				cornerBottomLeft.position = circleDimensions.position + sf::Vector2f(0, circleDimensions.size.y);
 
 				cornerTopLeft.color = color;
 				cornerTopRight.color = color;
@@ -348,8 +345,11 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 
 				quads.append(cornerTopLeft);
 				quads.append(cornerTopRight);
+				quads.append(cornerBottomLeft);
+
 				quads.append(cornerBottomRight);
 				quads.append(cornerBottomLeft);
+				quads.append(cornerTopRight);
 			}
 		}
 		else {
@@ -379,7 +379,7 @@ void GameLevel::pathsDraw(sf::FloatRect rect, uint32_t drawIterationsMax) {
 				float offsetDistFromCenter = 1.f - (sqrt(distToNearestPointSqrd) / circleSize);
 				float colorMult = offsetDistFromCenter * offsetDistFromCenter;
 
-				sf::Color color = sf::Color(sf::Uint8(RNGf::getRange(25, 125) * colorMult), sf::Uint8(RNGf::getRange(25, 75) * colorMult), sf::Uint8(RNGf::getRange(0, 0) * colorMult), sf::Uint8(85));
+				sf::Color color = sf::Color(uint8_t(RNGf::getRange(25, 125) * colorMult), uint8_t(RNGf::getRange(25, 75) * colorMult), uint8_t(RNGf::getRange(0, 0) * colorMult), uint8_t(85));
 
 				sf::Vertex lineStart;
 				lineStart.color = color;

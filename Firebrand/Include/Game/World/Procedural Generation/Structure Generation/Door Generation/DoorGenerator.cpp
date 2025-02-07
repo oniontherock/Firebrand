@@ -38,11 +38,11 @@ void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGri
 		//std::cout << "section id count: " << WallSectionGenerator::sectionIdCount << "\n";
 
 		// iterate over dimensions of every roomRect
-		for (uint16_t x = 0; x < roomRectCur.width; x++) {
-			for (uint16_t y = 0; y < roomRectCur.height; y++) {
+		for (uint16_t x = 0; x < roomRectCur.size.x; x++) {
+			for (uint16_t y = 0; y < roomRectCur.size.y; y++) {
 
-				bool isOnEdgeX = x <= 0 || x >= roomRectCur.width - 1;
-				bool isOnEdgeY = y <= 0 || y >= roomRectCur.height - 1;
+				bool isOnEdgeX = x <= 0 || x >= roomRectCur.size.x - 1;
+				bool isOnEdgeY = y <= 0 || y >= roomRectCur.size.y - 1;
 
 				// skip if cell is not an edge
 				if (!(isOnEdgeX || isOnEdgeY)) continue;
@@ -51,8 +51,8 @@ void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGri
 				if (isOnEdgeX && isOnEdgeY) continue;
 
 
-				uint16_t cellX = uint16_t(roomRectCur.left) + x;
-				uint16_t cellY = uint16_t(roomRectCur.top) + y;
+				uint16_t cellX = uint16_t(roomRectCur.position.x) + x;
+				uint16_t cellY = uint16_t(roomRectCur.position.y) + y;
 
 				const WallSectionGenerator::WallSectionCell& wallSection = wallSectionGrid[cellX][cellY];
 

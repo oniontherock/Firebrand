@@ -24,71 +24,71 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 			sf::Vector2f cellAxis = cell.dir * cell.dist;
 
 			StructureRect rect;
-			rect.width = RNGu16::getRange(5, 24) * structureGridCellSize;
-			rect.height = RNGu16::getRange(5, 24) * structureGridCellSize;
+			rect.size.x = RNGu16::getRange(5, 24) * structureGridCellSize;
+			rect.size.y = RNGu16::getRange(5, 24) * structureGridCellSize;
 			 
-			rect.left = (x * structureGridCellSize) - rect.width;
-			rect.top = (y * structureGridCellSize) - (rect.height / 2.f);
+			rect.position.x = (x * structureGridCellSize) - rect.size.x;
+			rect.position.y = (y * structureGridCellSize) - (rect.size.y / 2.f);
 
 			rect.rotation = atan2(cellAxis.y, cellAxis.x);
 
 			if (!(
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left), uint32_t(rect.top)) &&
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left + rect.width), uint32_t(rect.top)) &&
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left + rect.width), uint32_t(rect.top + rect.height)) &&
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.left), uint32_t(rect.top + rect.height))
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x), uint32_t(rect.position.y)) &&
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x + rect.size.x), uint32_t(rect.position.y)) &&
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x + rect.size.x), uint32_t(rect.position.y + rect.size.y)) &&
+				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x), uint32_t(rect.position.y + rect.size.y))
 				)) {
 				continue;
 			}
 
-			// check top face
-			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
-				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top).dist < distMin) {
-					rect.top += structureGridCellSize;
-					rect.height -= structureGridCellSize;
+			// check position.y face
+			for (uint16_t xOffset = 0; xOffset < rect.size.x; xOffset++) {
+				if (pathAxisGrid.cellGetFromWorld(rect.position.x + xOffset, rect.position.y).dist < distMin) {
+					rect.position.y += structureGridCellSize;
+					rect.size.y -= structureGridCellSize;
 					xOffset = 0;
 
-					if (rect.height <= structureGridCellSize) {
+					if (rect.size.y <= structureGridCellSize) {
 						break;
 					}
 				}
 			}
-			// check left face
-			for (uint16_t yOffset = 0; yOffset < rect.height; yOffset++) {
-				if (pathAxisGrid.cellGetFromWorld(rect.left, rect.top + yOffset).dist < distMin) {
-					rect.left += structureGridCellSize;
-					rect.width -= structureGridCellSize;
+			// check position.x face
+			for (uint16_t yOffset = 0; yOffset < rect.size.y; yOffset++) {
+				if (pathAxisGrid.cellGetFromWorld(rect.position.x, rect.position.y + yOffset).dist < distMin) {
+					rect.position.x += structureGridCellSize;
+					rect.size.x -= structureGridCellSize;
 					yOffset = 0;
 
-					if (rect.width <= structureGridCellSize) {
+					if (rect.size.x <= structureGridCellSize) {
 						break;
 					}
 				}
 			}
 			// check bottom face
-			for (uint16_t xOffset = 0; xOffset < rect.width; xOffset++) {
-				if (pathAxisGrid.cellGetFromWorld(rect.left + xOffset, rect.top + rect.height).dist < distMin) {
-					rect.height -= structureGridCellSize;
+			for (uint16_t xOffset = 0; xOffset < rect.size.x; xOffset++) {
+				if (pathAxisGrid.cellGetFromWorld(rect.position.x + xOffset, rect.position.y + rect.size.y).dist < distMin) {
+					rect.size.y -= structureGridCellSize;
 					xOffset = 0;
 
-					if (rect.height <= structureGridCellSize) {
+					if (rect.size.y <= structureGridCellSize) {
 						break;
 					}
 				}
 			}
 
-			if ((rect.width < (8.f * structureGridCellSize)) || (rect.height < (8.f * structureGridCellSize))) continue;
+			if ((rect.size.x < (8.f * structureGridCellSize)) || (rect.size.y < (8.f * structureGridCellSize))) continue;
 
-			sf::Vector2f structureCenter = sf::Vector2f(rect.left + (rect.width / 2.f), rect.top + rect.height / 2.f);
+			sf::Vector2f structureCenter = sf::Vector2f(rect.position.x + (rect.size.x / 2.f), rect.position.y + rect.size.y / 2.f);
 
 			// check if there is already a structure here
 			bool rectIsValid = true;
-			for (float xOffset = 0; xOffset < rect.width; xOffset++) {
-				for (float yOffset = 0; yOffset < rect.height; yOffset++) {
+			for (float xOffset = 0; xOffset < rect.size.x; xOffset++) {
+				for (float yOffset = 0; yOffset < rect.size.y; yOffset++) {
 
 					sf::Vector2f posRotated = Vector2fMath::rotate(
-						(rect.left + xOffset) - structureCenter.x,
-						(rect.top + yOffset) - structureCenter.y,
+						(rect.position.x + xOffset) - structureCenter.x,
+						(rect.position.y + yOffset) - structureCenter.y,
 						rect.rotation) + structureCenter;
 
 					if (!structurePlacementGrid.worldPosIsInGridFull(posRotated.x, posRotated.y)) {
@@ -107,12 +107,12 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 			if (!rectIsValid) continue;
 
 			// mark area as having a structure
-			for (float xOffset = 0; xOffset < rect.width; xOffset++) {
-				for (float yOffset = 0; yOffset < rect.height; yOffset++) {
+			for (float xOffset = 0; xOffset < rect.size.x; xOffset++) {
+				for (float yOffset = 0; yOffset < rect.size.y; yOffset++) {
 
 					sf::Vector2f posRotated = Vector2fMath::rotate(
-						(rect.left + xOffset) - structureCenter.x,
-						(rect.top + yOffset) - structureCenter.y,
+						(rect.position.x + xOffset) - structureCenter.x,
+						(rect.position.y + yOffset) - structureCenter.y,
 						rect.rotation) + structureCenter;
 
 					structurePlacementGrid.cellSetFromWorld(posRotated.x, posRotated.y, true);

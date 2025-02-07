@@ -20,7 +20,7 @@ int main() {
 	srand(TimeHandler::timeRealGet());
 
 	// setup window
-	WindowHolder::windowInitialize(sf::VideoMode(1280, 720), "Window");
+	WindowHolder::windowInitialize(sf::VideoMode(sf::Vector2u(1280, 720)), "Window");
 	//WindowHolder::windowGet().setFramerateLimit(60);
 
 	Engine::engineInitialize();
