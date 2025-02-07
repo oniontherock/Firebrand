@@ -146,31 +146,14 @@ void PanelDynamicView::panelUpdate() {
 	isFirstUpdate = false;
 }
 
-std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount) {
+std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(sf::Vector2f position, float angle, float radius, float coneSize, uint16_t pointsCount, GameLevel* gameLevel) {
 
-	// get player
-	Entity& player = EntityManager::entityGet(GameData::playerId);
-
-	GameLevel* gameLevel = GameLevelGrid::levelGet(player.levelId);
-
-	// get player position
-	const sf::Vector2f playerPosition = player.entityComponentGet<EntityComponents::ComponentPosition>()->position;
-	// get player rotation
-	const float playerRotation = player.entityComponentGet<EntityComponents::ComponentRotation>()->rotation;;
-	// get cone angle
-	const float coneAngle = playerRotation - (coneSize / 2.f);
-
+	const float coneAngle = angle - (coneSize / 2.f);
 
 	// list of points used for the vision mask
 	std::vector<sf::Vector2f> viewMaskShape;
-	if (coneSize < Mathf::TAU) {
-		//viewMaskShape.resize(pointsCount + 1);
-		//viewMaskShape.push_back(playerPosition);
-	}
-	else {
-		//viewMaskShape.resize(pointsCount);
-	}
 
+	viewMaskShape.push_back(position);
 
 	// the angular difference (in radians) between two rays.
 	const float rayAngleDifference = coneSize / pointsCount;
@@ -186,16 +169,14 @@ std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(float radius, fl
 		float dist = 0.f;
 		for (; dist < radius; dist += 1.f) {
 			// calculate ray position from castPosition and heading * dist
-			sf::Vector2f rayPositionCur = playerPosition + (rayHeading * dist);
+			sf::Vector2f rayPositionCur = position + (rayHeading * dist);
 
 			if (!gameLevel->occlusionGrid.worldPosIsInGridFull(rayPositionCur)) break;
 
-			// if we should occlude, check if the ray's position falls on a cell in the occlusion grid which is marked as occluding, if that's the case, break
+			// if the cell is o
 			if (gameLevel->occlusionGrid.cellGetFromWorld(rayPositionCur)) break;
-
 		}
-		viewMaskShape.push_back(playerPosition);
-		viewMaskShape.push_back(playerPosition + (rayHeading * dist));
+		viewMaskShape.push_back(position + (rayHeading * dist));
 	}
 
 	return viewMaskShape;
@@ -203,29 +184,37 @@ std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(float radius, fl
 
 void PanelDynamicView::viewMaskCreate() {
 
-	sf::Vector2u viewMaskSize = sf::Vector2u(2000, 2000);
+	// get player
+	Entity& player = EntityManager::entityGet(GameData::playerId);
+	// get the level the player is in
+	GameLevel* gameLevel = GameLevelGrid::levelGet(player.levelId);
+	// get player position
+	const sf::Vector2f playerPosition = player.entityComponentGet<EntityComponents::ComponentPosition>()->position;
+	// get player rotation
+	const float playerRotation = player.entityComponentGet<EntityComponents::ComponentRotation>()->rotation;
 
-	std::vector<sf::Vector2f> viewConePoints = viewMaskShapeCreate(1280.f, Mathf::PI / 2.f, 512);
+	float coneSize = Mathf::PI / 2.f;
 
-	sf::VertexArray coneVertexArray(sf::PrimitiveType::Lines, viewConePoints.size());
+	std::vector<sf::Vector2f> viewConePoints = viewMaskShapeCreate(playerPosition, playerRotation, 1280.f, coneSize, 128, gameLevel);
+	std::vector<sf::Vector2f> viewAreaPoints = viewMaskShapeCreate(playerPosition, playerRotation + Mathf::PI, 48.f, Mathf::TAU - (coneSize/1.05f), 128, gameLevel);
+
+	sf::VertexArray coneVertexArray(sf::PrimitiveType::TriangleFan, viewConePoints.size());
 
 	for (uint32_t i = 0; i < viewConePoints.size(); i++) {
 		coneVertexArray[i].position = viewConePoints[i];
 		coneVertexArray[i].color = sf::Color(255, 255, 255, 255);
 	}
 
-	std::vector<sf::Vector2f> viewAreaPoints = viewMaskShapeCreate(48.f, Mathf::TAU, 256);
-
-	sf::VertexArray areaVertexArray(sf::PrimitiveType::Lines, viewAreaPoints.size());
 
 	for (uint32_t i = 0; i < viewAreaPoints.size(); i++) {
-		areaVertexArray[i].position = viewAreaPoints[i];
-		areaVertexArray[i].color = sf::Color(255, 255, 255, 255);
+		sf::Vertex vertex;
+		vertex.position = viewAreaPoints[i];
+		vertex.color = sf::Color::White;
+		coneVertexArray.append(vertex);
 	}
 
 	texture.clearStencil(0);
 	texture.draw(coneVertexArray, sf::StencilMode{ sf::StencilComparison::Always, sf::StencilUpdateOperation::Replace, 1, 0xFF, true });
-	texture.draw(areaVertexArray, sf::StencilMode{ sf::StencilComparison::Always, sf::StencilUpdateOperation::Replace, 1, 0xFF, true });
 }
 
 void PanelDynamicView::checkModeChange() {

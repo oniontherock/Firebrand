@@ -49,7 +49,7 @@ struct PanelDynamicView : public Panel {
 
 private:
 
-	std::vector<sf:: Vector2f> viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount);
+	std::vector<sf::Vector2f> viewMaskShapeCreate(sf::Vector2f position, float angle, float radius, float coneSize, uint16_t pointsCount, GameLevel* gameLevel);
 	void viewMaskCreate();
 	bool isFirstUpdate = true;
 
