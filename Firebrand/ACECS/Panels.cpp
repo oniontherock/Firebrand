@@ -48,7 +48,7 @@ void PanelStaticView::panelApplyGrayscale() {
 	// clear panel texture
 	texture.clear();
 	// draw panelSprite to the panel with grayscaling applied
-	objectDraw(panelSprite, grayscaleShader);
+	texture.draw(panelSprite, &grayscaleShader);
 }
 
 void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
@@ -62,7 +62,7 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 	levelActive->backgroundDraw(sf::FloatRect(viewRect.position - (viewRect.size / 2.f), viewRect.size * 2.f), 256);
 
 	// draw base background color
-	objectDraw(backgroundRectangle);
+	texture.draw(backgroundRectangle);
 	// draw grass
 	levelActive->backgroundTexture.drawRectangleToTexture(viewRect, texture);
 	// draw paths
@@ -117,23 +117,32 @@ void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 			sprite.setRotation(sf::radians(entityCur.entityComponentGet<EntityComponents::ComponentRotation>()->rotation));
 		}
 
-		objectDraw(sprite);
+		texture.draw(sprite);
 	}
+}
+
+PanelDynamicView::PanelDynamicView(PanelRect _screenRect, PanelRect _viewRect, sf::Color _clearColor) {
+	screenRect = _screenRect;
+	viewRect = _viewRect;
+	clearColor = _clearColor;
+	viewRectSizeOriginal = _viewRect.size;
+
+	texture = PanelScreenTexture(sf::Vector2u(screenRect.size), sf::ContextSettings{ 0, 8 });
+	viewCreate();
 }
 
 void PanelDynamicView::panelUpdate() {
 
-	//if (isFirstUpdate) {
-		viewMaskCreate();
-	//}
 
 	checkModeChange();
 
 	GameLevel* level = GameLevelGrid::levelGet(0, 0, 0);
 
+	texture.clearStencil(0);
+	viewMaskCreate();
+
 	staticDraw();
 	charactersDraw(level);
-	viewMaskApply();
 	isFirstUpdate = false;
 }
 
@@ -144,22 +153,24 @@ std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(float radius, fl
 
 	GameLevel* gameLevel = GameLevelGrid::levelGet(player.levelId);
 
-	// list of points used for the vision mask
-	std::vector<sf::Vector2f> viewMaskShape;
-	if (coneSize < Mathf::TAU) {
-		//viewMaskShape.resize(pointsCount + 1);
-		viewMaskShape.push_back(sf::Vector2f(0, 0));
-	}
-	else {
-		//viewMaskShape.resize(pointsCount);
-	}
-
 	// get player position
 	const sf::Vector2f playerPosition = player.entityComponentGet<EntityComponents::ComponentPosition>()->position;
 	// get player rotation
 	const float playerRotation = player.entityComponentGet<EntityComponents::ComponentRotation>()->rotation;;
 	// get cone angle
 	const float coneAngle = playerRotation - (coneSize / 2.f);
+
+
+	// list of points used for the vision mask
+	std::vector<sf::Vector2f> viewMaskShape;
+	if (coneSize < Mathf::TAU) {
+		//viewMaskShape.resize(pointsCount + 1);
+		//viewMaskShape.push_back(playerPosition);
+	}
+	else {
+		//viewMaskShape.resize(pointsCount);
+	}
+
 
 	// the angular difference (in radians) between two rays.
 	const float rayAngleDifference = coneSize / pointsCount;
@@ -170,8 +181,8 @@ std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(float radius, fl
 		const float rayRotation = coneAngle + (float(curRayInd) * rayAngleDifference);
 		// heading of the ray
 		const sf::Vector2f rayHeading = sf::Vector2f(cos(rayRotation), sin(rayRotation));
+
 		// iterate from 0.f to rayMaxDist in steps of 1.f, updating the ray each iteration
-		viewMaskShape.push_back(sf::Vector2f(cos(rayRotation), sin(rayRotation)));
 		float dist = 0.f;
 		for (; dist < radius; dist += 1.f) {
 			// calculate ray position from castPosition and heading * dist
@@ -182,10 +193,9 @@ std::vector<sf::Vector2f> PanelDynamicView::viewMaskShapeCreate(float radius, fl
 			// if we should occlude, check if the ray's position falls on a cell in the occlusion grid which is marked as occluding, if that's the case, break
 			if (gameLevel->occlusionGrid.cellGetFromWorld(rayPositionCur)) break;
 
-
 		}
-		sf::Vector2f pointPosition = sf::Vector2f(cos(rayRotation), sin(rayRotation)) * dist;
-		viewMaskShape.push_back(pointPosition);
+		viewMaskShape.push_back(playerPosition);
+		viewMaskShape.push_back(playerPosition + (rayHeading * dist));
 	}
 
 	return viewMaskShape;
@@ -200,7 +210,7 @@ void PanelDynamicView::viewMaskCreate() {
 	sf::VertexArray coneVertexArray(sf::PrimitiveType::Lines, viewConePoints.size());
 
 	for (uint32_t i = 0; i < viewConePoints.size(); i++) {
-		coneVertexArray[i].position = viewConePoints[i] + sf::Vector2f(viewMaskSize / 2u);
+		coneVertexArray[i].position = viewConePoints[i];
 		coneVertexArray[i].color = sf::Color(255, 255, 255, 255);
 	}
 
@@ -209,18 +219,13 @@ void PanelDynamicView::viewMaskCreate() {
 	sf::VertexArray areaVertexArray(sf::PrimitiveType::Lines, viewAreaPoints.size());
 
 	for (uint32_t i = 0; i < viewAreaPoints.size(); i++) {
-		areaVertexArray[i].position = viewAreaPoints[i] + sf::Vector2f(viewMaskSize / 2u);
+		areaVertexArray[i].position = viewAreaPoints[i];
 		areaVertexArray[i].color = sf::Color(255, 255, 255, 255);
 	}
 
-	if (!viewMaskTexture.resize(viewMaskSize)) {
-		ConsoleHandler::consolePrintErr("viewMaskTexture resizing failed!");
-	}
-	viewMaskTexture.clear(sf::Color::Transparent);
-
-	viewMaskTexture.draw(coneVertexArray);
-	viewMaskTexture.draw(areaVertexArray);
-	viewMaskTexture.display();
+	texture.clearStencil(0);
+	texture.draw(coneVertexArray, sf::StencilMode{ sf::StencilComparison::Always, sf::StencilUpdateOperation::Replace, 1, 0xFF, true });
+	texture.draw(areaVertexArray, sf::StencilMode{ sf::StencilComparison::Always, sf::StencilUpdateOperation::Replace, 1, 0xFF, true });
 }
 
 void PanelDynamicView::checkModeChange() {
@@ -236,7 +241,7 @@ void PanelDynamicView::staticDraw() {
 	sf::Sprite staticSprite(panelStaticView.textureUngrayscaled);
 	staticSprite.setPosition(viewRect.position);
 
-	objectDraw(staticSprite);
+	texture.draw(staticSprite, sf::StencilMode{ sf::StencilComparison::Equal, sf::StencilUpdateOperation::Keep, 1, 0xFF, false });
 }
 void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
 
@@ -287,34 +292,8 @@ void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
 
 		sprite.setPosition(entityCur.entityComponentGet<EntityComponents::ComponentPosition>()->position);
 
-		objectDraw(sprite);
+		texture.draw(sprite, sf::StencilMode{ sf::StencilComparison::Equal, sf::StencilUpdateOperation::Keep, 1, 0xFF, false });
 	}
-}
-void PanelDynamicView::viewMaskApply() {
-	// render texture used for drawing a clipped section of the panel that works as a "view"
-	sf::RenderTexture viewRenderTexture(sf::Vector2u(screenRect.size));
-
-	// sprite using the view mask's texture
-	sf::Sprite viewMaskSprite(viewMaskTexture.getTexture());
-	// set view mask sprite origin to the center of it's texture
-	viewMaskSprite.setOrigin(sf::Vector2f(viewMaskTexture.getTexture().getSize()) / 2.f);
-
-	// get player
-	Entity& player = EntityManager::entityGet(GameData::playerId);
-	// get player position
-	sf::Vector2f playerPosition = player.entityComponentGet<EntityComponents::ComponentPosition>()->position;
-
-	// set position to the player's position relative to the viewRect
-	viewMaskSprite.setPosition(playerPosition - viewRect.position);
-
-	viewRenderTexture.draw(viewMaskSprite);
-	viewRenderTexture.display();
-
-	sf::Sprite viewSprite(viewRenderTexture.getTexture());
-	// set viewSprite position to align with the viewRect
-	viewSprite.setPosition(viewRect.position);
-
-	texture.draw(viewSprite, sf::BlendMultiply);
 }
 
 void PanelHud::panelUpdate() {

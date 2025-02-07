@@ -36,7 +36,8 @@ private:
 };
 
 struct PanelDynamicView : public Panel {
-	using Panel::Panel;
+
+	PanelDynamicView(PanelRect _screenRect, PanelRect _viewRect, sf::Color _clearColor);
 
 	enum Modes {
 		Normal,
@@ -48,7 +49,6 @@ struct PanelDynamicView : public Panel {
 
 private:
 
-	sf::RenderTexture viewMaskTexture = sf::RenderTexture(sf::Vector2u(1, 1));
 	std::vector<sf:: Vector2f> viewMaskShapeCreate(float radius, float coneSize, uint16_t pointsCount);
 	void viewMaskCreate();
 	bool isFirstUpdate = true;
@@ -58,7 +58,6 @@ private:
 	// draws the static panel's textureUngrayscaled on this panel, we do this so that we can get a non-grayscaled version of the static stuff
 	void staticDraw();
 	void charactersDraw(GameLevel* levelActive);
-	void viewMaskApply();
 };
 struct PanelHud : public Panel {
 	using Panel::Panel;
