@@ -332,17 +332,17 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			//createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Dresser),
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Dresser),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Dresser", false, 50),
-			//createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
-			//createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
-			//createComponentPairFromType<ComponentCollidable>(),
-			//createComponentPairFromType<ComponentCollider>(),
-			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-			//	})),
-			//createComponentPairFromType<ComponentCollisionResponse>(),
-			//createComponentPairFromType<ComponentMass>(200.f),
+			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
+			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollider>(),
+			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+				})),
+			createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -353,16 +353,16 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			//createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Table),
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Table),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Table Wooden", false, 50),
-			//createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(-16, -32, 32, 64) }),
-			//createComponentPairFromType<ComponentCollidable>(),
-			//createComponentPairFromType<ComponentCollider>(),
-			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-			//	})),
-			//createComponentPairFromType<ComponentCollisionResponse>(),
-			//createComponentPairFromType<ComponentMass>(200.f),
+			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
+			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollider>(),
+			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+				})),
+			createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(

@@ -162,14 +162,14 @@ void GameLevel::pathsGenerate() {
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
 	
-	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);;
+	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);
 
 	float avgTime = 0.f;
 
 	for (StructureRect& rectCur : structureRects) {
 
 		sf::Vector2u rectCellCount = sf::Vector2u(rectCur.size / structureGridCellSize);
-
+		
 		Structure structure = StructureGenerator::structureGenerate(&StructureTypeHome(), rectCur.getCenter(), rectCur.rotation, rectCellCount);
 		StructureInstantiator::structureInstantiate(levelPosition, structure);
 	}
