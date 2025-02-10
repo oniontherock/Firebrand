@@ -625,21 +625,6 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentCollisionResponse());
 		};
 	};
-	//// pushes the entity back when it collides with another entity
-	//struct ComponentPushOnCollision final : public Component {
-
-	//	void system(Entity& entity) final;
-
-	//	ComponentPushOnCollision() {
-	//		hasSystem = true;
-	//	};
-
-	//	sf::Vector2f velocity;
-
-	//	std::unique_ptr<Duplicatable> duplicate() override {
-	//		return std::unique_ptr<Duplicatable>(new ComponentPushOnCollision());
-	//	};
-	//};
 	struct ComponentHingeOnPoint final : public Component {
 
 		void system(Entity& entity) final;
@@ -662,6 +647,26 @@ namespace EntityComponents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentHingeOnPoint(hingeOffset));
+		};
+	};
+	struct ComponentObserver final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentObserver() {
+			hasSystem = true;
+		};
+		ComponentObserver(float _observationDistance) :
+			ComponentObserver()
+		{
+			observationDistance = _observationDistance;
+		};
+
+		// the distance at which this observer will mark an observable entity as observed
+		float observationDistance = 0.f;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentObserver(observationDistance));
 		};
 	};
 }

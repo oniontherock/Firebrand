@@ -21,7 +21,7 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			// cell's position local to the structure's origin
 			sf::Vector2f cellPositionLocal = (sf::Vector2f(float(x) * structureGridCellSize, float(y) * structureGridCellSize) + cell.offset) - (structure.structureGrid.gridGetSizeFull() / 2.f);
 
-			EntityUpdateType updateType = EntityUpdateType::Frame;
+			EntityUpdateType updateType = EntityUpdateType::Observation;
 
 			// if cell.type is a door, set it's update type to frame
 			if (cell.type.find("Wall") != std::string::npos) {

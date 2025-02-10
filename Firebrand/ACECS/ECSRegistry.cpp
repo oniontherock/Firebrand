@@ -8,7 +8,7 @@
 
 uint32_t MAX_ENTITIES = 100000;
 uint16_t MAX_EVENT_TYPES = 5;
-uint16_t MAX_COMPONENT_TYPES = 25;
+uint16_t MAX_COMPONENT_TYPES = 27;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -72,6 +72,7 @@ but if the order were swapped, ComponentB would never receive it
 void EntityComponents::componentIDsInitialize() {
 	using ComponentRegistry = TypeIDAllocator<Component>;
 
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObserver>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectTypeAssigner>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollidable>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollider>>();
@@ -163,6 +164,7 @@ void EntityComponents::componentTemplatesInitialize() {
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(120.f),
+			createComponentPairFromType<ComponentObserver>(1280.f),
 		}
 	);
 #pragma region Wall Templates
@@ -316,13 +318,13 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 59),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
-			//createComponentPairFromType<ComponentCollidable>(),
-			//createComponentPairFromType<ComponentCollider>(),
-			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			//sf::Vector2f(-24, -4), sf::Vector2f(24, -4), sf::Vector2f(24, 4), sf::Vector2f(-24, 4)
-			//	})),
-			//createComponentPairFromType<ComponentCollisionResponse>(),
-			//createComponentPairFromType<ComponentMass>(20.f),
+			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollider>(),
+			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			sf::Vector2f(-24, -4), sf::Vector2f(24, -4), sf::Vector2f(24, 4), sf::Vector2f(-24, 4)
+				})),
+			createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentMass>(20.f),
 			createComponentPairFromType<ComponentHingeOnPoint>(sf::Vector2f(-32, 0)),
 		}
 		);
@@ -338,12 +340,12 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Dresser", false, 50),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
-			//createComponentPairFromType<ComponentCollidable>(),
-			//createComponentPairFromType<ComponentCollider>(),
-			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-			//	})),
-			//createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollider>(),
+			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+				})),
+			createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
@@ -358,12 +360,12 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Table),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Table Wooden", false, 50),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
-			//createComponentPairFromType<ComponentCollidable>(),
-			//createComponentPairFromType<ComponentCollider>(),
-			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-			//	})),
-			//createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentCollidable>(),
+			createComponentPairFromType<ComponentCollider>(),
+			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+				})),
+			createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
@@ -920,6 +922,11 @@ void ComponentCollisionResponse::system(Entity& entity) {
 		entity.entityEventAddAndGet<EventMove>()->moveAxis = collisionAxisTotal;
 	}
 
+}
+void ComponentObserver::system(Entity& entity) {
+	if (entity.entityEventHas<EventInitialize>()) {
+		GameLevelGrid::levelGet(entity.levelId)->entitiesObservers.push_back(entity.Id);
+	}
 }
 
 #pragma endregion Systems

@@ -3,7 +3,9 @@
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Structure Types/StructureTypeRegistry.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/StructureGenerator.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Placement/StructurePlacer.hpp"
+#include "ECSRegistry.hpp"
 #include "GameLevel.hpp"
+#include <ECS/Entities/EntityManager.hpp>
 #include <Graphics/Stores/GraphicsStore.hpp>
 
 GameLevel::GameLevel() :
@@ -70,11 +72,42 @@ void GameLevel::entityMarkDrawable(EntityId id, bool isDynamic, uint16_t drawOrd
 		entitiesDrawableStatic[drawOrder].insert(id);
 	}
 }
+
 const std::vector<std::set<EntityId>>& GameLevel::entitiesDrawableStaticGet() {
 	return entitiesDrawableStatic;
 }
 const std::vector<std::set<EntityId>>& GameLevel::entitiesDrawableDynamicGet() {
 	return entitiesDrawableDynamic;
+}
+
+void GameLevel::entitiesObservedUpdate() {
+
+	if (!observersUpdateCooldown.updateAutoReset(TimeHandler::deltaRealGet())) return;
+
+	entitiesObserved.clear();
+
+	// copy of the entitiesObservation vector, anytime an entity is marked as observed it is removed from this vector.
+	std::vector<EntityId> entitiesObservationToCheck = entitiesObservation;
+
+	for (uint16_t i = 0; i < entitiesObservers.size(); i++) {
+		Entity& observerCur = EntityManager::entityGet(entitiesObservers[i]);
+
+		const sf::Vector2f& observerCurPosition = observerCur.entityComponentGet<EntityComponents::ComponentPosition>()->position;
+		const float observerCurDist = observerCur.entityComponentGet<EntityComponents::ComponentObserver>()->observationDistance;
+		const float observerCurDistSqrd = observerCurDist * observerCurDist;
+
+		for (int32_t i = entitiesObservation.size() - 1; i >= 0; i--) {
+
+			Entity& observationCur = EntityManager::entityGet(entitiesObservation[i]);
+
+			sf::Vector2f& observationCurPosition = observationCur.entityComponentGet<EntityComponents::ComponentPosition>()->position;
+
+			if (Vector2fMath::distSqrd(observerCurPosition, observationCurPosition) <= observerCurDistSqrd) {
+				entitiesObserved.push_back(entitiesObservation[i]);
+				entitiesObservationToCheck.erase(entitiesObservationToCheck.begin() + i);
+			}
+		}
+	}
 }
 
 void GameLevel::textureGridsUpdateValidity(sf::FloatRect rect) {

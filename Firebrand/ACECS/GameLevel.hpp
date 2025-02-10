@@ -58,9 +58,15 @@ struct GameLevel : public BaseLevel {
 	const std::vector<std::set<EntityId>>& entitiesDrawableStaticGet();
 	const std::vector<std::set<EntityId>>& entitiesDrawableDynamicGet();
 
+	void entitiesObservedUpdate() final;
+
+	// vector of entities who are observers
+	std::vector<EntityId> entitiesObservers;
 private:
 	std::vector<std::set<EntityId>> entitiesDrawableStatic;
 	std::vector<std::set<EntityId>> entitiesDrawableDynamic;
+
+	Cooldown observersUpdateCooldown = Cooldown(1.f);
 
 	sf::FloatRect backgroundRect;
 	sf::FloatRect backgroundRectPrev;
