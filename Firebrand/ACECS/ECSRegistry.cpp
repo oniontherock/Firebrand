@@ -473,15 +473,19 @@ void ComponentBatchSprite::system(Entity& entity) {
 
 		sf::Vector2f position;
 		float rotation = 0.f;
+		sf::Vector2f origin = sf::Vector2f(-INFINITY, -INFINITY);
 
-		if (entity.entityComponentHas<ComponentRotation>()) {
-			rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
-		}
 		if (entity.entityComponentHas<ComponentPosition>()) {
 			position = entity.entityComponentGet<ComponentPosition>()->position;
 		}
+		if (entity.entityComponentHas<ComponentRotation>()) {
+			rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
+		}
+		if (entity.entityComponentHas<ComponentSpriteOrigin>()) {
+			origin = entity.entityComponentGet<ComponentSpriteOrigin>()->origin;
+		}
 
-		BatchDrawableTransform transform(position, rotation);
+		BatchDrawableTransform transform(position, rotation, origin);
 
 		BatchDrawHandler::batchDrawRequest(fileName, transform);
 	}

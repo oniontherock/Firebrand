@@ -11,6 +11,7 @@
 struct BatchDrawableTransform {
 	sf::Vector2f position;
 	float rotation;
+	sf::Vector2f origin = sf::Vector2f(-INFINITY, -INFINITY);
 };
 
 class BatchDrawHandler {

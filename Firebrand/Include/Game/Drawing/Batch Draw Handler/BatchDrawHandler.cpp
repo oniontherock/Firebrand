@@ -35,15 +35,24 @@ std::pair<sf::Texture&, sf::VertexArray> BatchDrawHandler::batchedDrawPopProcess
 
 		if (Vector2fMath::distSqrd(drawableCur.position, observerPosition) > observerMaxDistSqrd) continue;
 
-		//vertexArraySize += 6;
-		//vertexArray.resize(vertexArraySize);
+		// if there is no origin, we center the quad on the object's position
+		if (drawableCur.origin.x < -999999999.f || drawableCur.origin.y < -999999999.f) {
+			vertexArray[(i * 6) + 0].position = drawableCur.position + Vector2fMath::rotate(cornerTopLeft, drawableCur.rotation);
+			vertexArray[(i * 6) + 1].position = drawableCur.position + Vector2fMath::rotate(cornerTopRight, drawableCur.rotation);
+			vertexArray[(i * 6) + 2].position = drawableCur.position + Vector2fMath::rotate(cornerBottomLeft, drawableCur.rotation);
+			vertexArray[(i * 6) + 3].position = drawableCur.position + Vector2fMath::rotate(cornerBottomRight, drawableCur.rotation);
+			vertexArray[(i * 6) + 4].position = drawableCur.position + Vector2fMath::rotate(cornerTopRight, drawableCur.rotation);
+			vertexArray[(i * 6) + 5].position = drawableCur.position + Vector2fMath::rotate(cornerBottomLeft, drawableCur.rotation);
+		}
+		else {
+			vertexArray[(i * 6) + 0].position = (drawableCur.position) + Vector2fMath::rotate(Vector2fMath::axis(drawableCur.origin, sf::Vector2f(0, 0)), drawableCur.rotation);
+			vertexArray[(i * 6) + 1].position = (drawableCur.position) + Vector2fMath::rotate(Vector2fMath::axis(drawableCur.origin, sf::Vector2f(textureSize.x, 0)), drawableCur.rotation);
+			vertexArray[(i * 6) + 2].position = (drawableCur.position) + Vector2fMath::rotate(Vector2fMath::axis(drawableCur.origin, sf::Vector2f(0, textureSize.y)), drawableCur.rotation);
+			vertexArray[(i * 6) + 3].position = (drawableCur.position) + Vector2fMath::rotate(Vector2fMath::axis(drawableCur.origin, sf::Vector2f(textureSize.x, textureSize.y)), drawableCur.rotation);
+			vertexArray[(i * 6) + 4].position = (drawableCur.position) + Vector2fMath::rotate(Vector2fMath::axis(drawableCur.origin, sf::Vector2f(textureSize.x, 0)), drawableCur.rotation);
+			vertexArray[(i * 6) + 5].position = (drawableCur.position) + Vector2fMath::rotate(Vector2fMath::axis(drawableCur.origin, sf::Vector2f(0, textureSize.y)), drawableCur.rotation);
+		}
 
-		vertexArray[(i * 6) + 0].position = drawableCur.position + Vector2fMath::rotate(cornerTopLeft, drawableCur.rotation);
-		vertexArray[(i * 6) + 1].position = drawableCur.position + Vector2fMath::rotate(cornerTopRight, drawableCur.rotation);
-		vertexArray[(i * 6) + 2].position = drawableCur.position + Vector2fMath::rotate(cornerBottomLeft, drawableCur.rotation);
-		vertexArray[(i * 6) + 3].position = drawableCur.position + Vector2fMath::rotate(cornerBottomRight, drawableCur.rotation);
-		vertexArray[(i * 6) + 4].position = drawableCur.position + Vector2fMath::rotate(cornerTopRight, drawableCur.rotation);
-		vertexArray[(i * 6) + 5].position = drawableCur.position + Vector2fMath::rotate(cornerBottomLeft, drawableCur.rotation);
 
 		vertexArray[(i * 6) + 0].texCoords = sf::Vector2f(0, 0);
 		vertexArray[(i * 6) + 1].texCoords = sf::Vector2f(textureSize.x, 0);
