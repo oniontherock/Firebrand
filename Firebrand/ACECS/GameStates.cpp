@@ -52,7 +52,7 @@ void GameStatePlay::gameStateStart() {
 	// create player and assign the level's playerId to the id of the newly created player
 	GameData::playerId = EntityManager::entityCreate(level->levelPosition, "Player");
 	Entity& player = EntityManager::entityGet(GameData::playerId);
-	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = sf::Vector2f(2048-900, 2048);
+	player.entityComponentGet<EntityComponents::ComponentPosition>()->position = level->pathGenerator.pathGet()[0]->position;
 }
 
 void GameStatePlay::worldClockUpdate() {

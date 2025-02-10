@@ -150,10 +150,19 @@ void Engine::audioRegister() {
 }
 void Engine::imagesRegister() {
 	GraphicsStore::imageStore.fileLoadFromName("Art/Circle");
+	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Floors/Floor Plank");
+	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Floors/Floor Tile");
 }
 void Engine::texturesRegister() {
 	sf::Texture circleTexture(GraphicsStore::imageStore.objectGet("Art/Circle"));
 	GraphicsStore::textureStore.objectAddFromInstance("Circle", circleTexture);
+
+	sf::Texture floorPlankTexture(GraphicsStore::imageStore.objectGet("Art/Structures/Floors/Floor Plank"));
+	GraphicsStore::textureStore.objectAddFromInstance("Floor Plank", floorPlankTexture);
+
+	sf::Texture floorTileTexture(GraphicsStore::imageStore.objectGet("Art/Structures/Floors/Floor Tile"));
+	GraphicsStore::textureStore.objectAddFromInstance("Floor Tile", floorTileTexture);
+
 }
 void Engine::RNGPoolsRegister() {
 

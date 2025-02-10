@@ -1,6 +1,7 @@
 #include "../ACECS/ECSRegistry.hpp"
 #include "../ACECS/GameLevel.hpp"
 #include "../Floor Generation/FloorGenerator.hpp"
+#include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
 #include "StructureInstantiator.hpp"
 #include <bitset>
 #include <ECS/Entities/EntityManager.hpp>
@@ -76,15 +77,7 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			// cell's global position
 			cellPosition = structure.position + cellPositionLocalTransformed;
 
-			Entity& entity = EntityManager::entityCreateAndGet(instantiationLevel, "Floor " + cell, EntityUpdateType::Never);
-
-			auto* entityComponentPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>();
-			entityComponentPosition->position = cellPosition;
-
-			if (entity.entityComponentHas<EntityComponents::ComponentRotation>()) {
-				auto* entityComponentRotation = entity.entityComponentGet<EntityComponents::ComponentRotation>();
-				entityComponentRotation->rotation = structure.rotation;
-			}
+			BatchDrawHandler::batchDrawRequest("Floor " + cell, cellPosition, structure.rotation);
 		}
 	}
 }

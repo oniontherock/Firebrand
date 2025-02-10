@@ -1,5 +1,6 @@
 #include "../Include/Debugging/AStarPathDrawer.hpp"
 #include "../Include/Debugging/ObjectGridRenderer.hpp"
+#include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
 #include "../Include/Game/GameData.hpp"
 #include "ECSRegistry.hpp"
 #include "Panels.hpp"
@@ -61,12 +62,21 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 
 	levelActive->backgroundDraw(sf::FloatRect(viewRect.position - (viewRect.size / 2.f), viewRect.size * 2.f), 256);
 
+
+
 	// draw base background color
 	texture.draw(backgroundRectangle);
 	// draw grass
 	levelActive->backgroundTexture.drawRectangleToTexture(viewRect, texture);
 	// draw paths
 	levelActive->pathsTexture.drawRectangleToTexture(viewRect, texture);
+
+	auto batchedDraws = BatchDrawHandler::batchedDrawsProcess(EntityManager::entityGet(GameData::playerId).entityComponentGet<EntityComponents::ComponentPosition>()->position, 1280.f);
+	 
+	for (uint16_t i = 0; i < batchedDraws.size(); i++) {
+		texture.draw(batchedDraws[i].second, &batchedDraws[i].first);
+	}
+
 }
 void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 	
