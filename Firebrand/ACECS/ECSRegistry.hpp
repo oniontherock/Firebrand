@@ -233,6 +233,38 @@ namespace EntityComponents {
 			}
 		}
 	};
+	// similar to ComponentSprite, but instead tells the BatchDrawHandler to draw it.
+	struct ComponentBatchSprite final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentBatchSprite() {
+			hasSystem = true;
+		};
+		// constructor that takes file name and extension, then loads/gets an image from the imageStore, and loads the texture with that image
+		ComponentBatchSprite(std::string _fileName, std::string _fileExtension) :
+			ComponentBatchSprite()
+		{
+			fileName = _fileName;
+			fileExtension = _fileExtension;
+		};
+		ComponentBatchSprite(std::string _fileName) :
+			ComponentBatchSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet())
+		{
+		};
+
+		// the name of the file for the texture
+		std::string fileName = "Art/Error texture";
+		// the name of the extension for the texture
+		std::string fileExtension = "png";
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentBatchSprite(fileName, fileExtension));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
 	// creates an EventRotate every frame that linearly interpolates towards the mouse
 	struct ComponentRotateToMouse final : public Component {
 

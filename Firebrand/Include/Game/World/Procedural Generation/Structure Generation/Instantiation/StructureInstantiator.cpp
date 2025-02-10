@@ -27,16 +27,6 @@ void StructureInstantiator::structureInstantiate(LevelPosition instantiationLeve
 			if (cell.type.find("Wall") != std::string::npos) {
 				updateType = EntityUpdateType::Never;
 			}
-			else {
-				std::cout << cell.type << "\n";
-			}
-			//if (cell.type.find("Door") != std::string::npos) {
-			//	updateType = EntityUpdateType::Never;
-			//}
-
-			//if (updateType == EntityUpdateType::Frame) {
-			//	std::cout << cell.type << "\n";
-			//}
 
 			// cellPositionLocal with the transform of the structure applied
 			sf::Vector2f cellPositionLocalTransformed = Vector2fMath::rotate(cellPositionLocal, structure.rotation);

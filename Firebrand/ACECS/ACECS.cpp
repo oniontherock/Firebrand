@@ -152,17 +152,21 @@ void Engine::imagesRegister() {
 	GraphicsStore::imageStore.fileLoadFromName("Art/Circle");
 	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Floors/Floor Plank");
 	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Floors/Floor Tile");
+	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Walls/Wall Wooden Single");
+	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Walls/Wall Wooden Straight");
+	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Walls/Wall Wooden Corner");
+	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Walls/Wall Wooden Junction T");
+	GraphicsStore::imageStore.fileLoadFromName("Art/Structures/Walls/Wall Wooden Junction Plus");
 }
 void Engine::texturesRegister() {
-	sf::Texture circleTexture(GraphicsStore::imageStore.objectGet("Art/Circle"));
-	GraphicsStore::textureStore.objectAddFromInstance("Circle", circleTexture);
-
-	sf::Texture floorPlankTexture(GraphicsStore::imageStore.objectGet("Art/Structures/Floors/Floor Plank"));
-	GraphicsStore::textureStore.objectAddFromInstance("Floor Plank", floorPlankTexture);
-
-	sf::Texture floorTileTexture(GraphicsStore::imageStore.objectGet("Art/Structures/Floors/Floor Tile"));
-	GraphicsStore::textureStore.objectAddFromInstance("Floor Tile", floorTileTexture);
-
+	GraphicsStore::textureStore.objectAddFromInstance("Circle", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Circle")));
+	GraphicsStore::textureStore.objectAddFromInstance("Floor Plank", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Structures/Floors/Floor Plank")));
+	GraphicsStore::textureStore.objectAddFromInstance("Floor Tile", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Structures/Floors/Floor Tile")));
+	GraphicsStore::textureStore.objectAddFromInstance("Wall Wooden Single", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Structures/Walls/Wall Wooden Single")));
+	GraphicsStore::textureStore.objectAddFromInstance("Wall Wooden Straight", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Structures/Walls/Wall Wooden Straight")));
+	GraphicsStore::textureStore.objectAddFromInstance("Wall Wooden Corner", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Structures/Walls/Wall Wooden Corner")));
+	GraphicsStore::textureStore.objectAddFromInstance("Wall Wooden Junction T", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Structures/Walls/Wall Wooden Junction T")));
+	GraphicsStore::textureStore.objectAddFromInstance("Wall Wooden Junction Plus", sf::Texture(GraphicsStore::imageStore.objectGet("Art/Structures/Walls/Wall Wooden Junction Plus")));
 }
 void Engine::RNGPoolsRegister() {
 

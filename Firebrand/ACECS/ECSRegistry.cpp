@@ -1,3 +1,4 @@
+#include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
 #include "ECSRegistry.hpp"
 #include <Auxiliary/Math.hpp>
 #include <Auxiliary/TimeHandler.hpp>
@@ -7,7 +8,7 @@
 
 uint32_t MAX_ENTITIES = 100000;
 uint16_t MAX_EVENT_TYPES = 5;
-uint16_t MAX_COMPONENT_TYPES = 24;
+uint16_t MAX_COMPONENT_TYPES = 25;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -102,6 +103,7 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteFlip>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteColor>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentBatchSprite>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentViewFollow>>();
@@ -173,7 +175,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Single", false, 60),
+			createComponentPairFromType<ComponentBatchSprite>("Wall Wooden Single"),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-12, -12), sf::Vector2f(48, 24)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-12, -12), sf::Vector2f(48, 24)) }),
 			createComponentPairFromType<ComponentCollidable>(),
@@ -192,7 +194,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Straight", false, 60),
+			createComponentPairFromType<ComponentBatchSprite>("Wall Wooden Straight"),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -6), sf::Vector2f(64, 12)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -6), sf::Vector2f(64, 12)) }),
 			createComponentPairFromType<ComponentCollidable>(),
@@ -211,7 +213,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Corner", false, 60),
+			createComponentPairFromType<ComponentBatchSprite>("Wall Wooden Corner"),
 			createComponentPairFromType<ComponentSpriteOrigin>(12.f, 12.f),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(10, 38)), sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(10, 38)), sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)) }),
@@ -235,8 +237,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),	
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction T", false, 60),
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
+			createComponentPairFromType<ComponentBatchSprite>("Wall Wooden Junction T"),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 65)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-5, -5), sf::Vector2f(38, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 65)) }),
 			createComponentPairFromType<ComponentCollidable>(),
@@ -250,7 +252,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			}),
 			createComponentPairFromType<ComponentMass>(10000000000.f),
 		}
-		);
+	);
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
 		"Wall Junction Plus",
@@ -260,7 +262,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Wall),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Walls/Wall Wooden Junction Plus", false, 60),
+			createComponentPairFromType<ComponentBatchSprite>("Wall Wooden Junction Plus"),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -5), sf::Vector2f(64, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 64)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -5), sf::Vector2f(64, 10)), sf::FloatRect(sf::Vector2f(-5, -32), sf::Vector2f(10, 64)) }),
 			createComponentPairFromType<ComponentCollidable>(),
@@ -314,13 +316,13 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 59),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
-			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollider>(),
-			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			sf::Vector2f(-24, -4), sf::Vector2f(24, -4), sf::Vector2f(24, 4), sf::Vector2f(-24, 4)
-				})),
-			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMass>(20.f),
+			//createComponentPairFromType<ComponentCollidable>(),
+			//createComponentPairFromType<ComponentCollider>(),
+			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			//sf::Vector2f(-24, -4), sf::Vector2f(24, -4), sf::Vector2f(24, 4), sf::Vector2f(-24, 4)
+			//	})),
+			//createComponentPairFromType<ComponentCollisionResponse>(),
+			//createComponentPairFromType<ComponentMass>(20.f),
 			createComponentPairFromType<ComponentHingeOnPoint>(sf::Vector2f(-32, 0)),
 		}
 		);
@@ -336,12 +338,12 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Dresser", false, 50),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
-			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollider>(),
-			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-				})),
-			createComponentPairFromType<ComponentCollisionResponse>(),
+			//createComponentPairFromType<ComponentCollidable>(),
+			//createComponentPairFromType<ComponentCollider>(),
+			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+			//	})),
+			//createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
@@ -356,12 +358,12 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Table),
 			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Table Wooden", false, 50),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
-			createComponentPairFromType<ComponentCollidable>(),
-			createComponentPairFromType<ComponentCollider>(),
-			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
-			sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
-				})),
-			createComponentPairFromType<ComponentCollisionResponse>(),
+			//createComponentPairFromType<ComponentCollidable>(),
+			//createComponentPairFromType<ComponentCollider>(),
+			//createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			//sf::Vector2f(-16, -32), sf::Vector2f(16, -32), sf::Vector2f(16, 32), sf::Vector2f(-16, 32)
+			//	})),
+			//createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
@@ -464,6 +466,24 @@ void ComponentRotation::system(Entity& entity) {
 void ComponentSprite::system(Entity& entity) {
 	if (entity.entityEventHas<EventInitialize>()) {
 		GameLevelGrid::levelGet(entity.levelId)->entityMarkDrawable(entity.Id, isDynamic, drawOrder);
+	}
+}
+void ComponentBatchSprite::system(Entity& entity) {
+	if (entity.entityEventHas<EventInitialize>()) {
+
+		sf::Vector2f position;
+		float rotation = 0.f;
+
+		if (entity.entityComponentHas<ComponentRotation>()) {
+			rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
+		}
+		if (entity.entityComponentHas<ComponentPosition>()) {
+			position = entity.entityComponentGet<ComponentPosition>()->position;
+		}
+
+		BatchDrawableTransform transform(position, rotation);
+
+		BatchDrawHandler::batchDrawRequest(fileName, transform);
 	}
 }
 void ComponentViewFollow::system(Entity& entity) {

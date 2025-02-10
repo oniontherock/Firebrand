@@ -250,5 +250,13 @@ void EntityComponents::ComponentCollisionPolygons::load(std::ifstream& str) {
 	str >> shapes;
 	str >> shapesMaxDist;
 }
+void EntityComponents::ComponentBatchSprite::save(std::ofstream& str) {
+	str << fileName;
+	str << fileExtension;
+}
+void EntityComponents::ComponentBatchSprite::load(std::ifstream& str) {
+	str >> fileName;
+	str >> fileExtension;
+}
 
 #pragma endregion
