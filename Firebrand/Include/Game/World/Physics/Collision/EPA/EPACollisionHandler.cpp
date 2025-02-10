@@ -20,7 +20,13 @@ sf::Vector2f EPACollisionHandler::collisionVectorGet(CollisionShapeBase* shapeA,
 
 			sf::Vector2f IJAxis = vertexJ - vertexI;
 
-			sf::Vector2f normal = Vector2fMath::normalize(IJAxis.y, -IJAxis.x);
+			sf::Vector2f normal;
+			if (Vector2fMath::lengthSqrd(IJAxis) <= 0.001f) {
+				normal.x = 1.f;
+			}
+			else {
+				normal = Vector2fMath::normalize(IJAxis.y, -IJAxis.x);
+			}
 			float normalDot = Vector2fMath::dot(normal, vertexI);
 
 			// make sure the normal faces the correct direction, if not, flip it and the normalDot
