@@ -28,6 +28,8 @@ struct GameLevel : public BaseLevel {
 
 	sf::Vector2u levelSize;
 
+	bool hasUpdated;
+
 	uint32_t exampleVariable = 0;
 
 	// OcclusionGrid used by RayCasters in this level

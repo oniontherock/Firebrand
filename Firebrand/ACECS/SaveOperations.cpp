@@ -29,6 +29,7 @@ std::ofstream& operator<< (std::ofstream& str, GameLevel& item) {
 	//str << item.distortionGrid;
 	str << item.objectGrid;
 	str << item.aStarGrid;
+	str << item.hasUpdated;
 
 	return str;
 }
@@ -41,6 +42,7 @@ std::ifstream& operator>> (std::ifstream& str, GameLevel& item) {
 	//str >> item.distortionGrid;
 	str >> item.objectGrid;
 	str >> item.aStarGrid;
+	str >> item.hasUpdated;
 
 	return str;
 }
@@ -133,6 +135,85 @@ std::ifstream& operator>> (std::ifstream& str, ObjectGrid& item) {
 	return str;
 }
 
+std::ofstream& operator<< (std::ofstream& str, Entity& item) {
+	str << item.updateType;
+	str << item.levelId;
+
+	for (EntityComponents::ComponentTypeID componentIdCur = 0; componentIdCur < EntityComponents::totalComponents; componentIdCur++) {
+		if (item.entityComponentHasAtIndex(componentIdCur)) {
+			str << componentIdCur;
+			item.entityComponentGetAtIndex(componentIdCur)->save(str);
+		}
+	}
+	// put in super high value so that the component loading loop exits
+	str << EntityComponents::totalComponents;
+
+	return str;
+}
+std::ifstream& operator>> (std::ifstream& str, Entity& item) {
+	str >> item.updateType;
+	str >> item.levelId;
+
+	if (uint16_t(item.updateType) == 2) {
+		std::cout << uint16_t(item.updateType) << "\n";
+	}
+
+	EntityComponents::ComponentTypeID componentIdCur;
+	str >> componentIdCur;
+	do {
+
+		// get the component of the current type that the entity saved.
+		EntityComponents::Component* componentToDuplicate = EntityComponents::componentsAll[componentIdCur].get();
+		// duplicate the component that the entity saved
+		ComponentUniquePtr componentDuplicated = Duplicatable::duplicateAndConvertToType<EntityComponents::Component>(componentToDuplicate);
+		// raw pointer to the duplicate that was duplicated
+		EntityComponents::Component* componentDuplicatedRaw = componentDuplicated.get();
+		// release unique ptr to duplicated component
+		componentDuplicated.release();
+
+		// load the data that the entity saved for this component
+		componentDuplicatedRaw->load(str);
+
+		// add the duplicated type to the entity
+		item.entityComponentAddAtIndex(componentDuplicatedRaw, componentIdCur);
+
+		str >> componentIdCur;
+	} while (componentIdCur < EntityComponents::totalComponents);
+
+	return str;
+}
+
+std::ofstream& operator<< (std::ofstream& str, CollisionShapeBase& item) {
+	str << item.rotation;
+	str << item.center;
+	str << item.shapeMaxDist;
+
+	return str;
+}
+std::ifstream& operator>> (std::ifstream& str, CollisionShapeBase& item) {
+	str >> item.rotation;
+	str >> item.center;
+	str >> item.shapeMaxDist;
+
+	return str;
+}
+std::ofstream& operator<< (std::ofstream& str, CollisionShapePolygon& item) {
+	str << item.rotation;
+	str << item.center;
+	str << item.shapeMaxDist;
+	str << item.vertices;
+
+	return str;
+}
+std::ifstream& operator>> (std::ifstream& str, CollisionShapePolygon& item) {
+	str >> item.rotation;
+	str >> item.center;
+	str >> item.shapeMaxDist;
+	str >> item.vertices;
+
+	return str;
+}
+
 #pragma region Components
 
 void EntityComponents::ComponentPosition::save(std::ofstream& str) {
@@ -146,12 +227,13 @@ void EntityComponents::ComponentSprite::save(std::ofstream& str) {
 	str << fileName;
 	str << fileExtension;
 	str << isDynamic;
+	str << drawOrder;
 }
 void EntityComponents::ComponentSprite::load(std::ifstream& str) {
 	str >> fileName;
 	str >> fileExtension;
 	str >> isDynamic;
-	textureInitialize();
+	str >> drawOrder;
 }
 
 void EntityComponents::ComponentMoveByInput::save(std::ofstream& str) {
@@ -243,20 +325,60 @@ void EntityComponents::ComponentObjectGridInhabiterRectangles::load(std::ifstrea
 	str >> rectangles;
 }
 void EntityComponents::ComponentCollisionPolygons::save(std::ofstream& str) {
-	str << shapes;
+
+	size_t shapesSize = shapes.size();
+	str << shapesSize;
+	for (uint16_t i = 0; i < shapes.size(); i++) {
+		str << shapes[i];
+	}
+
 	str << shapesMaxDist;
 }
 void EntityComponents::ComponentCollisionPolygons::load(std::ifstream& str) {
-	str >> shapes;
+	
+	size_t shapesSize;
+	str >> shapesSize;
+	shapes.resize(shapesSize);
+	for (uint16_t i = 0; i < shapes.size(); i++) {
+
+		str >> shapes[i];
+	}
+
+	shapesPtrs.resize(shapes.size());
+
+	for (uint16_t i = 0; i < shapes.size(); i++) {
+		shapesPtrs[i] = &shapes[i];
+	}
+
 	str >> shapesMaxDist;
 }
 void EntityComponents::ComponentBatchSprite::save(std::ofstream& str) {
 	str << fileName;
 	str << fileExtension;
 }
+void EntityComponents::ComponentMass::save(std::ofstream& str) {
+	str << mass;
+}
+void EntityComponents::ComponentMass::load(std::ifstream& str) {
+	str >> mass;
+}
 void EntityComponents::ComponentBatchSprite::load(std::ifstream& str) {
 	str >> fileName;
 	str >> fileExtension;
+}
+void EntityComponents::ComponentHingeOnPoint::save(std::ofstream& str) {
+	str << hingeOffset;
+	str << hingePoint;
+}
+void EntityComponents::ComponentHingeOnPoint::load(std::ifstream& str) {
+	str >> hingeOffset;
+	str >> hingePoint;
+}
+void EntityComponents::ComponentObserver::save(std::ofstream& str) {
+	str << observationDistance;
+}
+void EntityComponents::ComponentObserver::load(std::ifstream& str) {
+	str >> observationDistance;
 }
 
 #pragma endregion

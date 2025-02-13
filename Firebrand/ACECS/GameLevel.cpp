@@ -23,6 +23,8 @@ GameLevel::GameLevel() :
 
 	entitiesDrawableStatic.resize(100);
 	entitiesDrawableDynamic.resize(100);
+
+	hasUpdated = false;
 }
 
 GameLevel::GameLevel(LevelCoordinate _idX, LevelCoordinate _idY, LevelCoordinate _idZ) :
@@ -90,6 +92,7 @@ void GameLevel::entitiesObservedUpdate() {
 	std::vector<EntityId> entitiesObservationToCheck = entitiesObservation;
 
 	for (uint16_t i = 0; i < entitiesObservers.size(); i++) {
+
 		Entity& observerCur = EntityManager::entityGet(entitiesObservers[i]);
 
 		const sf::Vector2f& observerCurPosition = observerCur.entityComponentGet<EntityComponents::ComponentPosition>()->position;

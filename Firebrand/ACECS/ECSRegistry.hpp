@@ -222,6 +222,9 @@ namespace EntityComponents {
 
 	private:
 		void textureInitialize() {
+
+			if (fileName == "Art/Error texture") return;
+
 			// if texture does exist, get/load image from the file name and extension, then create texture with that image
 			if (!GraphicsStore::textureStore.objectExists(fileName)) {
 
@@ -549,6 +552,8 @@ namespace EntityComponents {
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentMass(mass));
 		};
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
 	};
 	// marks an entity as collidable in the GameLevel
 	struct ComponentCollidable final : public Component {
@@ -648,6 +653,9 @@ namespace EntityComponents {
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentHingeOnPoint(hingeOffset));
 		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
 	};
 	struct ComponentObserver final : public Component {
 
@@ -668,6 +676,9 @@ namespace EntityComponents {
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentObserver(observationDistance));
 		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
 	};
 }
 

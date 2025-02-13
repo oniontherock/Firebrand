@@ -280,32 +280,6 @@ void EntityComponents::componentTemplatesInitialize() {
 		}
 		);
 #pragma endregion Wall Templates
-#pragma region Floor Templates
-
-	ComponentTemplateManager::componentTemplateAdd(
-		/// template name
-		"Floor Plank",
-		{
-			"Transform",
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Plank", false, 0),
-		}
-		);
-
-	ComponentTemplateManager::componentTemplateAdd(
-		/// template name
-		"Floor Tile",
-		{
-			"Transform",
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Floors/Floor Tile", false, 0),
-		}
-		);
-#pragma endregion Floor Templates
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
 		"Door Wooden",
@@ -841,8 +815,8 @@ void ComponentOcclusionRectangles::system(Entity& entity) {
 void ComponentCollisionPolygons::system(Entity& entity) {
 	// check that entity has correct components
 	try {
-		if (!entity.entityComponentHas<ComponentPosition>()) throw std::string("ComponentCollisionShapeMulti assigned to an entity without a ComponentPosition!");
-		if (!entity.entityComponentHas<ComponentRotation>()) throw std::string("ComponentCollisionShapeMulti assigned to an entity without a ComponentRotation!");
+		if (!entity.entityComponentHas<ComponentPosition>()) throw std::string("ComponentCollisionPolygons assigned to an entity without a ComponentPosition!");
+		if (!entity.entityComponentHas<ComponentRotation>()) throw std::string("ComponentCollisionPolygons assigned to an entity without a ComponentRotation!");
 	}
 	catch (std::string e) {
 		ConsoleHandler::consolePrintErr(e);
@@ -850,13 +824,11 @@ void ComponentCollisionPolygons::system(Entity& entity) {
 		entity.entityComponentTerminate<ComponentCollisionPolygons>();
 	}
 
-	sf::Vector2f& position = entity.entityComponentGet<ComponentPosition>()->position;
-	float& rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
+	const sf::Vector2f& position = entity.entityComponentGet<ComponentPosition>()->position;
+	const float& rotation = entity.entityComponentGet<ComponentRotation>()->rotation;
 
 	for (CollisionShapePolygon& shape : shapes) {
-		// change these two calls to a shape.transformSet(), not doing it right now because i haven't tested if it works, (almost certain it does)
-		shape.centerSet(position);
-		shape.rotationSet(rotation);
+		shape.transformSet(position, rotation);
 	}
 
 	if (entity.entityEventHas<EventInitialize>()) {

@@ -27,6 +27,9 @@ struct CollisionShapeBase {
 	float rotationGet() const;
 	float shapeMaxDistGet() const;
 
+	friend std::ofstream& operator<<(std::ofstream& str, CollisionShapeBase& item);
+	friend std::ifstream& operator>>(std::ifstream& str, CollisionShapeBase& item);
+
 protected:
 	float rotation = 0.f;
 
@@ -55,6 +58,9 @@ struct CollisionShapePolygon : CollisionShapeBase {
 	// sets a new center and rotation and updates vertices,
 	// faster than calling centerSet and rotationSet independently, since it only has to update vertices once
 	void transformSet(sf::Vector2f centerNew, float rotationNew) final;
+
+	friend std::ofstream& operator<<(std::ofstream& str, CollisionShapePolygon& item);
+	friend std::ifstream& operator>>(std::ifstream& str, CollisionShapePolygon& item);
 };
 
 #endif

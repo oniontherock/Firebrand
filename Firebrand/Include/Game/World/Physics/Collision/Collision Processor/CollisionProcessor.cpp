@@ -66,12 +66,16 @@ void CollisionProcessor::collisionsProcess() {
 	std::unordered_map<EntityId, sf::Vector2f> entityCollisionAxes;
 
 #pragma region Collision Detection
+
+
 	for (Collider& collider : colliders) {
 		for (Collider& collidable : collidables) {
 			// skip if i equals j
 			if (collider.entityId == collidable.entityId) continue;
+			//std::cout << "col size: " << collider.shapes.size() << " " << collidable.shapes.size() << "\n";
 
 			if (collider.shapes.size() <= 0 || collidable.shapes.size() <= 0) continue;
+
 
 			// this isn't an amazing way of doing this, because it just assumes that every shape in a Collider has the same center,
 			// but it's really quick this way, and i think it'll be fine so i'm leaving it.

@@ -62,8 +62,6 @@ void PanelStaticView::backgroundDraw(GameLevel* levelActive) {
 
 	levelActive->backgroundDraw(sf::FloatRect(viewRect.position - (viewRect.size / 2.f), viewRect.size * 2.f), 256);
 
-
-
 	// draw base background color
 	texture.draw(backgroundRectangle);
 	// draw grass
