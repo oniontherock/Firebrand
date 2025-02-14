@@ -64,6 +64,10 @@ struct GameLevel : public BaseLevel {
 
 	// vector of entities who are observers
 	std::vector<EntityId> entitiesObservers;
+
+	friend std::ofstream& operator<<(std::ofstream& str, GameLevel& item);
+	friend std::ifstream& operator>>(std::ifstream& str, GameLevel& item);
+
 private:
 	std::vector<std::set<EntityId>> entitiesDrawableStatic;
 	std::vector<std::set<EntityId>> entitiesDrawableDynamic;

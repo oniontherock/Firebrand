@@ -7,6 +7,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <string>
 
+struct SaveDirector;
+
 // transform used for batch drawing something, has a rotation and a position
 struct BatchDrawableTransform {
 	sf::Vector2f position;
@@ -26,6 +28,8 @@ public:
 
 	static void batchDrawRequest(std::string textureName, BatchDrawableTransform batchDrawableTransform);
 	static void batchDrawRequest(std::string textureName, sf::Vector2f position, float rotation);
+
+	friend class SaveDirector;
 };
 
 

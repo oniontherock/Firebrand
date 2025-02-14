@@ -5,11 +5,6 @@
 #include <cmath>
 #include <Auxiliary/NumberGenerator.hpp>
 
-PathPoint::PathPoint(sf::Vector2f _position, PointIndex _index) {
-	position = _position;
-	index = _index;
-}
-
 PathGenerator::~PathGenerator() {
 	for (uint16_t i = 0; i < pathPoints.size(); i++) {
 		delete pathPoints[i];

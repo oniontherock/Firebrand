@@ -14,9 +14,6 @@ typedef uint16_t PointIndex;
 typedef std::pair<PointIndex, PointIndex> PointConnection;
 
 struct PathPoint {
-
-	PathPoint(sf::Vector2f _position, PointIndex _index);
-
 	// position of this point
 	sf::Vector2f position;
 	// index of this point
@@ -72,6 +69,9 @@ public:
 
 	const std::vector<PathPoint*>& pathGet() const;
 	const std::vector<PointConnection>& connectionsGet() const;
+
+	friend std::ofstream& operator<<(std::ofstream& str, PathGenerator& item);
+	friend std::ifstream& operator>>(std::ifstream& str, PathGenerator& item);
 };
 
 

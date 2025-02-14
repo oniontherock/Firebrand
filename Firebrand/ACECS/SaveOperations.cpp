@@ -27,9 +27,11 @@ std::ofstream& operator<< (std::ofstream& str, GameLevel& item) {
 	//str << item.staticSpriteEntityIds;
 	//str << item.firstRun;
 	//str << item.distortionGrid;
+	str << item.pathGenerator;
 	str << item.objectGrid;
 	str << item.aStarGrid;
 	str << item.hasUpdated;
+	str << item.pathPoints;
 
 	return str;
 }
@@ -40,9 +42,48 @@ std::ifstream& operator>> (std::ifstream& str, GameLevel& item) {
 	//str >> item.staticSpriteEntityIds;
 	//str >> item.firstRun;
 	//str >> item.distortionGrid;
+	str >> item.pathGenerator;
 	str >> item.objectGrid;
 	str >> item.aStarGrid;
 	str >> item.hasUpdated;
+	str >> item.pathPoints;
+
+	return str;
+}
+
+std::ofstream& operator<< (std::ofstream& str, PathGenerator& item) {
+
+	size_t pathPointsSize = item.pathPoints.size();
+	str << pathPointsSize;
+	for (uint32_t i = 0; i < item.pathPoints.size(); i++) {
+		str << *item.pathPoints[i];
+	}
+	size_t connectionsSize = item.connections.size();
+	str << connectionsSize;
+	for (uint32_t i = 0; i < item.connections.size(); i++) {
+		str << item.connections[i].first;
+		str << item.connections[i].second;
+	}
+
+	return str;
+}
+std::ifstream& operator>> (std::ifstream& str, PathGenerator& item) {
+
+	size_t pathPointsSize;
+	str >> pathPointsSize;
+	item.pathPoints.resize(pathPointsSize);
+	for (uint32_t i = 0; i < item.pathPoints.size(); i++) {
+		PathPoint* pathPoint = new PathPoint();
+		str >> *pathPoint;
+		item.pathPoints[i] = pathPoint;
+	}
+	size_t connectionsSize;
+	str >> connectionsSize;
+	item.connections.resize(connectionsSize);
+	for (uint32_t i = 0; i < item.connections.size(); i++) {
+		str >> item.connections[i].first;
+		str >> item.connections[i].second;
+	}
 
 	return str;
 }
@@ -153,10 +194,6 @@ std::ofstream& operator<< (std::ofstream& str, Entity& item) {
 std::ifstream& operator>> (std::ifstream& str, Entity& item) {
 	str >> item.updateType;
 	str >> item.levelId;
-
-	if (uint16_t(item.updateType) == 2) {
-		std::cout << uint16_t(item.updateType) << "\n";
-	}
 
 	EntityComponents::ComponentTypeID componentIdCur;
 	str >> componentIdCur;

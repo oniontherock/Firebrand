@@ -1,9 +1,10 @@
 #include "BatchDrawHandler.hpp"
+#include <Auxiliary/ConsoleHandler.hpp>
+#include <Auxiliary/Math.hpp>
+#include <Auxiliary/VectorMath.hpp>
 #include <Auxiliary/VectorMath.hpp>
 #include <Graphics/Stores/GraphicsStore.hpp>
 #include <iostream>
-#include <Auxiliary/ConsoleHandler.hpp>
-#include <Auxiliary/VectorMath.hpp>
 
 std::map<std::string, std::vector<BatchDrawableTransform>> BatchDrawHandler::batchDrawMap{};
 
@@ -80,6 +81,21 @@ void BatchDrawHandler::batchDrawRequest(std::string textureName, BatchDrawableTr
 
 	if (!batchDrawMap.contains(textureName)) {
 		batchDrawMap.insert({ textureName, std::vector<BatchDrawableTransform>() });
+	}
+
+	// ensure the batch draw that's being requested hasn't been requested before, this can occur a lot when saves are being loaded, but this next part handles it.
+	for (uint32_t i = 0; i < batchDrawMap[textureName].size(); i++) {
+		// if the origin, position, and rotation are all the approximately the same to the draw being requested, we return, and don't add the draw to the batchDrawMap
+		if (
+			// check origin equal
+			Vector2fMath::distSqrd(batchDrawMap[textureName][i].origin, batchDrawableTransform.origin) < 0.01f &&
+			// check position equal
+			Vector2fMath::distSqrd(batchDrawMap[textureName][i].position, batchDrawableTransform.position) < 0.01f &&
+			// check rotation equal
+			Mathf::approxEquals(batchDrawMap[textureName][i].rotation, batchDrawableTransform.rotation, 0.01f)
+			) {
+			return;
+		}
 	}
 
 	batchDrawMap[textureName].push_back(batchDrawableTransform);

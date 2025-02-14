@@ -153,4 +153,9 @@ std::ofstream& operator<< (std::ofstream& str, CollisionShapePolygon& item);
 // CollisionShapePolygon in
 std::ifstream& operator>> (std::ifstream& str, CollisionShapePolygon& item);
 
+// PathGenerator out
+std::ofstream& operator<< (std::ofstream& str, PathGenerator& item);
+// PathGenerator in
+std::ifstream& operator>> (std::ifstream& str, PathGenerator& item);
+
 #endif

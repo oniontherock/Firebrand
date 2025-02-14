@@ -1,3 +1,4 @@
+#include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
 #include "../Include/Game/GameData.hpp"
 #include "GameLevel.hpp"
 #include "GameStates.hpp"
@@ -17,6 +18,20 @@ void SaveDirector::gameDataSave() {
 				GameLevel& level = *static_cast<GameLevel*>(levelGrid[x][y][z].get());
 				SaveHandler::objectSave<GameLevel&>(level);
 			}
+		}
+	}
+
+	size_t batchDrawMapSize = BatchDrawHandler::batchDrawMap.size();
+	SaveHandler::objectSaveIgnoreErrors(batchDrawMapSize);
+	for (auto& pair : BatchDrawHandler::batchDrawMap) {
+		std::string str = pair.first;
+		SaveHandler::objectSave<std::string>(str);
+
+		size_t size = pair.second.size();
+		SaveHandler::objectSave(size);
+
+		for (uint16_t i = 0; i < size; i++) {
+			SaveHandler::objectSave(pair.second[i]);
 		}
 	}
 
@@ -40,11 +55,29 @@ void SaveDirector::gameDataLoad() {
 	for (uint16_t x = 0; x < levelGrid.size(); x++) {
 		for (uint16_t y = 0; y < levelGrid[x].size(); y++) {
 			for (uint16_t z = 0; z < levelGrid[x][y].size(); z++) {
-
 				GameLevel& level = *static_cast<GameLevel*>(levelGrid[x][y][z].get());
 				SaveHandler::objectLoad<GameLevel&>(level);
 			}
 		}
+	}
+
+	size_t batchDrawMapSize;
+	SaveHandler::objectLoadIgnoreErrors(batchDrawMapSize);
+	for (size_t i = 0; i < batchDrawMapSize; i++) {
+
+		std::pair<std::string, std::vector<BatchDrawableTransform>> pair;
+
+		SaveHandler::objectLoadIgnoreErrors<std::string>(pair.first);
+
+		size_t size;
+		SaveHandler::objectLoadIgnoreErrors(size);
+		pair.second.resize(size);
+
+		for (uint16_t i = 0; i < size; i++) {
+			SaveHandler::objectLoadIgnoreErrors(pair.second[i]);
+		}
+
+		BatchDrawHandler::batchDrawMap.insert(pair);
 	}
 
 	// load entities
@@ -62,7 +95,6 @@ void SaveDirector::gameDataLoad() {
 		// add entity to room if it's not an intangible entity
 		if (entity.levelId != NoLevelPosition) {
 			EntityManager::entityAddToRoom(entityIdCur, entity.levelId);
-			std::cout << "added to a room" << "\n";
 		}
 
 		// load entity's id
