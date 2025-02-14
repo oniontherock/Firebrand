@@ -100,6 +100,9 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRadius>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRectangles>>();
 
+	// AI
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentActorStateHolder>>();
+
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteFlip>>();
@@ -899,6 +902,9 @@ void ComponentObserver::system(Entity& entity) {
 	if (entity.entityEventHas<EventInitialize>()) {
 		GameLevelGrid::levelGet(entity.levelId)->entitiesObservers.push_back(entity.Id);
 	}
+}
+void ComponentActorStateHolder::system(Entity& entity) {
+	// currently there aren't really any states to hold, since there are no movement states or an inventory, so this component does nothing for now.
 }
 
 #pragma endregion Systems

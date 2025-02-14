@@ -2,6 +2,7 @@
 #define __ECS_REGISTRY_H__
 
 #include "../ACECS/Panels.hpp"
+#include "../Include/Common/DataCache.hpp"
 #include "../Include/Game/RayCasting/Object Vision/ObjectVision.hpp"
 #include "../Include/Game/World/Physics/Collision/CollisionHandler.hpp"
 #include "../Include/Game/World/Physics/Collision/CollisionShape.hpp"
@@ -679,6 +680,23 @@ namespace EntityComponents {
 
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
+	};
+	struct ComponentActorStateHolder final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentActorStateHolder() {
+			hasSystem = true;
+		};
+
+		DataCache actorStateHolder;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentActorStateHolder());
+		};
+
+		//void save(std::ofstream& str) override;
+		//void load(std::ifstream& str) override;
 	};
 }
 
