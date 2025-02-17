@@ -736,6 +736,20 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractorDebugger());
 		};
 	};
+	struct ComponentBlackboard final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentBlackboard() {
+			hasSystem = true;
+		};
+
+		DataCache data;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentBlackboard());
+		};
+	};
 }
 
 #endif

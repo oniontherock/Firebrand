@@ -8,7 +8,7 @@
 
 uint32_t MAX_ENTITIES = 100000;
 uint16_t MAX_EVENT_TYPES = 6;
-uint16_t MAX_COMPONENT_TYPES = 26;
+uint16_t MAX_COMPONENT_TYPES = 30;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -110,6 +110,7 @@ void EntityComponents::componentIDsInitialize() {
 	// AI
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentActorStateHolder>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractor>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentBlackboard>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -973,6 +974,15 @@ void ComponentSenseAbstractorDebugger::system(Entity& entity) {
 			}
 		}
 		ConsoleHandler::consolePrintColor("}", 6);
+	}
+}
+void ComponentBlackboard::system(Entity& entity) {
+	if (!entity.entityEventHas<EventSensesAbstracted>()) return;
+
+	auto& abstractedSenses = entity.entityEventGet<EventSensesAbstracted>()->abstractedSenses;
+
+	if (abstractedSenses.dataHas("Sight")) {
+		data.dataSet("Sight", abstractedSenses.dataGet<DataCache>("Sight"));
 	}
 }
 
