@@ -105,7 +105,6 @@ void EntityComponents::componentIDsInitialize() {
 	// senses
 	// vision
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
 	// hearing
 
 	// AI
@@ -118,6 +117,10 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteColor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentBatchSprite>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
+
+	// debug
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractorDebugger>>();
 
 
 }
@@ -160,7 +163,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Player),
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Human),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
@@ -174,7 +177,8 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
 			createComponentPairFromType<ComponentObjectVision>(),
-			createComponentPairFromType<ComponentObjectVisionDebug>(),
+			createComponentPairFromType<ComponentSenseAbstractor>(),
+			createComponentPairFromType<ComponentSenseAbstractorDebugger>(),
 		}
 	);
 #pragma region Wall Templates
@@ -353,21 +357,6 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentMass>(200.f),
 		}
 	);
-	ComponentTemplateManager::componentTemplateAdd(
-
-		/// template name
-		"Test Object",
-		{
-		},
-		/// list of components in template
-		{
-			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Door),
-			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentPosition>(sf::Vector2f(512.f, 256.f)),
-			createComponentPairFromType<ComponentSprite>("Art/Circle", true, 50),
-
-		}
-		);
 }
 
 #pragma endregion Component Templates
@@ -380,6 +369,7 @@ using namespace EntityEvents;
 #include <iostream>
 #include "../Include/Game/World/Objects/ObjectRegistry.hpp"
 #include "../Include/Game/World/Physics/Collision/Collision Processor/CollisionProcessor.hpp"
+#include "../Include/Game/AI/Sensory Abstraction/ObjectAbstractor.hpp"
 
 // if the system is not using the entity parameter, remove it's name to avoid a C4100 error
 
@@ -666,12 +656,24 @@ void ComponentObjectVision::system(Entity& entity) {
 
 		objectVision.update(positionComponent->position, angle, coneSize, 640, 64);
 
-		ObjectIdVector& objectsSeenSet = objectVision.objectsSeenGet();
+		ObjectIdVector& objectIdVector = objectVision.objectsSeenGet();
 
-		if (objectsSeenSet.size() <= 0) return;
+		// remove our id from the objectIdVector
+		if (entity.entityComponentHas<ComponentObjectTypeAssigner>()) {
+			// get entity's object type
+			ObjectType objType = entity.entityComponentGet<ComponentObjectTypeAssigner>()->objectType;
+			// get sub vector that this entity would be in
+			std::vector<EntityId>& objectIdSubVector = objectIdVector[uint16_t(objType)];
+			// attempt to find the entity in the objectIdSubVector
+			auto itr = std::find(objectIdSubVector.begin(), objectIdSubVector.end(), entity.Id);
+			// erase the entity from the sub vector if they are in it
+			if (itr != objectIdSubVector.end()) objectIdSubVector.erase(itr);
+		}
+
+		if (objectIdVector.size() <= 0) return;
 
 		auto* eventObjectSeen = entity.entityEventAddAndGet<EventObjectSeen>();
-		eventObjectSeen->objectsSeen = &objectsSeenSet;
+		eventObjectSeen->objectsSeen = &objectIdVector;
 	}
 }
 void ComponentObjectVisionDebug::system(Entity& entity) {
@@ -679,17 +681,6 @@ void ComponentObjectVisionDebug::system(Entity& entity) {
 	cooldownPrint.update(float(TimeHandler::deltaRealGet()));
 
 	if (cooldownPrint.ready()) {
-
-		constexpr const char* objectTypesNames[] = {
-			"Null",
-			"Player",
-			"SquadMember",
-			"Door",
-			"Dresser",
-			"Table",
-			"Wall",
-			"SIZE",
-		};
 
 		std::string string;
 
@@ -704,7 +695,7 @@ void ComponentObjectVisionDebug::system(Entity& entity) {
 			for (uint16_t i = 0; i < objectsSeenVector->size(); i++) {
 
 				for (uint16_t j = 0; j < objectsSeenVector->at(i).size(); j++) {
-					string += objectTypesNames[i];
+					string += objectTypeToString(ObjectType(i));
 					string += ", ";
 				}
 			}
@@ -916,12 +907,72 @@ void ComponentActorStateHolder::system(Entity& entity) {
 	// currently there aren't really any states to hold, since there are no movement states or an inventory, so this component does nothing for now.
 }
 void ComponentSenseAbstractor::system(Entity& entity) {
-	DataCache abstractedSenses;
+	// get whether the senses have updated
+	bool hasSightUpdated = entity.entityEventHas<EventObjectSeen>();
+	bool hasHearingUpdated = false; // not yet implemented, later replace with check for an actual hearing event
 
-	if (entity.entityEventHas<EventObjectSeen>()) {
+	// if none of the senses have updated, just return
+	if (!hasSightUpdated && !hasHearingUpdated) return;
+
+	// if any sense has updated, created an event for the new about to be abstracted data
+	auto& abstractedSenses = entity.entityEventAddAndGet<EventSensesAbstracted>()->abstractedSenses;
+
+	// check if the sight has been updated
+	if (hasSightUpdated) {
+		// if it has been updated, abstract the sight data and add it to the abstractedSenses
+
+		DataCache abstractedSight;
 		auto* eventObjectSeen = entity.entityEventGet<EventObjectSeen>();
 
-		eventObjectSeen->objectsSeen;
+		ObjectIdVector* objectIdVector = eventObjectSeen->objectsSeen;
+
+		for (uint16_t objTypeCur = 0; objTypeCur < objectIdVector->size(); objTypeCur++) {
+
+			ObjectDataVector objectDataVector;
+
+			for (uint16_t objCur = 0; objCur < objectIdVector->at(objTypeCur).size(); objCur++) {
+				objectDataVector.push_back(ObjectAbstractor::objectDataAbstract(objectIdVector->at(objTypeCur)[objCur], ObjectType(objTypeCur)));
+			}
+
+			abstractedSight.dataSet(objectTypeToString(ObjectType(objTypeCur)), objectDataVector);
+		}
+
+		abstractedSenses.dataSet("Sight", abstractedSight);
+	}
+	// check if the hearing has been updated
+	if (hasHearingUpdated) {
+		// not yet implemented, later put hearing stuff here
+	}
+}
+void ComponentSenseAbstractorDebugger::system(Entity& entity) {
+	if (!entity.entityEventHas<EventSensesAbstracted>()) return;
+
+	auto& abstractedSenses = entity.entityEventGet<EventSensesAbstracted>()->abstractedSenses;
+
+	if (abstractedSenses.dataHas("Sight")) {
+		ConsoleHandler::consolePrintColor("Sight: {", 6);
+		DataCache abstractedSight = abstractedSenses.dataGet<DataCache>("Sight");
+
+		for (uint16_t objTypeCur = 0; objTypeCur < uint16_t(ObjectType::SIZE); objTypeCur++) {
+			ObjectDataVector objectDataVector = abstractedSight.dataGet<ObjectDataVector>(objectTypeToString(ObjectType(objTypeCur)));
+
+			for (uint16_t objCur = 0; objCur < objectDataVector.size(); objCur++) {
+
+				auto& objData = objectDataVector[objCur];
+
+				ConsoleHandler::consolePrintColor("    " + objectTypeToString(ObjectType(objTypeCur)) + std::to_string(objCur) + " {", 6);
+
+				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("Position") + std::string(": ") +
+					std::to_string(objData.dataGet<sf::Vector2f>("Position").x) + std::to_string(objData.dataGet<sf::Vector2f>("Position").y),
+					6);
+				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("Rotation") + std::string(": ") + std::to_string(objData.dataGet<float>("Rotation")), 6);
+				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("HasSenseSight") + std::string(": ") + std::to_string(objData.dataGet<bool>("HasSenseSight")), 6);
+				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("IsThreat") + std::string(": ") + std::to_string(objData.dataGet<bool>("IsThreat")), 6);
+
+				ConsoleHandler::consolePrintColor("    }", 6);
+			}
+		}
+		ConsoleHandler::consolePrintColor("}", 6);
 	}
 }
 

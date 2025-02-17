@@ -8,7 +8,7 @@
 // variant of data types that can be contained in an DataUMap.
 typedef std::any DataType;
 // key of an BlackboardDataType, used in DataUMap.
-typedef const char* DataKey;
+typedef std::string DataKey;
 // map of names and data.
 typedef std::unordered_map<DataKey, DataType> DataUMap;
 
@@ -30,8 +30,7 @@ struct DataCache {
 	// clears all data from the dataUMap
 	void dataClear();
 
-	friend std::ofstream& operator<<(std::ofstream& str, DataCache& item);
-	friend std::ifstream& operator>>(std::ifstream& str, DataCache& item);
+	const DataUMap& dataUMapGet() const;
 private:
 
 	// map of all data contained in the cache

@@ -32,7 +32,7 @@ void RayCaster::raysCast(sf::Vector2f castPosition, float castAngle, float coneS
 			sf::Vector2f rayPositionCur = castPosition + (rayHeading * dist);
 
 			// if we should occlude, check if the ray's position falls on a cell in the occlusion grid which is marked as occluding, if that's the case, break
-			if (doOcclude) if (occlusionGrid->cellGetFromWorld(rayPositionCur)) break;
+			if (doOcclude) if (occlusionGrid->worldPosIsInGridFull(rayPositionCur)) if (occlusionGrid->cellGetFromWorld(rayPositionCur)) break;
 			// call ray update with the position of castPosition with the heading added multiplied by the dist, which is the rays position,
 			// breaks if ray update returns false
 			if (!rayUpdate(rayPositionCur)) break;

@@ -165,6 +165,7 @@
     <ClCompile Include="Include\Game\World\Objects\Object Grid\ObjectCell.cpp" />
     <ClCompile Include="Include\Game\World\Objects\Object Grid\ObjectGrid.cpp" />
     <ClCompile Include="Include\Game\World\Objects\ObjectRegistry.cpp" />
+    <ClCompile Include="Include\Game\World\Objects\ObjectTypes.cpp" />
     <ClCompile Include="Include\Game\World\Physics\Collision\Collision Grid\CollisionGrid.cpp" />
     <ClCompile Include="Include\Game\World\Physics\Collision\Collision Processor\CollisionProcessor.cpp" />
     <ClCompile Include="Include\Game\World\Physics\Collision\CollisionHandler.cpp" />

@@ -15,3 +15,6 @@ void DataCache::dataClear() {
 	dataUMap.clear();
 }
 
+const DataUMap& DataCache::dataUMapGet() const {
+	return dataUMap;
+}

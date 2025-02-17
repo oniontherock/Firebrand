@@ -6,8 +6,11 @@
 #include "../include/Game/World/Objects/ObjectRegistry.hpp"
 #include "../include/Game/World/Objects/ObjectTypes.hpp"
 
+typedef DataCache ObjectData;
+typedef std::vector<ObjectData> ObjectDataVector;
+
 namespace ObjectAbstractor {
-	DataCache objectDataAbstract(EntityId objectId, ObjectType objectType);
+	ObjectData objectDataAbstract(EntityId objectId, ObjectType objectType);
 }
 
 #endif

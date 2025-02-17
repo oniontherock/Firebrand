@@ -217,7 +217,8 @@ namespace EntityComponents {
 		};
 		ComponentSprite(std::string _fileName, bool _isDynamic, uint16_t _drawOrder) :
 			ComponentSprite(_fileName, GraphicsStore::imageStore.extensionDefaultGet(), _isDynamic, _drawOrder)
-		{};
+		{
+		};
 
 		// the name of the file for the texture
 		std::string fileName = "Art/Error texture";
@@ -665,7 +666,7 @@ namespace EntityComponents {
 		// global position of the hinge point in the world,
 		// determined when the component first runs based off of the hingeOffset and the entity's position
 		sf::Vector2f hingePoint = sf::Vector2f(-INFINITY, -INFINITY);
-		
+
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentHingeOnPoint(hingeOffset));
@@ -723,18 +724,18 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractor());
 		};
 	};
-	//struct ComponentSenseAbstractor final : public Component {
+	struct ComponentSenseAbstractorDebugger final : public Component {
 
-	//	void system(Entity& entity) final;
+		void system(Entity& entity) final;
 
-	//	ComponentSenseAbstractor() {
-	//		hasSystem = true;
-	//	};
+		ComponentSenseAbstractorDebugger() {
+			hasSystem = true;
+		};
 
-	//	std::unique_ptr<Duplicatable> duplicate() override {
-	//		return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractor());
-	//	};
-	//};
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractorDebugger());
+		};
+	};
 }
 
 #endif
