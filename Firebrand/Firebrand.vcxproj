@@ -151,6 +151,7 @@
     <ClCompile Include="Include\Common\TextureGrid.cpp" />
     <ClCompile Include="Include\Debugging\AStarPathDrawer.cpp" />
     <ClCompile Include="Include\Debugging\ObjectGridRenderer.cpp" />
+    <ClCompile Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.cpp" />
     <ClCompile Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.cpp" />
     <ClCompile Include="Include\Game\Drawing\DrawOrderHandler.cpp" />
     <ClCompile Include="Include\Game\GameData.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="Include\Common\TextureGrid.hpp" />
     <ClInclude Include="Include\Debugging\AStarPathDrawer.hpp" />
     <ClInclude Include="Include\Debugging\ObjectGridRenderer.hpp" />
+    <ClInclude Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.hpp" />
     <ClInclude Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.hpp" />
     <ClInclude Include="Include\Game\Drawing\DrawOrderHandler.hpp" />
     <ClInclude Include="Include\Game\GameData.hpp" />

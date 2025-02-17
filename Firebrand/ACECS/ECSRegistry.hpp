@@ -84,6 +84,22 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventCollision());
 		};
 	};
+	struct EventSensesAbstracted final : public Event {
+
+		EventSensesAbstracted() {
+			clear();
+		};
+
+		DataCache abstractedSenses;
+
+		void clear() final {
+			abstractedSenses.dataClear();
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventSensesAbstracted());
+		};
+	};
 }
 namespace EntityComponents {
 	struct ComponentMoveByInput final : public Component {
@@ -694,10 +710,31 @@ namespace EntityComponents {
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentActorStateHolder());
 		};
-
-		//void save(std::ofstream& str) override;
-		//void load(std::ifstream& str) override;
 	};
+	struct ComponentSenseAbstractor final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentSenseAbstractor() {
+			hasSystem = true;
+		};
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractor());
+		};
+	};
+	//struct ComponentSenseAbstractor final : public Component {
+
+	//	void system(Entity& entity) final;
+
+	//	ComponentSenseAbstractor() {
+	//		hasSystem = true;
+	//	};
+
+	//	std::unique_ptr<Duplicatable> duplicate() override {
+	//		return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractor());
+	//	};
+	//};
 }
 
 #endif

@@ -7,8 +7,8 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100000;
-uint16_t MAX_EVENT_TYPES = 5;
-uint16_t MAX_COMPONENT_TYPES = 27;
+uint16_t MAX_EVENT_TYPES = 6;
+uint16_t MAX_COMPONENT_TYPES = 26;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -45,6 +45,7 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventRotate>>();
 	EventRegistry::typeRegister<EventIDs<EventObjectSeen>>();
 	EventRegistry::typeRegister<EventIDs<EventCollision>>();
+	EventRegistry::typeRegister<EventIDs<EventSensesAbstracted>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -99,9 +100,17 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentOcclusionRadius>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRadius>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectGridInhabiterRectangles>>();
+	// camera/view
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentViewFollow>>();
+	// senses
+	// vision
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
+	// hearing
 
 	// AI
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentActorStateHolder>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractor>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -110,10 +119,6 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentBatchSprite>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSprite>>();
 
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentViewFollow>>();
-
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
 
 }
 
@@ -168,6 +173,8 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
+			createComponentPairFromType<ComponentObjectVision>(),
+			createComponentPairFromType<ComponentObjectVisionDebug>(),
 		}
 	);
 #pragma region Wall Templates
@@ -653,6 +660,7 @@ void ComponentObjectVision::system(Entity& entity) {
 
 		float angle = rotationComponent->rotation;
 
+		objectVision.occlusionGrid = &GameLevelGrid::levelGet(entity.levelId)->occlusionGrid;
 		// set the objectVision's objectGrid to the entity's level's ObjectGrid
 		objectVision.objectGridSet(&GameLevelGrid::levelGet(entity.levelId)->objectGrid);
 
@@ -673,13 +681,14 @@ void ComponentObjectVisionDebug::system(Entity& entity) {
 	if (cooldownPrint.ready()) {
 
 		constexpr const char* objectTypesNames[] = {
-		   "Null",
-		   "Player",
-		   "SquadMember",
-		   "Door",
-		   "Skipper",
-		   "Wall",
-		   "SIZE",
+			"Null",
+			"Player",
+			"SquadMember",
+			"Door",
+			"Dresser",
+			"Table",
+			"Wall",
+			"SIZE",
 		};
 
 		std::string string;
@@ -905,6 +914,15 @@ void ComponentObserver::system(Entity& entity) {
 }
 void ComponentActorStateHolder::system(Entity& entity) {
 	// currently there aren't really any states to hold, since there are no movement states or an inventory, so this component does nothing for now.
+}
+void ComponentSenseAbstractor::system(Entity& entity) {
+	DataCache abstractedSenses;
+
+	if (entity.entityEventHas<EventObjectSeen>()) {
+		auto* eventObjectSeen = entity.entityEventGet<EventObjectSeen>();
+
+		eventObjectSeen->objectsSeen;
+	}
 }
 
 #pragma endregion Systems

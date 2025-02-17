@@ -68,9 +68,3 @@ bool ObjectVision::rayUpdate(sf::Vector2f rayPosition) {
 	}
 	return true;
 }
-
-
-
-
-
-
