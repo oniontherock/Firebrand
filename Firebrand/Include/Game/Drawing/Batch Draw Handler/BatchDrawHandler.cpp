@@ -14,8 +14,6 @@ std::pair<sf::Texture&, sf::VertexArray> BatchDrawHandler::batchedDrawPopProcess
 	std::vector<BatchDrawableTransform> batchedDraws = batchDrawMap[batchToProcess];
 
 	sf::VertexArray vertexArray(sf::PrimitiveType::Triangles, batchedDraws.size() * 6);
-	uint32_t vertexArraySize = 0;
-
 
 	if (!GraphicsStore::textureStore.objectExists(batchToProcess)) {
 		ConsoleHandler::consolePrintErr("Batch draw attempted with non-existant texture: " + batchToProcess);

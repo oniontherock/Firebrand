@@ -277,7 +277,7 @@ RoomRectVector WallGenerator::roomsGenerate(WallGrid2D& wallGrid, StructureTypeB
 		constexpr uint16_t contactCountRerollTicker = 1000;
 
 		sf::Vector2u roomSize;
-		uint16_t roomContactCount;
+		uint16_t roomContactCount = 0;
 		do {
 
 			if (breaker % contactCountRerollTicker) {

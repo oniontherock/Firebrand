@@ -116,7 +116,7 @@ void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGri
 
 sf::Vector2u DoorGenerator::exteriorDoorRightSideGet(RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize) {
 	std::vector<sf::Vector2u> possibleRightSideConnectionPoints;
-	uint16_t x = structureSize.x - 1;
+	uint16_t x = uint16_t(structureSize.x - 1);
 	for (uint16_t y = 0; y < structureSize.y; y++) {
 
 		if (roomTypeGrid.cellGet(x - 1, y).type == RoomType::Hallway) {
@@ -126,7 +126,7 @@ sf::Vector2u DoorGenerator::exteriorDoorRightSideGet(RoomTypeGrid& roomTypeGrid,
 
 	if (possibleRightSideConnectionPoints.size() <= 0) return sf::Vector2u(9999, 9999);
 
-	return possibleRightSideConnectionPoints[RNGu16::getUnder(possibleRightSideConnectionPoints.size())];
+	return possibleRightSideConnectionPoints[RNGu16::getUnder(uint16_t(possibleRightSideConnectionPoints.size()))];
 }
 
 void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D& doorGrid, const sf::Vector2u structureSize, const uint16_t desiredDoorCount) {
@@ -227,7 +227,7 @@ void DoorGenerator::exteriorDoorsGenerate(RoomTypeGrid& roomTypeGrid, DoorGrid2D
 }
 bool DoorGenerator::doorGenerationPossible(RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize) {
 	
-	uint16_t x = structureSize.x - 1;
+	uint16_t x = uint16_t(structureSize.x - 1);
 	for (uint16_t y = 0; y < structureSize.y; y++) {
 		
 		if (roomTypeGrid.cellGet(x - 1, y).type == RoomType::Hallway) {

@@ -1,5 +1,6 @@
 #include "TextureGrid.hpp"
 #include <set>
+#include <Auxiliary/ConsoleHandler.hpp>
 
 TextureGrid::TextureGrid(uint32_t gridSizeX, uint32_t gridSizeY, float cellSizeX, float cellSizeY) :
 	Grid<GridTextureUniquePtr>::Grid(gridSizeX, gridSizeY, cellSizeX, cellSizeY)
@@ -26,7 +27,9 @@ void TextureGrid::cellInitialize(CellCoordinate cellX, CellCoordinate cellY) {
 	
 	GridTextureUniquePtr& cell = cellGet(cellX, cellY);
 
-	cell->resize(sf::Vector2u(uint32_t(cellSize.x), uint32_t(cellSize.y)));
+	if (!cell->resize(sf::Vector2u(uint32_t(cellSize.x), uint32_t(cellSize.y)))) {
+		ConsoleHandler::consolePrintErr("Cell resizing failed in TextureGrid");
+	}
 
 	sf::Vector2f cellPosition = sf::Vector2f(float(cellX) * cellSize.x, float(cellY) * cellSize.y);
 

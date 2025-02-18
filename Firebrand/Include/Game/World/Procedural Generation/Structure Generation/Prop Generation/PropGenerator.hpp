@@ -11,7 +11,6 @@
 #include <set>
 
 namespace PropGenerator {
-	void roomPropsGenerate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect, const RoomType roomType);
 	// generates all the props in all the rooms
 	PropTypeGrid2D propsGenerate(const WallGrid2D& wallGrid, const DoorGenerator::DoorGrid2D& doorGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector);
 };

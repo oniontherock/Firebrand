@@ -48,8 +48,6 @@ void GameStatePlay::gameStateStart() {
 		level->pathsGenerate();
 		level->structuresGenerate();
 
-		const std::vector<PathPoint*>& path = level->pathGenerator.pathGet();
-
 		// create player and assign the level's playerId to the id of the newly created player
 		GameData::playerId = EntityManager::entityCreate(level->levelPosition, "Player");
 		Entity& player = EntityManager::entityGet(GameData::playerId);

@@ -15,7 +15,7 @@ struct StructureRect : sf::FloatRect {
 };
 
 namespace StructurePlacer {
-	std::vector<StructureRect> structureRectsGenerate(const PathGenerator& pathGenerator, GameLevel* level);
+	std::vector<StructureRect> structureRectsGenerate(GameLevel* level);
 };
 
 #endif

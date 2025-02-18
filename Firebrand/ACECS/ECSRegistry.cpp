@@ -168,7 +168,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
 			createComponentPairFromType<ComponentMoveByInput>(120.f),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
-			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, 50u),
+			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, uint16_t(50u)),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud }),
 			createComponentPairFromType<ComponentCollider>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
@@ -304,7 +304,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Door),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, 59),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Doors/Door Wooden", false, uint16_t(59u)),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-32, -2), sf::Vector2f(64, 4)) }),
 			createComponentPairFromType<ComponentCollidable>(),
@@ -326,7 +326,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Dresser),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Dresser", false, 50),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Dresser", false, uint16_t(50u)),
 			createComponentPairFromType<ComponentOcclusionRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
 			createComponentPairFromType<ComponentCollidable>(),
@@ -347,7 +347,7 @@ void EntityComponents::componentTemplatesInitialize() {
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Table),
-			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Table Wooden", false, 50),
+			createComponentPairFromType<ComponentSprite>("Art/Structures/Props/Table Wooden", false, uint16_t(50u)),
 			createComponentPairFromType<ComponentObjectGridInhabiterRectangles>(std::vector<sf::FloatRect>{ sf::FloatRect(sf::Vector2f(-16, -32), sf::Vector2f(32, 64)) }),
 			createComponentPairFromType<ComponentCollidable>(),
 			createComponentPairFromType<ComponentCollider>(),
@@ -904,7 +904,7 @@ void ComponentObserver::system(Entity& entity) {
 		GameLevelGrid::levelGet(entity.levelId)->entitiesObservers.push_back(entity.Id);
 	}
 }
-void ComponentActorStateHolder::system(Entity& entity) {
+void ComponentActorStateHolder::system(Entity&) {
 	// currently there aren't really any states to hold, since there are no movement states or an inventory, so this component does nothing for now.
 }
 void ComponentSenseAbstractor::system(Entity& entity) {

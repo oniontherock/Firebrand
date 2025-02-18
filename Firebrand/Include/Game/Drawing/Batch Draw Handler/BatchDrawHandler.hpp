@@ -12,7 +12,7 @@ struct SaveDirector;
 // transform used for batch drawing something, has a rotation and a position
 struct BatchDrawableTransform {
 	sf::Vector2f position;
-	float rotation;
+	float rotation = 0.f;
 	sf::Vector2f origin = sf::Vector2f(-INFINITY, -INFINITY);
 };
 
@@ -29,7 +29,7 @@ public:
 	static void batchDrawRequest(std::string textureName, BatchDrawableTransform batchDrawableTransform);
 	static void batchDrawRequest(std::string textureName, sf::Vector2f position, float rotation);
 
-	friend class SaveDirector;
+	friend struct SaveDirector;
 };
 
 

@@ -8,10 +8,6 @@
 #include <queue>
 #include <set>
 
-void PropGenerator::roomPropsGenerate(const WallGrid2D& wallGrid, const sf::Vector2u structureSize, RoomTypeGrid& roomTypeGrid, const RoomRect roomRect, const RoomType roomType) {
-    //areaFillWithType(wallGrid, structureSize, roomTypeGrid, sf::Vector2u(roomRect.getPosition() + (roomRect.getSize() / 2)), roomType);
-}
-
 PropTypeGrid2D PropGenerator::propsGenerate(const WallGrid2D& wallGrid, const DoorGenerator::DoorGrid2D& doorGrid, RoomTypeGrid& roomTypeGrid, const sf::Vector2u structureSize, const RoomRectVector roomRectsVector) {
     
     PropTypeGrid2D propTypeGrid = PropTypeGrid2D(structureSize.x, PropTypeGrid1D(structureSize.y, PropCell("Null", 0, sf::Vector2f(0, 0))));
@@ -69,7 +65,7 @@ PropTypeGrid2D PropGenerator::propsGenerate(const WallGrid2D& wallGrid, const Do
                 continue;
             }
 
-            sf::Vector2u cell = allowedPoints[uint16_t(RNGu16::getUnder(allowedPoints.size()))];
+            sf::Vector2u cell = allowedPoints[RNGu16::getUnder(uint16_t(allowedPoints.size()))];
 
             // states of the walls in the 4 cardinal directions, ordered starting from the right going counter-clockwise
             std::bitset<4> wallStates;

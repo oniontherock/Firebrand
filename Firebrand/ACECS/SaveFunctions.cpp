@@ -73,8 +73,8 @@ void SaveDirector::gameDataLoad() {
 		SaveHandler::objectLoadIgnoreErrors(size);
 		pair.second.resize(size);
 
-		for (uint16_t i = 0; i < size; i++) {
-			SaveHandler::objectLoadIgnoreErrors(pair.second[i]);
+		for (uint16_t j = 0; j < size; j++) {
+			SaveHandler::objectLoadIgnoreErrors(pair.second[j]);
 		}
 
 		BatchDrawHandler::batchDrawMap.insert(pair);

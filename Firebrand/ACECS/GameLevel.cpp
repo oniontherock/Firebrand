@@ -84,7 +84,7 @@ const std::vector<std::set<EntityId>>& GameLevel::entitiesDrawableDynamicGet() {
 
 void GameLevel::entitiesObservedUpdate() {
 
-	if (!observersUpdateCooldown.updateAutoReset(TimeHandler::deltaRealGet())) return;
+	if (!observersUpdateCooldown.updateAutoReset(float(TimeHandler::deltaRealGet()))) return;
 
 	entitiesObserved.clear();
 
@@ -99,15 +99,17 @@ void GameLevel::entitiesObservedUpdate() {
 		const float observerCurDist = observerCur.entityComponentGet<EntityComponents::ComponentObserver>()->observationDistance;
 		const float observerCurDistSqrd = observerCurDist * observerCurDist;
 
-		for (int32_t i = entitiesObservation.size() - 1; i >= 0; i--) {
+		for (int32_t j = int32_t(entitiesObservation.size()) - 1; j >= 0; j--) {
 
-			Entity& observationCur = EntityManager::entityGet(entitiesObservation[i]);
+			Entity& observationCur = EntityManager::entityGet(entitiesObservation[j]);
+
+			if (!observationCur.entityComponentHas<EntityComponents::ComponentPosition>()) continue;
 
 			sf::Vector2f& observationCurPosition = observationCur.entityComponentGet<EntityComponents::ComponentPosition>()->position;
 
 			if (Vector2fMath::distSqrd(observerCurPosition, observationCurPosition) <= observerCurDistSqrd) {
-				entitiesObserved.push_back(entitiesObservation[i]);
-				entitiesObservationToCheck.erase(entitiesObservationToCheck.begin() + i);
+				entitiesObserved.push_back(entitiesObservation[j]);
+				entitiesObservationToCheck.erase(entitiesObservationToCheck.begin() + j);
 			}
 		}
 	}
@@ -198,9 +200,7 @@ void GameLevel::pathsGenerate() {
 void GameLevel::structuresGenerate() {
 	ConsoleHandler::consolePrintLoadingGame("Structure Generation Started");
 	
-	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(pathGenerator, this);
-
-	float avgTime = 0.f;
+	std::vector<StructureRect> structureRects = StructurePlacer::structureRectsGenerate(this);
 
 	for (StructureRect& rectCur : structureRects) {
 

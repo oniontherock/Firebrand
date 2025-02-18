@@ -3,11 +3,11 @@
 #include "../ACECS/RNGPoolIdRegistry.hpp"
 #include "../Structure Generation/Grid/StructureGridTypes.hpp"
 
-std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGenerator& pathGenerator, GameLevel* level) {
+std::vector<StructureRect> StructurePlacer::structureRectsGenerate(GameLevel* level) {
 	
 	std::vector<StructureRect> structureRects;
 
-	StructurePlacementGrid structurePlacementGrid(level->levelSize.x / structureGridCellSize, level->levelSize.y / structureGridCellSize, structureGridCellSize, structureGridCellSize);
+	StructurePlacementGrid structurePlacementGrid(uint32_t(level->levelSize.x / structureGridCellSize), uint32_t(level->levelSize.y / structureGridCellSize), structureGridCellSize, structureGridCellSize);
 
 	PathAxisGrid& pathAxisGrid = level->pathAxisGrid;
 
@@ -33,10 +33,10 @@ std::vector<StructureRect> StructurePlacer::structureRectsGenerate(const PathGen
 			rect.rotation = atan2(cellAxis.y, cellAxis.x);
 
 			if (!(
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x), uint32_t(rect.position.y)) &&
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x + rect.size.x), uint32_t(rect.position.y)) &&
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x + rect.size.x), uint32_t(rect.position.y + rect.size.y)) &&
-				pathAxisGrid.worldPosIsInGridFull(uint32_t(rect.position.x), uint32_t(rect.position.y + rect.size.y))
+				pathAxisGrid.worldPosIsInGridFull(rect.position.x, rect.position.y) &&
+				pathAxisGrid.worldPosIsInGridFull(rect.position.x + rect.size.x, rect.position.y) &&
+				pathAxisGrid.worldPosIsInGridFull(rect.position.x + rect.size.x, rect.position.y + rect.size.y) &&
+				pathAxisGrid.worldPosIsInGridFull(rect.position.x, rect.position.y + rect.size.y)
 				)) {
 				continue;
 			}

@@ -52,6 +52,8 @@ void ObjectGridRenderer::gridRender(ObjectGrid& objectGrid, PanelRect viewRect) 
 
 	image.createMaskFromColor(sf::Color::Black);
 
-	texture.loadFromImage(image);
+	if (texture.loadFromImage(image)) {
+		ConsoleHandler::consolePrintErr("Image loading failed in ObjectGridRenderer");
+	}
 }
 

@@ -51,8 +51,6 @@ Structure StructureGenerator::structureGenerate(StructureTypeBase* structureType
 	for (uint16_t x = 0; x < structureSize.x; x++) {
 		for (uint16_t y = 0; y < structureSize.y; y++) {
 
-			const RoomType roomType = roomTypeGrid.cellGet(x, y).type;
-
 			StructureCell cell = StructureCell("Null", 0.f);
 
 #pragma region Get Wall States

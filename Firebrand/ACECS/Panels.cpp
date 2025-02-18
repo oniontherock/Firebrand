@@ -85,7 +85,7 @@ void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 
 	constexpr float cullDist = 1000.f;
 
-	if (cullCooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
+	if (cullCooldown.updateAutoReset(float(TimeHandler::deltaRealGet()))) {
 
 		idsToDraw.clear();
 		
@@ -248,7 +248,7 @@ void PanelDynamicView::charactersDraw(GameLevel* levelActive) {
 
 	constexpr float cullDist = 300.f;
 
-	if (cullCooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
+	if (cullCooldown.updateAutoReset(float(TimeHandler::deltaRealGet()))) {
 
 		idsToDraw.clear();
 
@@ -341,14 +341,14 @@ void PanelHud::panelUpdate() {
 
 						sf::ConvexShape convexShape;
 						convexShape.setPointCount(polygon.vertices.size());
-						for (uint16_t i = 0; i < polygon.vertices.size(); i++) {
-							convexShape.setPoint(i, polygon.vertices[i]);
+						for (uint16_t j = 0; j < polygon.vertices.size(); j++) {
+							convexShape.setPoint(j, polygon.vertices[j]);
 						}
 						convexShape.setFillColor(sf::Color(255, 0, 0, 127));
 
 						objectDraw(convexShape);
 					}
-					catch (const std::bad_cast& e) {
+					catch (const std::bad_cast&) {
 						continue;
 					}
 
@@ -368,8 +368,8 @@ void PanelHud::panelUpdate() {
 
 						sf::ConvexShape convexShape;
 						convexShape.setPointCount(polygon.vertices.size());
-						for (uint16_t i = 0; i < polygon.vertices.size(); i++) {
-							convexShape.setPoint(i, polygon.vertices[i]);
+						for (uint16_t j = 0; j < polygon.vertices.size(); j++) {
+							convexShape.setPoint(j, polygon.vertices[j]);
 						}
 						convexShape.setFillColor(sf::Color(255, 0, 0, 127));
 

@@ -22,7 +22,7 @@ sf::Vector2f PathAxisGenerator::pointGetAxisToPathPointClosest(std::vector<sf::V
 
 PathAxisGrid PathAxisGenerator::pathAxisGridGenerate(std::vector<sf::Vector2f> pathPoints, GameLevel* level) {
 
-	PathAxisGrid pathDistanceGrid(level->levelSize.x / structureGridCellSize, level->levelSize.y / structureGridCellSize, structureGridCellSize, structureGridCellSize);
+	PathAxisGrid pathDistanceGrid(uint32_t(level->levelSize.x / structureGridCellSize), uint32_t(level->levelSize.y / structureGridCellSize), structureGridCellSize, structureGridCellSize);
 
 	for (uint16_t x = 0; x < pathDistanceGrid.gridGetSizeX(); x++) {
 		for (uint16_t y = 0; y < pathDistanceGrid.gridGetSizeY(); y++) {
