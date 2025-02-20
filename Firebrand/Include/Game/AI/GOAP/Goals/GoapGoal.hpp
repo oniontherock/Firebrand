@@ -16,8 +16,10 @@ namespace Goap {
 		GoalInsistence insistence = 0.5f;
 
 		void preconditionAdd(Precondition precondition);
-		void preconditionAdd(std::string preconditionName, bool preconditionValue);
+		void preconditionAdd(WorldState state, bool preconditionValue);
 		void insistenceSet(GoalInsistence insistenceNew);
+
+
 	};
 }
 

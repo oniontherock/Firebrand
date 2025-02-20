@@ -5,11 +5,22 @@
 #include <map>
 
 namespace Goap {
-	typedef std::pair<std::string, bool> Precondition;
-	typedef std::map<std::string, bool> PreconditionMap;
+	enum class WorldState {
+		IsThreatNear,
+		IsHealthLow,
+		HasWeapon,
+		IsHungry,
+		HasFood,
+		IsAllyNear,
+		IsLeaderNear,
+		IsInBuilding,
+	};
 
-	typedef std::pair<std::string, bool> Effect;
-	typedef std::map<std::string, bool> EffectMap;
+	typedef std::pair<WorldState, bool> Precondition;
+	typedef std::map<WorldState, bool> PreconditionMap;
+
+	typedef std::pair<WorldState, bool> Effect;
+	typedef std::map<WorldState, bool> EffectMap;
 }
 
 

@@ -152,6 +152,7 @@
     <ClCompile Include="Include\Debugging\AStarPathDrawer.cpp" />
     <ClCompile Include="Include\Debugging\ObjectGridRenderer.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Actions\GoapAction.cpp" />
+    <ClCompile Include="Include\Game\AI\GOAP\Actions\GoapActionRegistry.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoal.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="Include\Debugging\AStarPathDrawer.hpp" />
     <ClInclude Include="Include\Debugging\ObjectGridRenderer.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Actions\GoapAction.hpp" />
+    <ClInclude Include="Include\Game\AI\GOAP\Actions\GoapActionRegistry.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Actors\GoapActor.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoal.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.hpp" />

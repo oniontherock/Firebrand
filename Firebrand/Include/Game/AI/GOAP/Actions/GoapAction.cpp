@@ -3,15 +3,15 @@
 void Goap::Action::preconditionAdd(Precondition precondition) {
 	preconditions.insert(precondition);
 }
-void Goap::Action::preconditionAdd(std::string preconditionName, bool preconditionValue) {
-	preconditionAdd(Precondition(preconditionName, preconditionValue));
+void Goap::Action::preconditionAdd(WorldState state, bool preconditionValue) {
+	preconditionAdd(Precondition(state, preconditionValue));
 }
 
 void Goap::Action::effectAdd(Effect effect) {
 	effects.insert(effect);
 }
-void Goap::Action::effectAdd(std::string effectName, bool effectValue) {
-	effectAdd(effectName, effectValue);
+void Goap::Action::effectAdd(WorldState state, bool effectValue) {
+	effectAdd(Effect(state, effectValue));
 }
 
 void Goap::Action::costSet(ActionCost costNew) {
