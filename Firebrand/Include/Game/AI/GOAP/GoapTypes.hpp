@@ -3,25 +3,22 @@
 
 #include <string>
 #include <map>
+#include "Actors/GoapActor.hpp"
+#include "Blackboard/GoapBlackboard.hpp"
+#include <functional>
 
 namespace Goap {
-	enum class WorldState {
-		IsThreatNear,
-		IsHealthLow,
-		HasWeapon,
-		IsHungry,
-		HasFood,
-		IsAllyNear,
-		IsLeaderNear,
-		IsInBuilding,
-	};
 
-	typedef std::pair<WorldState, bool> Precondition;
-	typedef std::map<WorldState, bool> PreconditionMap;
+	typedef std::string BlackboardKey;
+	typedef std::any BlackboardValue;
 
-	typedef std::pair<WorldState, bool> Effect;
-	typedef std::map<WorldState, bool> EffectMap;
+	typedef std::function<bool(BlackboardValue)> Condition;
+
+	typedef std::pair<BlackboardKey, Condition> Precondition;
+	typedef std::map<BlackboardKey, Condition> PreconditionMap;
+
+	typedef std::pair<BlackboardKey, BlackboardValue> Effect;
+	typedef std::map<BlackboardKey, BlackboardValue> EffectMap;
 }
-
 
 #endif

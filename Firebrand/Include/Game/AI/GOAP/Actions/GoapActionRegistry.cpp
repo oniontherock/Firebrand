@@ -10,26 +10,24 @@ Goap::Action& Goap::actionAdd(ActionName actionName) {
 
 void Goap::actionsRegister() {
 
-	using enum WorldState;
-
 	std::string actionName;
 
 	// we put the action definitions in their own scope so we can have them keep the same name for convience sake
 	actionName = "Flee";
 	{
 		Action& action = actionAdd(actionName);
-		action.effectAdd(IsThreatNear, false);
+		action.effectAdd("ThreatDistance", BlackboardValue(99999999999999.f)); // the action of flee promises to maximum the distance to a threat
 
 		action.executionFunctionSet([](Actor&) {
 			});
 		action.evaluationFunctionSet([](Actor&) {
-			return ActionCost(25.f);
+			return ActionCost(1.f);
 			});
 	};
 	actionName = "EnterBuilding";
 	{
 		Action& action = actionAdd(actionName);
-		action.effectAdd(IsInBuilding, true);
+		action.effectAdd("HasShelter", BlackboardValue(true));
 
 		action.executionFunctionSet([](Actor&) {
 			});

@@ -238,6 +238,7 @@
     <ClInclude Include="Include\Game\AI\GOAP\Actions\GoapAction.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Actions\GoapActionRegistry.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Actors\GoapActor.hpp" />
+    <ClInclude Include="Include\Game\AI\GOAP\Blackboard\GoapBlackboard.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoal.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\GoapTypes.hpp" />

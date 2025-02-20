@@ -24,12 +24,12 @@ namespace Goap {
 		// adds a new precondition required for this action, so for example, a "ShootGun" action has the precondition of "HasGun" and "HasBullets"
 		void preconditionAdd(Precondition precondition);
 		// adds a new precondition required for this action, so for example, a "ShootGun" action has the precondition of "HasGun" and "HasBullets"
-		void preconditionAdd(WorldState state, bool preconditionValue);
+		void preconditionAdd(BlackboardKey key, Condition condition);
 
 		// adds a new effect that this action causes, so for example, an "EatFood" action has the effect of "IsHungry" being false
 		void effectAdd(Effect effect);
 		// adds a new effect that this action causes, so for example, an "EatFood" action has the effect of "IsHungry" being false
-		void effectAdd(WorldState state, bool effectValue);
+		void effectAdd(BlackboardKey key, BlackboardValue value);
 		
 		// sets the cost of this action, used when creating plans to determine the best action for the given scenario,
 		// later the cost system will be more complicated and dynamic but for now it is just a simple value
