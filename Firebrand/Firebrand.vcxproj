@@ -151,6 +151,9 @@
     <ClCompile Include="Include\Common\TextureGrid.cpp" />
     <ClCompile Include="Include\Debugging\AStarPathDrawer.cpp" />
     <ClCompile Include="Include\Debugging\ObjectGridRenderer.cpp" />
+    <ClCompile Include="Include\Game\AI\GOAP\Actions\GoapAction.cpp" />
+    <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoal.cpp" />
+    <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.cpp" />
     <ClCompile Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.cpp" />
     <ClCompile Include="Include\Game\Drawing\DrawOrderHandler.cpp" />
@@ -231,6 +234,11 @@
     <ClInclude Include="Include\Common\TextureGrid.hpp" />
     <ClInclude Include="Include\Debugging\AStarPathDrawer.hpp" />
     <ClInclude Include="Include\Debugging\ObjectGridRenderer.hpp" />
+    <ClInclude Include="Include\Game\AI\GOAP\Actions\GoapAction.hpp" />
+    <ClInclude Include="Include\Game\AI\GOAP\Actors\GoapActor.hpp" />
+    <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoal.hpp" />
+    <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.hpp" />
+    <ClInclude Include="Include\Game\AI\GOAP\GoapTypes.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.hpp" />
     <ClInclude Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.hpp" />
     <ClInclude Include="Include\Game\Drawing\DrawOrderHandler.hpp" />

@@ -177,9 +177,6 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
-			createComponentPairFromType<ComponentObjectVision>(),
-			createComponentPairFromType<ComponentSenseAbstractor>(),
-			createComponentPairFromType<ComponentSenseAbstractorDebugger>(),
 		}
 	);
 #pragma region Wall Templates
