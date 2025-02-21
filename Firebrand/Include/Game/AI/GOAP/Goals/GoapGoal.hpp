@@ -1,15 +1,17 @@
 #ifndef __GOAP_GOAL_H__
 #define __GOAP_GOAL_H__
 
+#include "../Blackboard/GoapBlackboard.hpp"
 #include "../GoapTypes.hpp"
 #include <string>
+#include <functional>
 
 namespace Goap {
 
 	typedef std::string GoalName;
 	typedef float GoalInsistence;
 
-	typedef std::function<bool(const Blackboard& blackboard)> GoalValidationFunction;
+	typedef std::function<bool(const Blackboard&)> GoalValidationFunction;
 
 	struct Goal {
 

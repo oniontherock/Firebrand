@@ -7,11 +7,13 @@
 
 
 namespace Goap {
-	extern std::map<ActionName, Action> actions;
+	namespace ActionRegistry {
+		extern std::map<ActionName, Action> actions;
 
-	Action& actionAdd(ActionName actionName);
+		Action& actionAdd(ActionName actionName);
 
-	void actionsRegister();
+		void actionsRegister();
+	}
 }
 
 #endif

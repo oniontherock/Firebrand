@@ -1,15 +1,15 @@
 #include "GoapGoalRegistry.hpp"
 
 
-extern std::map<Goap::GoalName, Goap::Goal> Goap::goals{};
+extern std::map<Goap::GoalName, Goap::Goal> Goap::GoalRegistry::goals{};
 
-Goap::Goal& Goap::goalAdd(GoalName goalName) {
+Goap::Goal& Goap::GoalRegistry::goalAdd(GoalName goalName) {
 	goals.insert({ goalName, Goal() });
 
 	return goals[goalName];
 }
 
-void Goap::goalsRegister() {
+void Goap::GoalRegistry::goalsRegister() {
 
 	// we put the goal definitions in their own scope so we can have them keep the same name for convience sake
 	{

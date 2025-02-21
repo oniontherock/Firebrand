@@ -1,5 +1,7 @@
 #include "GoapAction.hpp"
 
+
+
 void Goap::Action::preconditionAdd(Precondition precondition) {
 	preconditions.insert(precondition);
 }

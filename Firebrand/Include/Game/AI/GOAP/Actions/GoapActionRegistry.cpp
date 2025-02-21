@@ -1,14 +1,14 @@
 #include "GoapActionRegistry.hpp"
 
-extern std::map<Goap::ActionName, Goap::Action> Goap::actions{};
+extern std::map<Goap::ActionName, Goap::Action> Goap::ActionRegistry::actions{};
 
-Goap::Action& Goap::actionAdd(ActionName actionName) {
+Goap::Action& Goap::ActionRegistry::actionAdd(ActionName actionName) {
 	actions.insert({ actionName, Action() });
 
 	return actions[actionName];
 }
 
-void Goap::actionsRegister() {
+void Goap::ActionRegistry::actionsRegister() {
 
 	std::string actionName;
 

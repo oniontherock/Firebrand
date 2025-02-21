@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include "Actors/GoapActor.hpp"
 #include "Blackboard/GoapBlackboard.hpp"
 #include <functional>
 

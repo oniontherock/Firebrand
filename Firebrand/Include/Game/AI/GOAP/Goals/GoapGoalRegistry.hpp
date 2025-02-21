@@ -7,11 +7,13 @@
 
 
 namespace Goap {
-	extern std::map<GoalName, Goal> goals;
+	namespace GoalRegistry {
+		extern std::map<GoalName, Goal> goals;
 
-	Goal& goalAdd(GoalName goalName);
+		Goal& goalAdd(GoalName goalName);
 
-	void goalsRegister();
+		void goalsRegister();
+	}
 }
 
 #endif

@@ -1,13 +1,14 @@
 #ifndef __GOAP_ACTION_H__
 #define __GOAP_ACTION_H__
 
-#include "../Actors/GoapActor.hpp"
 #include "../GoapTypes.hpp"
 #include <algorithm>
 #include <functional>
 #include <string>
 
 namespace Goap {
+
+	struct Actor;
 
 	typedef std::string ActionName;
 	typedef float ActionCost;
