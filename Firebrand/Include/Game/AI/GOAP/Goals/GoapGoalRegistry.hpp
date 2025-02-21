@@ -11,6 +11,7 @@ namespace Goap {
 		extern std::map<GoalName, Goal> goals;
 
 		Goal& goalAdd(GoalName goalName);
+		Goal goalGet(GoalName goalName);
 
 		void goalsRegister();
 	}

@@ -11,6 +11,7 @@ namespace Goap {
 		extern std::map<ActionName, Action> actions;
 
 		Action& actionAdd(ActionName actionName);
+		Action actionGet(ActionName actionName);
 
 		void actionsRegister();
 	}

@@ -17,6 +17,12 @@ namespace Goap {
 
 	struct Action {
 
+		Action();
+		Action(ActionName _name);
+
+		// primarily use for debugging so when can tell what actions are being used
+		ActionName name;
+		
 		PreconditionMap preconditions;
 		EffectMap effects;
 
@@ -41,6 +47,7 @@ namespace Goap {
 		void evaluationFunctionSet(ActionEvaluationFunction function);
 
 		void actionUpdate(Actor& actor);
+	
 	private:
 
 		ActionExecutionFunction executionFunction;

@@ -1,6 +1,11 @@
 #include "GoapAction.hpp"
 
-
+Goap::Action::Action() {
+	name = "NULL NAME";
+}
+Goap::Action::Action(ActionName _name) {
+	name = _name;
+}
 
 void Goap::Action::preconditionAdd(Precondition precondition) {
 	preconditions.insert(precondition);
@@ -28,7 +33,6 @@ void Goap::Action::evaluationFunctionSet(ActionEvaluationFunction function) {
 }
 
 void Goap::Action::actionUpdate(Actor& actor) {
-	execute(actor);
 	evaluate(actor);
 }
 void Goap::Action::execute(Actor& actor) {

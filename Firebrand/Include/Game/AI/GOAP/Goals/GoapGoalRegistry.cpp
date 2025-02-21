@@ -23,12 +23,16 @@ void Goap::GoalRegistry::goalsRegister() {
 			return std::any_cast<float>(value) > 75.f;
 			}
 		);
-		goal.preconditionAdd("HasWeapon", [](BlackboardValue value) {
-			return std::any_cast<bool>(value);
-			}
-		);
+		//goal.preconditionAdd("HasWeapon", [](BlackboardValue value) {
+		//	return std::any_cast<bool>(value);
+		//	}
+		//);
 		goal.validationFunctionSet([](const Blackboard& blackboard) {
 			return true;
 			});
 	};
 }
+Goap::Goal Goap::GoalRegistry::goalGet(GoalName goalName) {
+	return goals[goalName];
+}
+

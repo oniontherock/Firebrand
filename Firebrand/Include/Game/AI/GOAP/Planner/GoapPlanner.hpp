@@ -16,12 +16,11 @@ namespace Goap {
 			float cost = 99999999999.f;
 		};
 
-		GoalName actorGoalGet(Actor& actor);
+		Goal actorGoalGet(Actor& actor);
 		Plan actorPlanGet(Actor& actor, Goal& goal);
 
-		Plan planGetFromPrecondition(Precondition precondition, Blackboard blackboard);
 		// returns a vector of actions that satisfy the precondition
-		Plan actionsGetFromPrecondition(Precondition precondition, Blackboard blackboard);
+		Plan actionsGetFromPrecondition(Precondition precondition, Actor& actor, Blackboard blackboard);
 	}
 }
 

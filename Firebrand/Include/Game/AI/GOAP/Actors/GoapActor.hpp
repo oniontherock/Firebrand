@@ -8,13 +8,15 @@
 namespace Goap {
 	struct Actor {
 
-		void goalAdd(GoalName goalName);
-		void actionAdd(ActionName actionName);
+		void goalAdd(Goal goal);
+		void actionAdd(Action action);
 
-		std::vector<ActionName> actions;
-		std::vector<GoalName> goals;
+		std::vector<Action> actions;
+		std::vector<Goal> goals;
 
 		Blackboard blackboard;
+
+		void actionsUpdate();
 	};
 }
 
