@@ -23,30 +23,42 @@ int main() {
 
 	Actor actor;
 
-	actor.goalAdd(GoalRegistry::goalGet("KeepSafe"));
+	actor.goalAdd("KeepSafe");
 
-	actor.actionAdd(ActionRegistry::actionGet("Flee"));
-	actor.actionAdd(ActionRegistry::actionGet("UseMedkit"));
-	actor.actionAdd(ActionRegistry::actionGet("TakeMedkit"));
-	actor.actionAdd(ActionRegistry::actionGet("GoToMedkit"));
+	actor.actionAdd("Flee");
+	actor.actionAdd("UseMedkit");
+	actor.actionAdd("TakeMedkit");
+	actor.actionAdd("GoToMedkit");
 
 	actor.blackboard.dataSet("MedkitDistance", 512.f);
 	actor.blackboard.dataSet("HasMedkit", false);
 	actor.blackboard.dataSet("Health", 25.f);
 	actor.blackboard.dataSet("ThreatDistance", 512.f);
 
-	actor.actionsUpdate();
+	TimeHandler::deltaCompute();
+	
+	Cooldown cooldown(0.1f);
 
-	Planner::Plan plan = Planner::actorPlanGet(actor, GoalRegistry::goals["KeepSafe"]);
+	while (true) {
 
-	ConsoleHandler::consolePrintDebug(std::to_string(plan.cost));
+		TimeHandler::deltaCompute();
 
-	for (const Action& actionCur : plan) {
-		ConsoleHandler::consolePrintDebug(actionCur.name);
+		if (!cooldown.updateAutoReset(TimeHandler::deltaRealGet())) continue;
+
+		Planner::Plan plan = Planner::actorPlanGet(actor, GoalRegistry::goals["KeepSafe"]);
+
+		ConsoleHandler::consolePrintDebug(std::to_string(plan.cost));
+
+		if (plan.size() <= 0) break;
+
+		plan[0].execute(actor);
+
+		for (Action& actionCur : plan) {
+			ConsoleHandler::consolePrintDebug(actionCur.name);
+		}
 	}
 
 
-	//TimeHandler::deltaCompute();
 
 	//srand(TimeHandler::timeRealGet());
 

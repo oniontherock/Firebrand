@@ -32,9 +32,6 @@ void Goap::Action::evaluationFunctionSet(ActionEvaluationFunction function) {
 	evaluationFunction = function;
 }
 
-void Goap::Action::actionUpdate(Actor& actor) {
-	evaluate(actor);
-}
 void Goap::Action::execute(Actor& actor) {
 	std::invoke(executionFunction, actor);
 }

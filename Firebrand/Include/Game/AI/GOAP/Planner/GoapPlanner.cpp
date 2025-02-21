@@ -31,6 +31,8 @@ Goap::Planner::Plan Goap::Planner::actionsGetFromPrecondition(Precondition preco
 	// iterate over all possible actions
 	for (Action& actionCur : actor.actions) {
 		
+		actionCur.evaluate(actor);
+
 		bool actionSatisfies = false;
 
 		// iterate over the effects of each action

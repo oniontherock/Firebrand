@@ -46,15 +46,12 @@ namespace Goap {
 		void executionFunctionSet(ActionExecutionFunction function);
 		void evaluationFunctionSet(ActionEvaluationFunction function);
 
-		void actionUpdate(Actor& actor);
-	
-	private:
-
-		ActionExecutionFunction executionFunction;
-		ActionEvaluationFunction evaluationFunction;
-
 		void evaluate(Actor& actor);
 		void execute(Actor& actor);
+
+	private:
+		ActionExecutionFunction executionFunction;
+		ActionEvaluationFunction evaluationFunction;
 	};
 }
 

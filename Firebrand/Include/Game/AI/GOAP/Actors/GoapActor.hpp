@@ -9,14 +9,16 @@ namespace Goap {
 	struct Actor {
 
 		void goalAdd(Goal goal);
+		void goalAdd(GoalName goalName);
+
 		void actionAdd(Action action);
+		void actionAdd(ActionName actionName);
+
 
 		std::vector<Action> actions;
 		std::vector<Goal> goals;
 
 		Blackboard blackboard;
-
-		void actionsUpdate();
 	};
 }
 
