@@ -27,7 +27,7 @@ void Goap::GoalRegistry::goalsRegister() {
 		//	return std::any_cast<bool>(value);
 		//	}
 		//);
-		goal.validationFunctionSet([](const Blackboard& blackboard) {
+		goal.validationFunctionSet([](const Blackboard&) {
 			return true;
 			});
 	};

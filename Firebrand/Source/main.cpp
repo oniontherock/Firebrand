@@ -43,7 +43,7 @@ int main() {
 
 		TimeHandler::deltaCompute();
 
-		if (!cooldown.updateAutoReset(TimeHandler::deltaRealGet())) continue;
+		if (!cooldown.updateAutoReset(float(TimeHandler::deltaRealGet()))) continue;
 
 		Planner::Plan plan = Planner::actorPlanGet(actor, GoalRegistry::goals["KeepSafe"]);
 

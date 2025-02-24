@@ -159,6 +159,7 @@
     <ClCompile Include="Include\Game\AI\GOAP\Planner\GoapPlanner.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.cpp" />
     <ClCompile Include="Include\Game\AI\Teams\TeamHolder.cpp" />
+    <ClCompile Include="Include\Game\AI\Teams\TeamRelationHolder.cpp" />
     <ClCompile Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.cpp" />
     <ClCompile Include="Include\Game\Drawing\DrawOrderHandler.cpp" />
     <ClCompile Include="Include\Game\GameData.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="Include\Game\AI\GOAP\Planner\GoapPlanner.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.hpp" />
     <ClInclude Include="Include\Game\AI\Teams\TeamHolder.hpp" />
+    <ClInclude Include="Include\Game\AI\Teams\TeamRelationHolder.hpp" />
     <ClInclude Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.hpp" />
     <ClInclude Include="Include\Game\Drawing\DrawOrderHandler.hpp" />
     <ClInclude Include="Include\Game\GameData.hpp" />
