@@ -11,7 +11,7 @@ namespace Goap {
 
 		std::set<ObjectDataIndex> creatures;
 		std::set<ObjectDataIndex> threats;
-		ObjectDataIndex threatClosest;
+		ObjectDataIndex threatClosest = 0.f;
 		std::set<ObjectDataIndex> allies;
 		std::set<ObjectDataIndex> items;
 		std::set<ObjectDataIndex> obstacles;
