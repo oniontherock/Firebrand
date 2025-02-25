@@ -3,6 +3,7 @@
 
 #include "../ACECS/Panels.hpp"
 #include "../Include/Common/DataCache.hpp"
+#include "../Include/Game/AI/GOAP/Blackboard/GoapBlackboard.hpp"
 #include "../Include/Game/AI/Teams/TeamHolder.hpp"
 #include "../Include/Game/AI/Teams/TeamRegistry.hpp"
 #include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
@@ -88,20 +89,20 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventCollision());
 		};
 	};
-	struct EventSensesAbstracted final : public Event {
+	struct EventBlackboardUpdated final : public Event {
 
-		EventSensesAbstracted() {
+		EventBlackboardUpdated() {
 			clear();
 		};
 
-		DataCache abstractedSenses;
+		Goap::Blackboard blackboardNew;
 
 		void clear() final {
-			abstractedSenses.dataClear();
+			blackboardNew = Goap::Blackboard();
 		}
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new EventSensesAbstracted());
+			return std::unique_ptr<Duplicatable>(new EventBlackboardUpdated());
 		};
 	};
 	struct EventTeamSwitch final : public Event {
@@ -764,7 +765,7 @@ namespace EntityComponents {
 			hasSystem = true;
 		};
 
-		DataCache data;
+		DataCache blackboard;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentBlackboard());
@@ -792,6 +793,18 @@ namespace EntityComponents {
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentTeam(teamId));
 		};
-	};}
+	};
+	// component which shows that an entity is animate/alive, this is used for deciding what objects to consider allies, enemies, or neutral
+	struct ComponentIsAnimate final : public Component {
+
+		ComponentIsAnimate() {
+			hasSystem = false;
+		};
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentIsAnimate());
+		};
+	};
+}
 
 #endif

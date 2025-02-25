@@ -9,6 +9,12 @@
 
 namespace Teams {
 
+	enum class ThreatLevel {
+		Enemy,
+		Neutral,
+		Ally,
+	};
+
 	// should always be between -100 and +100
 	typedef float TeamRelationValue;
 

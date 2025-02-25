@@ -48,7 +48,7 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventRotate>>();
 	EventRegistry::typeRegister<EventIDs<EventObjectSeen>>();
 	EventRegistry::typeRegister<EventIDs<EventCollision>>();
-	EventRegistry::typeRegister<EventIDs<EventSensesAbstracted>>();
+	EventRegistry::typeRegister<EventIDs<EventBlackboardUpdated>>();
 	EventRegistry::typeRegister<EventIDs<EventTeamSwitch>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -116,6 +116,7 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentActorStateHolder>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentBlackboard>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentIsAnimate>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -127,8 +128,6 @@ void EntityComponents::componentIDsInitialize() {
 	// debug
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractorDebugger>>();
-
-
 }
 
 #pragma endregion Components
@@ -915,24 +914,17 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 	if (!hasSightUpdated && !hasHearingUpdated) return;
 
 	// if any sense has updated, created an event for the new about to be abstracted data
-	auto& abstractedSenses = entity.entityEventAddAndGet<EventSensesAbstracted>()->abstractedSenses;
-
-	DataCache abstractedGeneralData;
-	ObjectDataVector threatsVector;
-
+	auto& blackboardNew = entity.entityEventAddAndGet<EventBlackboardUpdated>()->blackboardNew;
 
 	// check if the sight has been updated
 	if (hasSightUpdated) {
 		// if it has been updated, abstract the sight data and add it to the abstractedSenses
 
-		DataCache abstractedSight;
 		auto* eventObjectSeen = entity.entityEventGet<EventObjectSeen>();
 
 		ObjectIdVector* objectIdVector = eventObjectSeen->objectsSeen;
 
 		for (uint16_t objTypeCur = 0; objTypeCur < objectIdVector->size(); objTypeCur++) {
-
-			ObjectDataVector objectDataVector;
 
 			for (uint16_t objCur = 0; objCur < objectIdVector->at(objTypeCur).size(); objCur++) {
 
@@ -940,31 +932,37 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 
 				auto abstractedObjectData = ObjectAbstractor::objectDataAbstract(objectId, ObjectType(objTypeCur));
 
-				objectDataVector.push_back(abstractedObjectData);
+				ObjectDataIndex objectInd = blackboardNew.objectAdd(abstractedObjectData);
 
 				if (abstractedObjectData.dataGet<bool>("IsAnimate")) {
-					if (ObjectAbstractor::objectThreatLevelAssess(entity.Id, objectId)) {
-						threatsVector.push_back(abstractedObjectData);
+
+					Teams::ThreatLevel threatLevel = ObjectAbstractor::objectThreatLevelAssess(entity.Id, objectId);
+				
+					blackboardNew.creatures.insert(objectInd);
+
+					switch (threatLevel) {
+					case Teams::ThreatLevel::Enemy:
+						blackboardNew.threats.insert(objectInd);
+						break;
+					case Teams::ThreatLevel::Neutral:
+						break;
+					case Teams::ThreatLevel::Ally:
+						blackboardNew.allies.insert(objectInd);
+						break;
 					}
 				}
 			}
-
-			abstractedSight.dataSet(objectTypeToString(ObjectType(objTypeCur)), objectDataVector);
 		}
-
-		abstractedSenses.dataSet("Sight", abstractedSight);
 	}
 	// check if the hearing has been updated
 	if (hasHearingUpdated) {
 		// not yet implemented, later put hearing stuff here
 	}
-
-	abstractedGeneralData.dataSet("Threats", threatsVector);
 }
 void ComponentSenseAbstractorDebugger::system(Entity& entity) {
-	if (!entity.entityEventHas<EventSensesAbstracted>()) return;
+	if (!entity.entityEventHas<EventBlackboardUpdated>()) return;
 
-	auto& abstractedSenses = entity.entityEventGet<EventSensesAbstracted>()->abstractedSenses;
+	auto& abstractedSenses = entity.entityEventGet<EventBlackboardUpdated>()->blackboardNew;
 
 	if (abstractedSenses.dataHas("Sight")) {
 		ConsoleHandler::consolePrintColor("Sight: {", 6);
@@ -993,13 +991,11 @@ void ComponentSenseAbstractorDebugger::system(Entity& entity) {
 	}
 }
 void ComponentBlackboard::system(Entity& entity) {
-	if (!entity.entityEventHas<EventSensesAbstracted>()) return;
+	if (!entity.entityEventHas<EventBlackboardUpdated>()) return;
 
-	auto& abstractedSenses = entity.entityEventGet<EventSensesAbstracted>()->abstractedSenses;
+	auto& blackboardNew = entity.entityEventGet<EventBlackboardUpdated>()->blackboardNew;
 
-	if (abstractedSenses.dataHas("Sight")) {
-		data.dataSet("Sight", abstractedSenses.dataGet<DataCache>("Sight"));
-	}
+	blackboard = blackboardNew;
 }
 void ComponentTeam::system(Entity& entity) {
 	if (entity.entityEventHas<EventInitialize>()) {

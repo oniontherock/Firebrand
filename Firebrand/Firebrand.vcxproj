@@ -154,6 +154,7 @@
     <ClCompile Include="Include\Game\AI\GOAP\Actions\GoapAction.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Actions\GoapActionRegistry.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Actors\GoapActor.cpp" />
+    <ClCompile Include="Include\Game\AI\GOAP\Blackboard\GoapBlackboard.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoal.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Planner\GoapPlanner.cpp" />
