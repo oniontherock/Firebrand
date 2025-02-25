@@ -2,6 +2,7 @@
 #include <iterator>
 #include <algorithm>
 #include <Auxiliary/ConsoleHandler.hpp>
+#include "TeamRegistry.hpp"
 
 std::set<Teams::TeamId> Teams::TeamHolder::availableTeamIds{};
 std::unordered_map<Teams::TeamId, Teams::TeamSet> Teams::TeamHolder::teamsUMap{};
@@ -11,6 +12,10 @@ void Teams::TeamHolder::initialize() {
 	for (TeamId i = 0; i < maxTeamCount; i++) {
 		availableTeamIds.insert(i);
 	}
+
+	teamCreateFromId(TeamId(TeamRegistry::Player));
+	teamCreateFromId(TeamId(TeamRegistry::Flesh));
+	teamCreateFromId(TeamId(TeamRegistry::Shepard));
 }
 
 void Teams::TeamHolder::teamCreateFromId(TeamId teamId) {
@@ -29,7 +34,7 @@ Teams::TeamId Teams::TeamHolder::teamCreate() {
 void Teams::TeamHolder::teamAddEntity(TeamId teamId, EntityId entityId) {
 	// if the teamId is in availableTeamIds then the team doesn't exist
 	if (availableTeamIds.contains(teamId)) {
-		ConsoleHandler::consolePrintErr("Attempted to add entity (Id=" + std::to_string(entityId) + ") to non-existant team: " + std::to_string(teamId));
+		teamCreateFromId(teamId);
 		return;
 	}
 	teamsUMap[teamId].insert(entityId);

@@ -1,3 +1,4 @@
+#include "../Include/Game/AI/Teams/TeamHolder.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Prop Types/PropTypeRegistry.hpp"
 #include "../Include/Game/World/Procedural Generation/Structure Generation/Room Types/RoomTypeRegistry.hpp"
 #include "ACECS.hpp"
@@ -190,6 +191,8 @@ void Engine::engineInitialize() {
 
 	RoomTypeRegistry::roomTypesRegister();
 	PropTypeRegistry::propTypesRegister();
+
+	Teams::TeamHolder::initialize();
 
 	GameLevelGrid::levelGridInitialize(1, 1, 1);
 	GameLevelGrid::levelAdd(new GameLevel(0, 0, 0), true);

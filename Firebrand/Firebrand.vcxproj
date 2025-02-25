@@ -249,6 +249,7 @@
     <ClInclude Include="Include\Game\AI\GOAP\Planner\GoapPlanner.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.hpp" />
     <ClInclude Include="Include\Game\AI\Teams\TeamHolder.hpp" />
+    <ClInclude Include="Include\Game\AI\Teams\TeamRegistry.hpp" />
     <ClInclude Include="Include\Game\AI\Teams\TeamRelationHolder.hpp" />
     <ClInclude Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.hpp" />
     <ClInclude Include="Include\Game\Drawing\DrawOrderHandler.hpp" />

@@ -14,6 +14,10 @@ void Teams::TeamRelationHolder::teamRelationSet(TeamId teamIdA, TeamId teamIdB, 
 	teamRelations[std::pair(teamIdA, teamIdB)] = teamRelationNew;
 }
 Teams::TeamRelationValue Teams::TeamRelationHolder::teamRelationGet(TeamId teamIdA, TeamId teamIdB) {
+	// if the team relationship doesn't exist, return 0
+	if (!teamRelations.contains(std::pair(teamIdA, teamIdB))) {
+		return 0.f;
+	}
 	return teamRelations[std::pair(teamIdA, teamIdB)];
 }
 void Teams::TeamRelationHolder::teamRelationIncrement(TeamId teamIdA, TeamId teamIdB, TeamRelationValue teamRelationOffset) {
