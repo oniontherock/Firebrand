@@ -3,6 +3,10 @@
 
 #include "../ACECS/Panels.hpp"
 #include "../Include/Common/DataCache.hpp"
+#include "../Include/Game/AI/Teams/TeamHolder.hpp"
+#include "../Include/Game/AI/Teams/TeamRegistry.hpp"
+#include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
+#include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
 #include "../Include/Game/RayCasting/Object Vision/ObjectVision.hpp"
 #include "../Include/Game/World/Physics/Collision/CollisionHandler.hpp"
 #include "../Include/Game/World/Physics/Collision/CollisionShape.hpp"
@@ -750,6 +754,28 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentBlackboard());
 		};
 	};
-}
+	struct ComponentTeam final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentTeam() {
+			hasSystem = true;
+		};
+		ComponentTeam(Teams::TeamId _teamId) :
+			ComponentTeam()
+		{
+			teamId = _teamId;
+		};
+		ComponentTeam(Teams::TeamType _teamType) :
+			ComponentTeam(Teams::TeamId(_teamType))
+		{
+		};
+
+		Teams::TeamId teamId = UINT32_MAX;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentTeam(teamId));
+		};
+	};}
 
 #endif

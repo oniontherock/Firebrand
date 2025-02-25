@@ -1,4 +1,7 @@
+#include "../Include/Game/AI/Sensory Abstraction/ObjectAbstractor.hpp"
 #include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
+#include "../Include/Game/World/Objects/ObjectRegistry.hpp"
+#include "../Include/Game/World/Physics/Collision/Collision Processor/CollisionProcessor.hpp"
 #include "ECSRegistry.hpp"
 #include <Auxiliary/Math.hpp>
 #include <Auxiliary/TimeHandler.hpp>
@@ -8,7 +11,7 @@
 
 uint32_t MAX_ENTITIES = 100000;
 uint16_t MAX_EVENT_TYPES = 6;
-uint16_t MAX_COMPONENT_TYPES = 30;
+uint16_t MAX_COMPONENT_TYPES = 31;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -74,6 +77,7 @@ void EntityComponents::componentIDsInitialize() {
 	using ComponentRegistry = TypeIDAllocator<Component>;
 
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObserver>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentTeam>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectTypeAssigner>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollidable>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollider>>();
@@ -177,6 +181,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
+			createComponentPairFromType<ComponentTeam>(Teams::TeamType::Player),
 		}
 	);
 #pragma region Wall Templates
@@ -364,10 +369,6 @@ using namespace EntityComponents;
 using namespace EntityEvents;
 
 // if you need to include a certain file for a system, include it here.
-#include <iostream>
-#include "../Include/Game/World/Objects/ObjectRegistry.hpp"
-#include "../Include/Game/World/Physics/Collision/Collision Processor/CollisionProcessor.hpp"
-#include "../Include/Game/AI/Sensory Abstraction/ObjectAbstractor.hpp"
 
 // if the system is not using the entity parameter, remove it's name to avoid a C4100 error
 
@@ -980,6 +981,16 @@ void ComponentBlackboard::system(Entity& entity) {
 
 	if (abstractedSenses.dataHas("Sight")) {
 		data.dataSet("Sight", abstractedSenses.dataGet<DataCache>("Sight"));
+	}
+}
+void ComponentTeam::system(Entity& entity) {
+	if (entity.entityEventHas<EventInitialize>()) {
+		// if the teamId hasn't been specified, set it to a new team
+		if (teamId >= UINT32_MAX) {
+			teamId = Teams::TeamHolder::teamCreate();
+		}
+		// add the entity's id to the specified team
+		Teams::TeamHolder::teamAddEntity(teamId, entity.Id);
 	}
 }
 

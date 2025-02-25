@@ -13,9 +13,9 @@ void Teams::TeamHolder::initialize() {
 		availableTeamIds.insert(i);
 	}
 
-	teamCreateFromId(TeamId(TeamRegistry::Player));
-	teamCreateFromId(TeamId(TeamRegistry::Flesh));
-	teamCreateFromId(TeamId(TeamRegistry::Shepard));
+	teamCreateFromId(TeamId(TeamType::Player));
+	teamCreateFromId(TeamId(TeamType::Flesh));
+	teamCreateFromId(TeamId(TeamType::Shepard));
 }
 
 void Teams::TeamHolder::teamCreateFromId(TeamId teamId) {
