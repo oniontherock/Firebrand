@@ -104,6 +104,22 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventSensesAbstracted());
 		};
 	};
+	struct EventTeamSwitch final : public Event {
+
+		EventTeamSwitch() {
+			clear();
+		};
+
+		Teams::TeamId teamIdNew;
+
+		void clear() final {
+			teamIdNew = UINT32_MAX;
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventTeamSwitch());
+		};
+	};
 }
 namespace EntityComponents {
 	struct ComponentMoveByInput final : public Component {

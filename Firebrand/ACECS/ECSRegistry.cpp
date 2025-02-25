@@ -10,7 +10,7 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100000;
-uint16_t MAX_EVENT_TYPES = 6;
+uint16_t MAX_EVENT_TYPES = 7;
 uint16_t MAX_COMPONENT_TYPES = 31;
 
 void ECSRegistry::ECSInitialize() {
@@ -49,6 +49,7 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventObjectSeen>>();
 	EventRegistry::typeRegister<EventIDs<EventCollision>>();
 	EventRegistry::typeRegister<EventIDs<EventSensesAbstracted>>();
+	EventRegistry::typeRegister<EventIDs<EventTeamSwitch>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -991,6 +992,11 @@ void ComponentTeam::system(Entity& entity) {
 		}
 		// add the entity's id to the specified team
 		Teams::TeamHolder::teamAddEntity(teamId, entity.Id);
+	}
+	if (entity.entityEventHas<EventTeamSwitch>()) {
+		Teams::TeamId teamIdNew = entity.entityEventGet<EventTeamSwitch>()->teamIdNew;
+
+		Teams::TeamHolder::entityTeamSwitch(teamIdNew, entity.Id);
 	}
 }
 

@@ -16,89 +16,89 @@
 
 int main() {
 
-	using namespace Goap;
-	
-	GoalRegistry::goalsRegister();
-	ActionRegistry::actionsRegister();
+	//using namespace Goap;
+	//
+	//GoalRegistry::goalsRegister();
+	//ActionRegistry::actionsRegister();
 
-	Actor actor;
+	//Actor actor;
 
-	actor.goalAdd("KeepSafe");
+	//actor.goalAdd("KeepSafe");
 
-	actor.actionAdd("Flee");
-	actor.actionAdd("UseMedkit");
-	actor.actionAdd("TakeMedkit");
-	actor.actionAdd("GoToMedkit");
+	//actor.actionAdd("Flee");
+	//actor.actionAdd("UseMedkit");
+	//actor.actionAdd("TakeMedkit");
+	//actor.actionAdd("GoToMedkit");
 
-	actor.blackboard.dataSet("MedkitDistance", 512.f);
-	actor.blackboard.dataSet("HasMedkit", false);
-	actor.blackboard.dataSet("Health", 25.f);
-	actor.blackboard.dataSet("ThreatDistance", 512.f);
+	//actor.blackboard.dataSet("MedkitDistance", 512.f);
+	//actor.blackboard.dataSet("HasMedkit", false);
+	//actor.blackboard.dataSet("Health", 25.f);
+	//actor.blackboard.dataSet("ThreatDistance", 512.f);
 
-	TimeHandler::deltaCompute();
-	
-	Cooldown cooldown(0.1f);
+	//TimeHandler::deltaCompute();
+	//
+	//Cooldown cooldown(0.1f);
 
-	while (true) {
-
-		TimeHandler::deltaCompute();
-
-		if (!cooldown.updateAutoReset(float(TimeHandler::deltaRealGet()))) continue;
-
-		Planner::Plan plan = Planner::actorPlanGet(actor, GoalRegistry::goals["KeepSafe"]);
-
-		ConsoleHandler::consolePrintDebug(std::to_string(plan.cost));
-
-		if (plan.size() <= 0) break;
-
-		plan[0].execute(actor);
-
-		for (Action& actionCur : plan) {
-			ConsoleHandler::consolePrintDebug(actionCur.name);
-		}
-	}
-
-
-
-	//srand(TimeHandler::timeRealGet());
-
-	//// setup window
-	//WindowHolder::windowInitialize(sf::VideoMode(sf::Vector2u(1280, 720)), "Window");
-	////WindowHolder::windowGet().setFramerateLimit(60);
-
-	//Engine::engineInitialize();
-	//Engine::engineLoad();
-
-	//uint32_t frames = 0;
-	//double frameTimer = 0.0;
-
-	////run main program loop if window is open
-	//while (WindowHolder::windowGet().isOpen()) {
+	//while (true) {
 
 	//	TimeHandler::deltaCompute();
 
-	//	Engine::engineInputUpdate(WindowHolder::windowGet());
-	//	Engine::engineUpdate();
+	//	if (!cooldown.updateAutoReset(float(TimeHandler::deltaRealGet()))) continue;
 
-	//	//if (GameData::renderTimer.updateAutoReset(TimeHandler::deltaRealGet())) {
-	//		WindowHolder::windowGet().clear(sf::Color::Black);
-	//		Engine::engineDraw(WindowHolder::windowGet());
-	//		WindowHolder::windowGet().display();
-	//	//}
+	//	Planner::Plan plan = Planner::actorPlanGet(actor, GoalRegistry::goals["KeepSafe"]);
 
-	//	frames++;
-	//	frameTimer += TimeHandler::deltaRealGet();
-	//	if (frameTimer > 1.0) {
+	//	ConsoleHandler::consolePrintDebug(std::to_string(plan.cost));
 
-	//		ConsoleHandler::consolePrintDebug(std::to_string(frames));
+	//	if (plan.size() <= 0) break;
 
-	//		frames = 0;
-	//		frameTimer = 0.0;
+	//	plan[0].execute(actor);
+
+	//	for (Action& actionCur : plan) {
+	//		ConsoleHandler::consolePrintDebug(actionCur.name);
 	//	}
 	//}
 
-	//Engine::engineSave();
-	//Engine::engineTerminate();
+
+
+	srand(TimeHandler::timeRealGet());
+
+	// setup window
+	WindowHolder::windowInitialize(sf::VideoMode(sf::Vector2u(1280, 720)), "Window");
+	//WindowHolder::windowGet().setFramerateLimit(60);
+
+	Engine::engineInitialize();
+	Engine::engineLoad();
+
+	uint32_t frames = 0;
+	double frameTimer = 0.0;
+
+	//run main program loop if window is open
+	while (WindowHolder::windowGet().isOpen()) {
+
+		TimeHandler::deltaCompute();
+
+		Engine::engineInputUpdate(WindowHolder::windowGet());
+		Engine::engineUpdate();
+
+		//if (GameData::renderTimer.updateAutoReset(TimeHandler::deltaRealGet())) {
+			WindowHolder::windowGet().clear(sf::Color::Black);
+			Engine::engineDraw(WindowHolder::windowGet());
+			WindowHolder::windowGet().display();
+		//}
+
+		frames++;
+		frameTimer += TimeHandler::deltaRealGet();
+		if (frameTimer > 1.0) {
+
+			ConsoleHandler::consolePrintDebug(std::to_string(frames));
+
+			frames = 0;
+			frameTimer = 0.0;
+		}
+	}
+
+	Engine::engineSave();
+	Engine::engineTerminate();
 
 	return 0;
 }
