@@ -11,6 +11,8 @@ typedef std::vector<ObjectData> ObjectDataVector;
 
 namespace ObjectAbstractor {
 	ObjectData objectDataAbstract(EntityId objectId, ObjectType objectType);
+
+	bool objectThreatLevelAssess(EntityId entityId, EntityId objectId);
 }
 
 #endif

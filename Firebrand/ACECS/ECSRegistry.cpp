@@ -917,6 +917,10 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 	// if any sense has updated, created an event for the new about to be abstracted data
 	auto& abstractedSenses = entity.entityEventAddAndGet<EventSensesAbstracted>()->abstractedSenses;
 
+	DataCache abstractedGeneralData;
+	ObjectDataVector threatsVector;
+
+
 	// check if the sight has been updated
 	if (hasSightUpdated) {
 		// if it has been updated, abstract the sight data and add it to the abstractedSenses
@@ -931,7 +935,18 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 			ObjectDataVector objectDataVector;
 
 			for (uint16_t objCur = 0; objCur < objectIdVector->at(objTypeCur).size(); objCur++) {
-				objectDataVector.push_back(ObjectAbstractor::objectDataAbstract(objectIdVector->at(objTypeCur)[objCur], ObjectType(objTypeCur)));
+
+				EntityId objectId = objectIdVector->at(objTypeCur)[objCur];
+
+				auto abstractedObjectData = ObjectAbstractor::objectDataAbstract(objectId, ObjectType(objTypeCur));
+
+				objectDataVector.push_back(abstractedObjectData);
+
+				if (abstractedObjectData.dataGet<bool>("IsAnimate")) {
+					if (ObjectAbstractor::objectThreatLevelAssess(entity.Id, objectId)) {
+						threatsVector.push_back(abstractedObjectData);
+					}
+				}
 			}
 
 			abstractedSight.dataSet(objectTypeToString(ObjectType(objTypeCur)), objectDataVector);
@@ -943,6 +958,8 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 	if (hasHearingUpdated) {
 		// not yet implemented, later put hearing stuff here
 	}
+
+	abstractedGeneralData.dataSet("Threats", threatsVector);
 }
 void ComponentSenseAbstractorDebugger::system(Entity& entity) {
 	if (!entity.entityEventHas<EventSensesAbstracted>()) return;
