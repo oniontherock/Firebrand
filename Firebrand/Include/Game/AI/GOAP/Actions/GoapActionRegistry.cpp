@@ -21,7 +21,7 @@ void Goap::ActionRegistry::actionsRegister() {
 		action.effectAdd("ThreatCount", uint32_t(0));
 
 		action.executionFunctionSet([](Entity& entity, Actor& actor) {
-			entity.entityEventAddAndGet<EntityEvents::EventMove>()->moveAxis = sf::Vector2f(0, 0.1f);
+			entity.entityEventAddAndGet<EntityEvents::EventMoveDirection>()->moveDirection = sf::Vector2f(-1.f, 0.f);
 			});
 		action.evaluationFunctionSet([](Actor&) {
 			return ActionCost(1.f);

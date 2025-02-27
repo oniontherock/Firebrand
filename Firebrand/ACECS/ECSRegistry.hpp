@@ -11,7 +11,6 @@
 #include "../Include/Game/AI/Teams/TeamHolder.hpp"
 #include "../Include/Game/AI/Teams/TeamRegistry.hpp"
 #include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
-#include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
 #include "../Include/Game/RayCasting/Object Vision/ObjectVision.hpp"
 #include "../Include/Game/World/Physics/Collision/CollisionHandler.hpp"
 #include "../Include/Game/World/Physics/Collision/CollisionShape.hpp"
@@ -39,10 +38,25 @@ namespace EntityEvents {
 		sf::Vector2f moveAxis{ 0,0 };
 
 		void clear() final {
-			moveAxis *= 0.f;
+			moveAxis.x = 0.f;
+			moveAxis.y = 0.f;
 		}
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new EventMove());
+		};
+	};
+	struct EventMoveDirection final : public Event {
+
+		EventMoveDirection() {};
+
+		sf::Vector2f moveDirection{ 0,0 };
+
+		void clear() final {
+			moveDirection.x = 0.f;
+			moveDirection.y = 0.f;
+		}
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventMoveDirection());
 		};
 	};
 	struct EventRotate final : public Event {
@@ -134,19 +148,43 @@ namespace EntityComponents {
 		ComponentMoveByInput() {
 			hasSystem = true;
 		};
-		ComponentMoveByInput(float _moveSpeed) :
-			ComponentMoveByInput()
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentMoveByInput());
+		};
+	};
+	struct ComponentMoveSpeed final : public Component {
+
+		ComponentMoveSpeed() {
+			hasSystem = false;
+		};
+		ComponentMoveSpeed(float _moveSpeed) :
+			ComponentMoveSpeed()
 		{
 			moveSpeed = _moveSpeed;
 		};
 
-		float moveSpeed = 1.f;
+		float moveSpeed = 120.f;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentMoveByInput(moveSpeed));
+			return std::unique_ptr<Duplicatable>(new ComponentMoveSpeed(moveSpeed));
 		};
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
+	};
+	// currently does very basic things, like turning an EventMoveDirection into an EventMove based off of ComponentMoveSpeed.
+	// later will be used to basically communicate general movement requests to the procedural animation system.
+	struct ComponentMovementHandler final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentMovementHandler() {
+			hasSystem = true;
+		};
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentMovementHandler());
+		};
 	};
 	struct ComponentSpriteOrigin final : public Component {
 

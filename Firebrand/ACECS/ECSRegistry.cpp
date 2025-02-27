@@ -93,6 +93,8 @@ void EntityComponents::componentIDsInitialize() {
 	// physics
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentHingeOnPoint>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMass>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentMoveSpeed>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementHandler>>();
 	// transform
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentPosition>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotation>>();
@@ -197,6 +199,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObserver>(500.f),
 			createComponentPairFromType<ComponentTeam>(),
 			createComponentPairFromType<ComponentIsAnimate>(),
+			createComponentPairFromType<ComponentMovementHandler>(),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -211,7 +214,8 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Human),
 			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
-			createComponentPairFromType<ComponentMoveByInput>(120.f),
+			createComponentPairFromType<ComponentMoveSpeed>(120.f),
+			createComponentPairFromType<ComponentMoveByInput>(),
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, uint16_t(50u)),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud }),
@@ -243,6 +247,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			sf::Vector2f(-12, -24), sf::Vector2f(12, -24), sf::Vector2f(12, 24), sf::Vector2f(-12, 24)
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentMoveSpeed>(60.f),
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
 			createComponentPairFromType<ComponentTeam>(),
@@ -445,11 +450,7 @@ void ComponentMoveByInput::system(Entity& entity) {
 	inputAxis.y = float(InputInterface::inputGetActive("Move Down") - InputInterface::inputGetActive("Move Up"));
 
 	if (inputAxis.x != 0 || inputAxis.y != 0) {
-
-		inputAxis = Vector2fMath::normalize(inputAxis) * float(double(moveSpeed * TimeHandler::deltaSimulatedGet()));
-
-		auto* moveEvent = entity.entityEventAddAndGet<EventMove>();
-		moveEvent->moveAxis = inputAxis;
+		entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(inputAxis);
 	}
 }
 void ComponentRotateToMouse::system(Entity& entity) {
@@ -1108,6 +1109,25 @@ void ComponentGoapPlanExecuter::system(Entity& entity) {
 	if (plan.empty()) return;
 
 	plan[0].execute(entity, actor);
+}
+void ComponentMovementHandler::system(Entity& entity) {
+
+	const float movespeed = (entity.entityComponentHas<ComponentMoveSpeed>() ? entity.entityComponentGet<ComponentMoveSpeed>()->moveSpeed : 120.f);
+
+	if (entity.entityEventHas<EventMoveDirection>()) {
+
+		auto eventMoveDirectionAll = entity.entityEventGetAllOfType<EventMoveDirection>();
+
+		sf::Vector2f moveDirectionTotal;
+
+		for (uint32_t i = 0; i < eventMoveDirectionAll.size(); i++) {
+			moveDirectionTotal += eventMoveDirectionAll[i]->moveDirection;
+		}
+		moveDirectionTotal /= float(eventMoveDirectionAll.size());
+
+		entity.entityEventAddAndGet<EventMove>()->moveAxis = moveDirectionTotal * float(double(movespeed) * TimeHandler::deltaSimulatedGet());
+		
+	}
 }
 
 #pragma endregion Systems

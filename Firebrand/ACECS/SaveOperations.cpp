@@ -273,10 +273,10 @@ void EntityComponents::ComponentSprite::load(std::ifstream& str) {
 	str >> drawOrder;
 }
 
-void EntityComponents::ComponentMoveByInput::save(std::ofstream& str) {
+void EntityComponents::ComponentMoveSpeed::save(std::ofstream& str) {
 	str << moveSpeed;
 }
-void EntityComponents::ComponentMoveByInput::load(std::ifstream& str) {
+void EntityComponents::ComponentMoveSpeed::load(std::ifstream& str) {
 	str >> moveSpeed;
 }
 
