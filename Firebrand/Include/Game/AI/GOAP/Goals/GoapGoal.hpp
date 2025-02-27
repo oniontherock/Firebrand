@@ -15,6 +15,12 @@ namespace Goap {
 
 	struct Goal {
 
+		Goal();
+		Goal(GoalName _name);
+
+		// primarily use for debugging so when can tell what goals are being used
+		GoalName name;
+
 		PreconditionMap preconditions;
 
 		GoalInsistence insistence = 0.5f;

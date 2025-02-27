@@ -1,5 +1,6 @@
 #include "GoapActionRegistry.hpp"
 #include "../Actors/GoapActor.hpp"
+#include "../ACECS/ECSRegistry.hpp"
 
 extern std::map<Goap::ActionName, Goap::Action> Goap::ActionRegistry::actions{};
 
@@ -17,55 +18,13 @@ void Goap::ActionRegistry::actionsRegister() {
 	actionName = "Flee";
 	{
 		Action& action = actionAdd(actionName);
-		action.effectAdd("ThreatDistance", 99999999999999.f); // the action of flee promises to maximum the distance to a threat
+		action.effectAdd("ThreatCount", uint32_t(0));
 
-		action.executionFunctionSet([](Actor& actor) {
-			actor.blackboard.dataSet("ThreatDistance", actor.blackboard.dataGet<float>("ThreatDistance") + 16.f);
+		action.executionFunctionSet([](Entity& entity, Actor& actor) {
+			entity.entityEventAddAndGet<EntityEvents::EventMove>()->moveAxis = sf::Vector2f(0, 0.1f);
 			});
 		action.evaluationFunctionSet([](Actor&) {
 			return ActionCost(1.f);
-			});
-	};
-	actionName = "UseMedkit";
-	{
-		Action& action = actionAdd(actionName);
-		action.effectAdd("Health", 99999999999999999.f); // this action basically promises to increase health as much as possible
-		action.preconditionAdd("HasMedkit", [](BlackboardValue value) {
-			return std::any_cast<bool>(value);
-			});
-
-		action.executionFunctionSet([](Actor& actor) {
-			actor.blackboard.dataSet("Health", actor.blackboard.dataGet<float>("Health") + 75.f);
-			});
-		action.evaluationFunctionSet([](Actor&) {
-			return ActionCost(5.f);
-			});
-	};
-	actionName = "TakeMedkit";
-	{
-		Action& action = actionAdd(actionName);
-		action.effectAdd("HasMedkit", true);
-		action.preconditionAdd("MedkitDistance", [](BlackboardValue value) {
-			return std::any_cast<float>(value) < 16.f;
-			});
-
-		action.executionFunctionSet([](Actor& actor) {
-			actor.blackboard.dataSet("HasMedkit", true);
-			});
-		action.evaluationFunctionSet([](Actor&) {
-			return ActionCost(3.f);
-			});
-	};
-	actionName = "GoToMedkit";
-	{
-		Action& action = actionAdd(actionName);
-		action.effectAdd("MedkitDistance", 0.f);
-
-		action.executionFunctionSet([](Actor& actor) {
-			actor.blackboard.dataSet("MedkitDistance", actor.blackboard.dataGet<float>("MedkitDistance") - 16.f);
-			});
-		action.evaluationFunctionSet([](Actor&) {
-			return ActionCost(10.f);
 			});
 	};
 }

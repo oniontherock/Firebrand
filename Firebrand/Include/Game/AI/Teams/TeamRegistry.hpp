@@ -6,6 +6,7 @@ namespace Teams {
 		Player,
 		Flesh,
 		Shepard,
+		TEAMTYPESIZE, // size of the TeamType enum
 	};
 }
 

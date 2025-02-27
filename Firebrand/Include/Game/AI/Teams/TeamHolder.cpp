@@ -12,10 +12,10 @@ void Teams::TeamHolder::initialize() {
 	for (TeamId i = 0; i < maxTeamCount; i++) {
 		availableTeamIds.insert(i);
 	}
-
-	teamCreateFromId(TeamId(TeamType::Player));
-	teamCreateFromId(TeamId(TeamType::Flesh));
-	teamCreateFromId(TeamId(TeamType::Shepard));
+	
+	for (TeamId i = 0; i < TeamId(TeamType::TEAMTYPESIZE); i++) {
+		teamCreateFromId(i);
+	}
 }
 
 void Teams::TeamHolder::teamCreateFromId(TeamId teamId) {

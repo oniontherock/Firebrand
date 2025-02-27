@@ -12,7 +12,7 @@ namespace Goap {
 
 	typedef std::string ActionName;
 	typedef float ActionCost;
-	typedef std::function<void(Actor&)> ActionExecutionFunction;
+	typedef std::function<void(Entity&, Actor&)> ActionExecutionFunction;
 	typedef std::function<ActionCost(Actor&)> ActionEvaluationFunction;
 
 	struct Action {
@@ -46,8 +46,8 @@ namespace Goap {
 		void executionFunctionSet(ActionExecutionFunction function);
 		void evaluationFunctionSet(ActionEvaluationFunction function);
 
+		void execute(Entity& entity, Actor& actor);
 		void evaluate(Actor& actor);
-		void execute(Actor& actor);
 
 	private:
 		ActionExecutionFunction executionFunction;

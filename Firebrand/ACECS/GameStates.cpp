@@ -53,6 +53,11 @@ void GameStatePlay::gameStateStart() {
 		Entity& player = EntityManager::entityGet(GameData::playerId);
 		player.entityComponentGet<EntityComponents::ComponentPosition>()->position = level->pathGenerator.pathGet()[0]->position;
 
+		EntityId creatureId = EntityManager::entityCreate(level->levelPosition, "Test Creature");
+		Entity& creature = EntityManager::entityGet(creatureId);
+		creature.entityComponentGet<EntityComponents::ComponentPosition>()->position = level->pathGenerator.pathGet()[0]->position + sf::Vector2f(256, 0);
+
+
 		level->hasUpdated = true;
 	}
 }

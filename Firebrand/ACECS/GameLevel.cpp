@@ -109,7 +109,10 @@ void GameLevel::entitiesObservedUpdate() {
 
 			if (Vector2fMath::distSqrd(observerCurPosition, observationCurPosition) <= observerCurDistSqrd) {
 				entitiesObserved.push_back(entitiesObservation[j]);
-				entitiesObservationToCheck.erase(entitiesObservationToCheck.begin() + j);
+				auto itr = std::find(entitiesObservationToCheck.begin(), entitiesObservationToCheck.end(), entitiesObservation[j]);
+				if (itr != entitiesObservationToCheck.end()) {
+					entitiesObservationToCheck.erase(std::find(entitiesObservationToCheck.begin(), entitiesObservationToCheck.end(), entitiesObservation[j]));
+				}
 			}
 		}
 	}

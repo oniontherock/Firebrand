@@ -193,6 +193,8 @@ void Engine::engineInitialize() {
 	PropTypeRegistry::propTypesRegister();
 
 	Teams::TeamHolder::initialize();
+	Goap::GoalRegistry::goalsRegister();
+	Goap::ActionRegistry::actionsRegister();
 
 	GameLevelGrid::levelGridInitialize(1, 1, 1);
 	GameLevelGrid::levelAdd(new GameLevel(0, 0, 0), true);

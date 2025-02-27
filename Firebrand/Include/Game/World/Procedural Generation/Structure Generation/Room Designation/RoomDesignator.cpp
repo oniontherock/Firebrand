@@ -151,7 +151,7 @@ bool RoomDesignator::structureRoomTypesDesignate(const WallGrid2D& wallGrid, Roo
 
             // designate rooms
             for (uint16_t roomTypeCur = 3; roomTypeCur < uint16_t(RoomType::RoomTypeSize); roomTypeCur++) {
-                const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(RoomType(roomTypeCur));
+                RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(RoomType(roomTypeCur));
 
 
                 std::set<RoomType> roomNeighbors = roomNeighborTypesGet(wallGrid, structureSize, roomTypeGrid, roomCur);

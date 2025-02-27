@@ -18,7 +18,7 @@ class RoomTypeRegistry {
 
 public:
 
-	static const RoomTypeInstance& roomTypeInstanceGet(RoomType roomType);
+	static RoomTypeInstance& roomTypeInstanceGet(RoomType roomType);
 
 	static void roomTypesRegister();
 };

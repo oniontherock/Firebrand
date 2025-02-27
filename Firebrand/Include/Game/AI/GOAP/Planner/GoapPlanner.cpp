@@ -13,13 +13,11 @@ Goap::Planner::Plan Goap::Planner::actorPlanGet(Actor& actor, Goal& goal) {
 	PreconditionMap preconditions = goal.preconditions;
 
 	for (Precondition preconditionCur : preconditions) {
-
 		if (std::invoke(preconditionCur.second, actor.blackboard.dataUMapGet().at(preconditionCur.first))) continue;
 
 		Plan planCur = actionsGetFromPrecondition(preconditionCur, actor, actor.blackboard);
 		plan.insert(plan.begin(), planCur.begin(), planCur.end());
 		plan.cost += planCur.cost;
-
 	}
 
 	return plan;

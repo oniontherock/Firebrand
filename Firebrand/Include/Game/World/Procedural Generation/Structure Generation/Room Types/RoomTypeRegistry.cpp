@@ -11,7 +11,7 @@ void RoomTypeRegistry::roomInstanceAdd(RoomTypeInstance roomTypeInstance) {
 
 	roomTypeInstances.insert(roomTypeInstances.begin() + index, roomTypeInstance);
 }
-const RoomTypeInstance& RoomTypeRegistry::roomTypeInstanceGet(RoomType roomType) {
+RoomTypeInstance& RoomTypeRegistry::roomTypeInstanceGet(RoomType roomType) {
 	return roomTypeInstances[uint16_t(roomType)];
 }
 void RoomTypeRegistry::roomTypesRegister() {

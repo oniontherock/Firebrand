@@ -11,7 +11,7 @@
 
 uint32_t MAX_ENTITIES = 100000;
 uint16_t MAX_EVENT_TYPES = 7;
-uint16_t MAX_COMPONENT_TYPES = 31;
+uint16_t MAX_COMPONENT_TYPES = 32;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -86,6 +86,8 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMoveByInput>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentRotateToMouse>>();
 
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapPlanExecuter>>();
+
 	// collision response
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollisionResponse>>();
 	// physics
@@ -113,10 +115,11 @@ void EntityComponents::componentIDsInitialize() {
 	// hearing
 
 	// AI
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentIsAnimate>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentActorStateHolder>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractor>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentBlackboard>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentIsAnimate>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapActor>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapPlanner>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -162,9 +165,47 @@ void EntityComponents::componentTemplatesInitialize() {
 	ComponentTemplateManager::componentTemplateAdd(
 
 		/// template name
+		"Actor",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentSenseAbstractor>(),
+			createComponentPairFromType<ComponentActorStateHolder>(),
+			createComponentPairFromType<ComponentGoapActor>(),
+			createComponentPairFromType<ComponentGoapPlanExecuter>(),
+		}
+	);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Creature",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Null),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentCollider>(),
+			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			sf::Vector2f(-32, -32), sf::Vector2f(32, -32), sf::Vector2f(32, 32), sf::Vector2f(-32, 32)
+				})),
+			createComponentPairFromType<ComponentCollisionResponse>(),
+			createComponentPairFromType<ComponentMass>(100.f),
+			createComponentPairFromType<ComponentObserver>(500.f),
+			createComponentPairFromType<ComponentTeam>(),
+			createComponentPairFromType<ComponentIsAnimate>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
 		"Player",
 		{
 			"Input Controlled",
+			"Creature",
 		},
 		/// list of components in template
 		{
@@ -174,6 +215,29 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentRotateToMouse>(Mathf::TAU * 1.25f),
 			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, uint16_t(50u)),
 			createComponentPairFromType<ComponentViewFollow>(std::vector<PanelName> { PanelName::StaticView, PanelName::DynamicView, PanelName::Hud }),
+			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
+			sf::Vector2f(-12, -24), sf::Vector2f(12, -24), sf::Vector2f(12, 24), sf::Vector2f(-12, 24)
+				})),
+			createComponentPairFromType<ComponentMass>(120.f),
+			createComponentPairFromType<ComponentObserver>(1280.f),
+			createComponentPairFromType<ComponentTeam>(Teams::TeamType::Player),
+		}
+	);
+	ComponentTemplateManager::componentTemplateAdd(
+
+		/// template name
+		"Test Creature",
+		{
+			"Transform",
+			"Creature",
+			"Actor",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectTypeAssigner>(ObjectType::Human),
+			createComponentPairFromType<ComponentObjectGridInhabiterRadius>(32.f),
+			createComponentPairFromType<ComponentSpriteColor>(sf::Color(255, 0, 0, 255)),
+			createComponentPairFromType<ComponentSprite>("Art/Squad Member", false, uint16_t(50u)),
 			createComponentPairFromType<ComponentCollider>(),
 			createComponentPairFromType<ComponentCollisionPolygons>(CollisionShapePolygon(CollisionPolygon{
 			sf::Vector2f(-12, -24), sf::Vector2f(12, -24), sf::Vector2f(12, 24), sf::Vector2f(-12, 24)
@@ -181,7 +245,10 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentCollisionResponse>(),
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
-			createComponentPairFromType<ComponentTeam>(Teams::TeamType::Player),
+			createComponentPairFromType<ComponentTeam>(),
+			createComponentPairFromType<ComponentObjectVision>(),
+			createComponentPairFromType<ComponentGoapActor>(std::vector<Goap::GoalName>{ "KeepSafe" }, std::vector<Goap::ActionName>{ "Flee" }),
+			createComponentPairFromType<ComponentGoapPlanner>(),
 		}
 	);
 #pragma region Wall Templates
@@ -502,6 +569,10 @@ void ComponentViewFollow::system(Entity& entity) {
 }
 void ComponentObjectTypeAssigner::system(Entity& entity) {
 	if (!entity.entityEventHas<EventInitialize>()) return;
+
+	if (objectType == ObjectType::Null) {
+		ConsoleHandler::consolePrintErr("Entity (Id=" + std::to_string(entity.Id) + ") has ComponentObjectTypeAssigner with ObjectType::Null. Please Assign a proper ObjectType");
+	}
 
 	ObjectRegistry::entityObjectTypeAssign(entity.Id, objectType);
 }
@@ -936,18 +1007,19 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 
 				if (abstractedObjectData.dataGet<bool>("IsAnimate")) {
 
-					Teams::ThreatLevel threatLevel = ObjectAbstractor::objectThreatLevelAssess(entity.Id, objectId);
-				
-					blackboardNew.creatures.insert(objectInd);
+					Teams::ThreatLevel threatLevel = Teams::ThreatLevel::Enemy;//ObjectAbstractor::objectThreatLevelAssess(entity.Id, objectId);
+
+					blackboardNew.dataGet<ObjectDataIndexVector&>("Creatures").insert(objectInd);
 
 					switch (threatLevel) {
 					case Teams::ThreatLevel::Enemy:
-						blackboardNew.threats.insert(objectInd);
+						blackboardNew.dataGet<ObjectDataIndexVector&>("Threats").insert(objectInd);
+						blackboardNew.dataGet<uint32_t&>("ThreatCount") += 1;
 						break;
 					case Teams::ThreatLevel::Neutral:
 						break;
 					case Teams::ThreatLevel::Ally:
-						blackboardNew.allies.insert(objectInd);
+						blackboardNew.dataGet<ObjectDataIndexVector&>("Allies").insert(objectInd);
 						break;
 					}
 				}
@@ -990,12 +1062,10 @@ void ComponentSenseAbstractorDebugger::system(Entity& entity) {
 		ConsoleHandler::consolePrintColor("}", 6);
 	}
 }
-void ComponentBlackboard::system(Entity& entity) {
+void ComponentGoapActor::system(Entity& entity) {
 	if (!entity.entityEventHas<EventBlackboardUpdated>()) return;
 
-	auto& blackboardNew = entity.entityEventGet<EventBlackboardUpdated>()->blackboardNew;
-
-	blackboard = blackboardNew;
+	actor.blackboard = entity.entityEventGet<EventBlackboardUpdated>()->blackboardNew;
 }
 void ComponentTeam::system(Entity& entity) {
 	if (entity.entityEventHas<EventInitialize>()) {
@@ -1011,6 +1081,33 @@ void ComponentTeam::system(Entity& entity) {
 
 		Teams::TeamHolder::entityTeamSwitch(teamIdNew, entity.Id);
 	}
+}
+void ComponentGoapPlanner::system(Entity& entity) {
+
+	if (!entity.entityComponentHas<ComponentGoapActor>()) {
+		ConsoleHandler::consolePrintErr("ComponentGoapPlanner assigned to an entity (Id=" + std::to_string(entity.Id) + ") without a ComponentGoapActor");
+		return;
+	}
+
+	Goap::Actor& actor = entity.entityComponentGet<ComponentGoapActor>()->actor;
+
+	goal = Goap::Planner::actorGoalGet(actor);
+
+	plan = Goap::Planner::actorPlanGet(actor, goal);
+}
+void ComponentGoapPlanExecuter::system(Entity& entity) {
+
+	if (!entity.entityComponentGet<ComponentGoapPlanner>()) {
+		ConsoleHandler::consolePrintErr("Entity (Id=" + std::to_string(entity.Id) + ") has ComponentGoapPlanExecuter without ComponentGoapPlanner");
+		return;
+	}
+
+	auto& actor = entity.entityComponentGet<ComponentGoapActor>()->actor;
+	auto& plan = entity.entityComponentGet<ComponentGoapPlanner>()->plan;
+
+	if (plan.empty()) return;
+
+	plan[0].execute(entity, actor);
 }
 
 #pragma endregion Systems

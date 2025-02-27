@@ -9,6 +9,7 @@
 typedef DataCache ObjectData;
 typedef std::vector<ObjectData> ObjectDataVector;
 typedef uint32_t ObjectDataIndex;
+typedef std::set<ObjectDataIndex> ObjectDataIndexVector;
 
 namespace ObjectAbstractor {
 	ObjectData objectDataAbstract(EntityId objectId, ObjectType objectType);

@@ -1,5 +1,12 @@
 #include "GoapGoal.hpp"
 
+Goap::Goal::Goal() {
+	name = "NULL NAME";
+}
+Goap::Goal::Goal(GoalName _name) {
+	name = _name;
+}
+
 void Goap::Goal::preconditionAdd(Precondition precondition) {
 	preconditions.insert(precondition);
 }

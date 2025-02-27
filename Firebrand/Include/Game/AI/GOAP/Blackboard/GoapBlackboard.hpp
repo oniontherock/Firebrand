@@ -7,14 +7,10 @@
 
 namespace Goap {
 	struct Blackboard : DataCache {
-		ObjectDataVector objects;
 
-		std::set<ObjectDataIndex> creatures;
-		std::set<ObjectDataIndex> threats;
-		ObjectDataIndex threatClosest = 0.f;
-		std::set<ObjectDataIndex> allies;
-		std::set<ObjectDataIndex> items;
-		std::set<ObjectDataIndex> obstacles;
+		Blackboard();
+
+		ObjectDataVector objects;
 
 		ObjectDataIndex objectAdd(ObjectData& objectData);
 	};

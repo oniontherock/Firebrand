@@ -4,7 +4,7 @@
 extern std::map<Goap::GoalName, Goap::Goal> Goap::GoalRegistry::goals{};
 
 Goap::Goal& Goap::GoalRegistry::goalAdd(GoalName goalName) {
-	goals.insert({ goalName, Goal() });
+	goals.insert({ goalName, Goal(goalName) });
 
 	return goals[goalName];
 }
@@ -15,18 +15,10 @@ void Goap::GoalRegistry::goalsRegister() {
 	{
 		Goal& goal = goalAdd("KeepSafe");
 		goal.insistenceSet(0.8f);
-		goal.preconditionAdd("ThreatDistance", [](BlackboardValue value) {
-			return std::any_cast<float>(value) > 1024.f;
+		goal.preconditionAdd("ThreatCount", [](BlackboardValue value) {
+			return std::any_cast<uint32_t>(value) <= 0;
 			}
 		);
-		goal.preconditionAdd("Health", [](BlackboardValue value) {
-			return std::any_cast<float>(value) > 75.f;
-			}
-		);
-		//goal.preconditionAdd("HasWeapon", [](BlackboardValue value) {
-		//	return std::any_cast<bool>(value);
-		//	}
-		//);
 		goal.validationFunctionSet([](const Blackboard&) {
 			return true;
 			});

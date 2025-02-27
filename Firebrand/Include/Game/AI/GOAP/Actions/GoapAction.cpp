@@ -32,8 +32,8 @@ void Goap::Action::evaluationFunctionSet(ActionEvaluationFunction function) {
 	evaluationFunction = function;
 }
 
-void Goap::Action::execute(Actor& actor) {
-	std::invoke(executionFunction, actor);
+void Goap::Action::execute(Entity& entity, Actor& actor) {
+	std::invoke(executionFunction, entity, actor);
 }
 void Goap::Action::evaluate(Actor& actor) {
 	costSet(std::invoke(evaluationFunction, actor));

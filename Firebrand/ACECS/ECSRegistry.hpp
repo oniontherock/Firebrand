@@ -3,7 +3,11 @@
 
 #include "../ACECS/Panels.hpp"
 #include "../Include/Common/DataCache.hpp"
+#include "../Include/Game/AI/GOAP/Actions/GoapActionRegistry.hpp"
+#include "../Include/Game/AI/GOAP/Actors/GoapActor.hpp"
 #include "../Include/Game/AI/GOAP/Blackboard/GoapBlackboard.hpp"
+#include "../Include/Game/AI/GOAP/Goals/GoapGoalRegistry.hpp"
+#include "../Include/Game/AI/GOAP/Planner/GoapPlanner.hpp"
 #include "../Include/Game/AI/Teams/TeamHolder.hpp"
 #include "../Include/Game/AI/Teams/TeamRegistry.hpp"
 #include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
@@ -757,20 +761,6 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractorDebugger());
 		};
 	};
-	struct ComponentBlackboard final : public Component {
-
-		void system(Entity& entity) final;
-
-		ComponentBlackboard() {
-			hasSystem = true;
-		};
-
-		DataCache blackboard;
-
-		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentBlackboard());
-		};
-	};
 	struct ComponentTeam final : public Component {
 
 		void system(Entity& entity) final;
@@ -803,6 +793,62 @@ namespace EntityComponents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentIsAnimate());
+		};
+	};
+	struct ComponentGoapActor final : public Component {
+	
+		void system(Entity& entity) final;
+
+		ComponentGoapActor() {
+			hasSystem = true;
+		};
+		ComponentGoapActor(Goap::Actor _actor) :
+			ComponentGoapActor()
+		{
+			actor = _actor;
+		};
+		ComponentGoapActor(std::vector<Goap::GoalName> goalNames, std::vector<Goap::ActionName> actionNames) :
+			ComponentGoapActor()
+		{
+			for (Goap::GoalName goalNameCur : goalNames) {
+				actor.goalAdd(goalNameCur);
+			}
+			for (Goap::ActionName actionNameCur : actionNames) {
+				actor.actionAdd(actionNameCur);
+			}
+		};
+
+		Goap::Actor actor;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentGoapActor(actor));
+		};
+	};
+	struct ComponentGoapPlanner final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentGoapPlanner() {
+			hasSystem = true;
+		};
+
+		Goap::Goal goal;
+		Goap::Planner::Plan plan;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentGoapPlanner());
+		};
+	};
+	struct ComponentGoapPlanExecuter final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentGoapPlanExecuter() {
+			hasSystem = true;
+		};
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentGoapPlanExecuter());
 		};
 	};
 }

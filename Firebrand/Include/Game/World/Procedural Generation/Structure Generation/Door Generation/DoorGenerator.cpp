@@ -12,7 +12,7 @@ void DoorGenerator::roomDoorsGenerate(const WallSectionGenerator::WallSectionGri
 
 		RoomType roomRectType = RoomDesignator::roomTypeGet(roomTypeGrid, roomRectCur);
 
-		const RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(roomRectType);
+		RoomTypeInstance& roomTypeInstance = RoomTypeRegistry::roomTypeInstanceGet(roomRectType);
 
 #pragma region Connection Types Detection
 

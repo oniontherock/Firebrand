@@ -17,8 +17,8 @@ struct DataCache {
 	void dataRemove(DataKey dataKey);
 	// gets the data associated with dataKey, T is the type of the data that is being obtained.
 	template <typename T>
-	T dataGet(DataKey dataKey) const {
-		return std::any_cast<T>(dataUMap.at(dataKey));
+	T dataGet(DataKey dataKey) {
+		return std::any_cast<T>(dataUMap[dataKey]);
 	}
 	// sets the value of dataKey to value.
 	template <typename T>
