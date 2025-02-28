@@ -132,7 +132,6 @@ void EntityComponents::componentIDsInitialize() {
 
 	// debug
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVisionDebug>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractorDebugger>>();
 }
 
 #pragma endregion Components
@@ -1002,65 +1001,13 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 
 				EntityId objectId = objectIdVector->at(objTypeCur)[objCur];
 
-				auto abstractedObjectData = ObjectAbstractor::objectDataAbstract(objectId, ObjectType(objTypeCur));
-
-				ObjectDataIndex objectInd = blackboardNew.objectAdd(abstractedObjectData);
-
-				if (abstractedObjectData.dataGet<bool>("IsAnimate")) {
-
-					Teams::ThreatLevel threatLevel = Teams::ThreatLevel::Enemy;//ObjectAbstractor::objectThreatLevelAssess(entity.Id, objectId);
-
-					blackboardNew.dataGet<ObjectDataIndexVector&>("Creatures").insert(objectInd);
-
-					switch (threatLevel) {
-					case Teams::ThreatLevel::Enemy:
-						blackboardNew.dataGet<ObjectDataIndexVector&>("Threats").insert(objectInd);
-						blackboardNew.dataGet<uint32_t&>("ThreatCount") += 1;
-						break;
-					case Teams::ThreatLevel::Neutral:
-						break;
-					case Teams::ThreatLevel::Ally:
-						blackboardNew.dataGet<ObjectDataIndexVector&>("Allies").insert(objectInd);
-						break;
-					}
-				}
+				ObjectAbstractor::blackboardAddObjectData(blackboardNew, entity, EntityManager::entityGet(objectId), ObjectType(objTypeCur));
 			}
 		}
 	}
 	// check if the hearing has been updated
 	if (hasHearingUpdated) {
 		// not yet implemented, later put hearing stuff here
-	}
-}
-void ComponentSenseAbstractorDebugger::system(Entity& entity) {
-	if (!entity.entityEventHas<EventBlackboardUpdated>()) return;
-
-	auto& abstractedSenses = entity.entityEventGet<EventBlackboardUpdated>()->blackboardNew;
-
-	if (abstractedSenses.dataHas("Sight")) {
-		ConsoleHandler::consolePrintColor("Sight: {", 6);
-		DataCache abstractedSight = abstractedSenses.dataGet<DataCache>("Sight");
-
-		for (uint16_t objTypeCur = 0; objTypeCur < uint16_t(ObjectType::SIZE); objTypeCur++) {
-			ObjectDataVector objectDataVector = abstractedSight.dataGet<ObjectDataVector>(objectTypeToString(ObjectType(objTypeCur)));
-
-			for (uint16_t objCur = 0; objCur < objectDataVector.size(); objCur++) {
-
-				auto& objData = objectDataVector[objCur];
-
-				ConsoleHandler::consolePrintColor("    " + objectTypeToString(ObjectType(objTypeCur)) + std::to_string(objCur) + " {", 6);
-
-				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("Position") + std::string(": ") +
-					std::to_string(objData.dataGet<sf::Vector2f>("Position").x) + std::to_string(objData.dataGet<sf::Vector2f>("Position").y),
-					6);
-				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("Rotation") + std::string(": ") + std::to_string(objData.dataGet<float>("Rotation")), 6);
-				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("HasSenseSight") + std::string(": ") + std::to_string(objData.dataGet<bool>("HasSenseSight")), 6);
-				ConsoleHandler::consolePrintColor(std::string("        ") + std::string("IsThreat") + std::string(": ") + std::to_string(objData.dataGet<bool>("IsThreat")), 6);
-
-				ConsoleHandler::consolePrintColor("    }", 6);
-			}
-		}
-		ConsoleHandler::consolePrintColor("}", 6);
 	}
 }
 void ComponentGoapActor::system(Entity& entity) {
@@ -1127,7 +1074,7 @@ void ComponentMovementHandler::system(Entity& entity) {
 
 		entity.entityEventAddAndGet<EventMove>()->moveAxis = moveDirectionTotal * float(double(movespeed) * TimeHandler::deltaSimulatedGet());
 		
-	}
+}
 }
 
 #pragma endregion Systems

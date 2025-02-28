@@ -10,9 +10,9 @@ namespace Goap {
 
 		Blackboard();
 
-		ObjectDataVector objects;
+		ObjectAbstractor::ObjectDataVector objects;
 
-		ObjectDataIndex objectAdd(ObjectData& objectData);
+		ObjectAbstractor::ObjectDataIndex objectAdd(ObjectAbstractor::ObjectData& objectData);
 	};
 }
 

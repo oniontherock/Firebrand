@@ -4,6 +4,7 @@
 #include <any>
 #include <string>
 #include <unordered_map>
+#include <Auxiliary/ConsoleHandler.hpp>
 
 // variant of data types that can be contained in an DataUMap.
 typedef std::any DataType;
@@ -18,6 +19,9 @@ struct DataCache {
 	// gets the data associated with dataKey, T is the type of the data that is being obtained.
 	template <typename T>
 	T dataGet(DataKey dataKey) {
+		if (!dataUMap.contains(dataKey)) {
+			ConsoleHandler::consolePrintErr("DataCache key non-existant: " + dataKey);
+		}
 		return std::any_cast<T>(dataUMap[dataKey]);
 	}
 	// sets the value of dataKey to value.

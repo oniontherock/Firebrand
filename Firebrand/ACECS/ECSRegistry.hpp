@@ -787,18 +787,6 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractor());
 		};
 	};
-	struct ComponentSenseAbstractorDebugger final : public Component {
-
-		void system(Entity& entity) final;
-
-		ComponentSenseAbstractorDebugger() {
-			hasSystem = true;
-		};
-
-		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentSenseAbstractorDebugger());
-		};
-	};
 	struct ComponentTeam final : public Component {
 
 		void system(Entity& entity) final;
