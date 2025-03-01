@@ -1067,14 +1067,19 @@ void ComponentMovementHandler::system(Entity& entity) {
 
 		sf::Vector2f moveDirectionTotal;
 
-		for (uint32_t i = 0; i < eventMoveDirectionAll.size(); i++) {
+		const uint32_t eventMoveDirectionAmount = eventMoveDirectionAll.size();
+
+		for (uint32_t i = 0; i < eventMoveDirectionAmount; i++) {
 			moveDirectionTotal += eventMoveDirectionAll[i]->moveDirection;
 		}
-		moveDirectionTotal /= float(eventMoveDirectionAll.size());
+
+		if (eventMoveDirectionAmount > 0) {
+			moveDirectionTotal /= float(eventMoveDirectionAmount);
+		}
 
 		entity.entityEventAddAndGet<EventMove>()->moveAxis = moveDirectionTotal * float(double(movespeed) * TimeHandler::deltaSimulatedGet());
 		
-}
+	}
 }
 
 #pragma endregion Systems
