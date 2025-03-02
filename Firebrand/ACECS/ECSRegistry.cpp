@@ -440,8 +440,6 @@ void EntityComponents::componentTemplatesInitialize() {
 using namespace EntityComponents;
 using namespace EntityEvents;
 
-// if you need to include a certain file for a system, include it here.
-
 // if the system is not using the entity parameter, remove it's name to avoid a C4100 error
 
 void ComponentMoveByInput::system(Entity& entity) {
@@ -487,6 +485,7 @@ void ComponentRotateToMouse::system(Entity& entity) {
 	}
 }
 void ComponentPosition::system(Entity& entity) {
+
 	if (entity.entityEventHas<EventMove>()) {
 
 		auto moveEvents = entity.entityEventGetAllOfType<EventMove>();
@@ -1068,7 +1067,7 @@ void ComponentMovementHandler::system(Entity& entity) {
 
 		sf::Vector2f moveDirectionTotal;
 
-		const uint32_t eventMoveDirectionAmount = eventMoveDirectionAll.size();
+		const uint32_t eventMoveDirectionAmount = uint32_t(eventMoveDirectionAll.size());
 
 		for (uint32_t i = 0; i < eventMoveDirectionAmount; i++) {
 			moveDirectionTotal += eventMoveDirectionAll[i]->moveDirection;
@@ -1079,7 +1078,7 @@ void ComponentMovementHandler::system(Entity& entity) {
 		}
 
 		entity.entityEventAddAndGet<EventMove>()->moveAxis = moveDirectionTotal * float(double(movespeed) * TimeHandler::deltaSimulatedGet());
-		
+
 	}
 }
 

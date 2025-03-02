@@ -17,5 +17,5 @@ Goap::Blackboard::Blackboard() {
 
 ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectAbstractor::ObjectData& objectData) {
 	objects.push_back(objectData);
-	return objects.size() - 1;
+	return ObjectAbstractor::ObjectDataIndex(objects.size() - 1);
 }

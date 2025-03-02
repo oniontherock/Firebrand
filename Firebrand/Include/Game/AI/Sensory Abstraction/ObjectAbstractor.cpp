@@ -18,7 +18,7 @@ void ObjectAbstractor::blackboardAddObjectData(Goap::Blackboard& blackboard, Ent
 	}
 }
 
-ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType) {
+ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Blackboard&, Entity&, Entity& object, ObjectType objectType) {
 
 	ObjectData objectData;
 
@@ -75,9 +75,9 @@ void ObjectAbstractor::enemyDataAbstract(Goap::Blackboard& blackboard, Entity& e
 		blackboard.dataSet("ThreatClosestInd", objectInd);
 	}
 }
-void ObjectAbstractor::neutralDataAbstract(Goap::Blackboard& blackboard, Entity& entity, ObjectData& objectData, ObjectDataIndex objectInd) {
+void ObjectAbstractor::neutralDataAbstract(Goap::Blackboard&, Entity&, ObjectData&, ObjectDataIndex) {
 }
-void ObjectAbstractor::allyDataAbstract(Goap::Blackboard& blackboard, Entity& entity, ObjectData& objectData, ObjectDataIndex objectInd) {
+void ObjectAbstractor::allyDataAbstract(Goap::Blackboard& blackboard, Entity&, ObjectData&, ObjectDataIndex objectInd) {
 	blackboard.dataGet<ObjectDataIndexVector&>("Allies").insert(objectInd);
 }
 
