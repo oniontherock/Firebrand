@@ -10,7 +10,7 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100000;
-uint16_t MAX_EVENT_TYPES = 7;
+uint16_t MAX_EVENT_TYPES = 8;
 uint16_t MAX_COMPONENT_TYPES = 32;
 
 void ECSRegistry::ECSInitialize() {
@@ -45,6 +45,7 @@ void EntityEvents::eventIDsInitialize() {
 
 	EventRegistry::typeRegister<EventIDs<EventInitialize>>();
 	EventRegistry::typeRegister<EventIDs<EventMove>>();
+	EventRegistry::typeRegister<EventIDs<EventMoveDirection>>();
 	EventRegistry::typeRegister<EventIDs<EventRotate>>();
 	EventRegistry::typeRegister<EventIDs<EventObjectSeen>>();
 	EventRegistry::typeRegister<EventIDs<EventCollision>>();
