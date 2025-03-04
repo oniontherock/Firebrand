@@ -60,21 +60,6 @@ void EntityEvents::eventIDsInitialize() {
 
 #pragma endregion Events
 #pragma region Components
-/*
-registers all components,
-registering a component gives it an ID which dictates it's update order, lower ID, sooner update.
-
-the order of registry is very important, as it heavily dictates the behavior of components,
-for example:
-
-REGISTER(Component, ComponentA)
-REGISTER(Component, ComponentB)
-
-in this example, ComponentA is ALWAYS updated BEFORE ComponentB,
-which is very important, because if ComponentA sends and event, ComponentB will always receive it,
-but if the order were swapped, ComponentB would never receive it
-*/
-
 
 void EntityComponents::componentIDsInitialize() {
 	using ComponentRegistry = TypeIDAllocator<Component>;
