@@ -90,6 +90,22 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventObjectSeen());
 		};
 	};
+	struct EventSensesAbstract final : public Event {
+
+		EventSensesAbstract() {
+			clear();
+		};
+
+		std::unordered_map<EntityId, std::pair<ObjectType, uint32_t>>* objects;
+
+		void clear() final {
+			objects = nullptr;
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventSensesAbstract());
+		};
+	};
 	struct EventCollision final : public Event {
 
 		EventCollision() {
@@ -547,6 +563,22 @@ namespace EntityComponents {
 
 		void save(std::ofstream& str) override;
 		void load(std::ifstream& str) override;
+	};
+	struct ComponentObjectMemory final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentObjectMemory() {
+			hasSystem = true;
+		};
+
+		// unordered_map of pairs, the keys are the EntityIds of objects we've memorized,
+		// the value is a pair, the first value in the pair is the ObjectType of the object, the second value is the time at which the object was seen
+		std::unordered_map<EntityId, std::pair<ObjectType, uint32_t>> objects;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentObjectMemory());
+		};
 	};
 	struct ComponentObjectVisionDebug final : public Component {
 
