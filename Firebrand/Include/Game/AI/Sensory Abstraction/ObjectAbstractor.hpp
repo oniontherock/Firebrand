@@ -24,11 +24,11 @@ namespace ObjectAbstractor {
 	// @param object: a reference to the entity/object that we're filling the given blackboard with
 	// @param objectType: the object type of the object we're filling the blackboard with
 	// @param certainty: how certain we are about this object, I.E. how certain we are about were it is, what it is, etc.
-	void blackboardAddObjectData(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType);
+	void blackboardAddObjectData(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType, float certainty);
 
-	ObjectData objectBasicDataAbstract(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType);
+	ObjectData objectBasicDataAbstract(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType, float certainty);
 
-	void objectPositionDataAbstract(ObjectData& objectData, Entity& object);
+	void objectPositionDataAbstract(ObjectData& objectData, Entity& object, float certainty);
 	void animateObjectDataAbstract(Entity& object, ObjectData& objectData);
 	void creatureAffiliationAbstract(Goap::Blackboard& blackboard, Entity& entity, Teams::ThreatLevel threatLevel, ObjectData& objectData, ObjectDataIndex objectInd);
 	void enemyDataAbstract(Goap::Blackboard& blackboard, Entity& entity, ObjectData& objectData, ObjectDataIndex objectInd);

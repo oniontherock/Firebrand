@@ -4,9 +4,9 @@
 
 using namespace EntityComponents;
 
-void ObjectAbstractor::blackboardAddObjectData(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType) {
+void ObjectAbstractor::blackboardAddObjectData(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType, float certainty) {
 
-	ObjectData objectData = ObjectAbstractor::objectBasicDataAbstract(blackboard, entity, object, objectType);
+	ObjectData objectData = ObjectAbstractor::objectBasicDataAbstract(blackboard, entity, object, objectType, certainty);
 
 	ObjectDataIndex objectInd = blackboard.objectAdd(objectData);
 
@@ -19,7 +19,7 @@ void ObjectAbstractor::blackboardAddObjectData(Goap::Blackboard& blackboard, Ent
 	}
 }
 
-ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Blackboard&, Entity&, Entity& object, ObjectType objectType) {
+ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Blackboard&, Entity&, Entity& object, ObjectType objectType, float certainty) {
 
 	ObjectData objectData;
 
@@ -30,7 +30,7 @@ ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Bla
 	bool objectIsAnimate = object.entityComponentGet<ComponentIsAnimate>();
 	objectData.dataSet("IsAnimate", objectIsAnimate);
 
-	objectPositionDataAbstract(objectData, object);
+	objectPositionDataAbstract(objectData, object, certainty);
 
 	if (objectIsAnimate) {
 		animateObjectDataAbstract(object, objectData);
@@ -38,8 +38,22 @@ ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Bla
 
 	return objectData;
 }
-void ObjectAbstractor::objectPositionDataAbstract(ObjectData& objectData, Entity& object) {
-	objectData.dataSet("Position", object.entityComponentGet<ComponentPosition>()->position);
+void ObjectAbstractor::objectPositionDataAbstract(ObjectData& objectData, Entity& object, float certainty) {
+
+	// vector3 representing the position of an object, the x and y are the position of the object in space,
+	// the z is the maximum assumed distance the object could be from the point,
+	sf::Vector3f positionArea;
+
+	sf::Vector2f objPosition = object.entityComponentGet<ComponentPosition>()->position;
+
+	positionArea.x = objPosition.x;
+	positionArea.y = objPosition.y;
+
+	if (objectData.dataGet<bool>("IsAnimate")) {
+		positionArea.z = (100.f - certainty) * 32.f;
+	}
+
+	objectData.dataSet("PositionArea", positionArea);
 }
 void ObjectAbstractor::animateObjectDataAbstract(Entity& object, ObjectData& objectData) {
 	if (object.entityComponentHas<ComponentActorStateHolder>()) objectData.dataSet("State", object.entityComponentGet<ComponentActorStateHolder>()->actorStateHolder);
