@@ -49,9 +49,9 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventRotate>>();
 	EventRegistry::typeRegister<EventIDs<EventObjectSeen>>();
 	EventRegistry::typeRegister<EventIDs<EventCollision>>();
+	EventRegistry::typeRegister<EventIDs<EventMemoryUpdated>>();
 	EventRegistry::typeRegister<EventIDs<EventBlackboardUpdated>>();
 	EventRegistry::typeRegister<EventIDs<EventTeamSwitch>>();
-	EventRegistry::typeRegister<EventIDs<EventSensesAbstract>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -102,15 +102,15 @@ void EntityComponents::componentIDsInitialize() {
 	// vision
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
 	// hearing
-	// memory
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectMemory>>();
 
-	// AI
+	// Actors/Goap
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentIsAnimate>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentActorStateHolder>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapActor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapPlanner>>();
+	// memory
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectMemory>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -966,22 +966,36 @@ void ComponentActorStateHolder::system(Entity&) {
 	// currently there aren't really any states to hold, since there are no movement states or an inventory, so this component does nothing for now.
 }
 void ComponentSenseAbstractor::system(Entity& entity) {
-	bool doUpdateBlackboard = entity.entityEventHas<EventSensesAbstract>();
+	// get whether the senses have updated
+	bool hasSightUpdated = entity.entityEventHas<EventObjectSeen>();
+	bool hasHearingUpdated = false; // not yet implemented, later replace with check for an actual hearing event
 
-	if (!doUpdateBlackboard) return;
+	// if none of the senses have updated, just return
+	if (!hasSightUpdated && !hasHearingUpdated) return;
 
 	// if any sense has updated, created an event for the new about to be abstracted data
-	auto& blackboardNew = entity.entityEventAddAndGet<EventBlackboardUpdated>()->blackboardNew;
+	auto& memoryDataNew = entity.entityEventAddAndGet<EventMemoryUpdated>()->memoryDataNew;
 
-	auto* eventSensesAbstract = entity.entityEventGet<EventSensesAbstract>();
+	// check if the sight has been updated
+	if (hasSightUpdated) {
+		// if it has been updated, abstract the sight data and add it to the abstractedSenses
 
-	for (auto& objectCur : *eventSensesAbstract->objects) {
+		auto* eventObjectSeen = entity.entityEventGet<EventObjectSeen>();
 
-		EntityId objectId = objectCur.first;
+		ObjectIdVector* objectIdVector = eventObjectSeen->objectsSeen;
 
-		float certainty = Mathf::clamp(100.f - (float(TimeHandler::timeSimulatedGet() - objectCur.second.second) / 1000.f), 0.f, 100.f);
+		for (uint16_t objTypeCur = 0; objTypeCur < objectIdVector->size(); objTypeCur++) {
+			for (uint16_t objCur = 0; objCur < objectIdVector->at(objTypeCur).size(); objCur++) {
 
-		ObjectAbstractor::blackboardAddObjectData(blackboardNew, entity, EntityManager::entityGet(objectId), objectCur.second.first, certainty);
+				EntityId objectId = objectIdVector->at(objTypeCur)[objCur];
+
+				ObjectAbstractor::blackboardAddObjectData(memoryDataNew, entity, EntityManager::entityGet(objectId), ObjectType(objTypeCur));
+			}
+		}
+	}
+	// check if the hearing has been updated
+	if (hasHearingUpdated) {
+		// not yet implemented, later put hearing stuff here
 	}
 }
 void ComponentGoapActor::system(Entity& entity) {
@@ -1057,35 +1071,17 @@ void ComponentMovementHandler::system(Entity& entity) {
 }
 void ComponentObjectMemory::system(Entity& entity) {
 
-	if (!entity.entityEventHas<EventObjectSeen>()) return;
+	if (!entity.entityEventHas<EventMemoryUpdated>()) return;
 
 	uint32_t timeCur = TimeHandler::timeSimulatedGet();
 
-	auto eventObjectSeenAll = entity.entityEventGetAllOfType<EventObjectSeen>();
+	auto* eventMemoryUpdated = entity.entityEventGet<EventMemoryUpdated>();
+	
+	memory = eventMemoryUpdated->memoryDataNew;
 
-	for (uint16_t i = 0; i < eventObjectSeenAll.size(); i++) {
-		auto* eventObjectSeen = eventObjectSeenAll[i];
+	auto* eventBlackboardUpdated = entity.entityEventAddAndGet<EventBlackboardUpdated>();
 
-		ObjectIdVector* objectIdVector = eventObjectSeen->objectsSeen;
-
-		for (uint16_t objTypeCur = 0; objTypeCur < objectIdVector->size(); objTypeCur++) {
-			for (uint16_t objCur = 0; objCur < objectIdVector->at(objTypeCur).size(); objCur++) {
-
-				EntityId objectId = objectIdVector->at(objTypeCur)[objCur];
-
-				if (!objects.contains(objectId)) {
-					objects.insert({ objectId, std::pair{ObjectType(objTypeCur), timeCur} });
-				}
-				else {
-					objects[objectId].second = timeCur;
-				}
-			}
-		}
-	}
-
-	auto* eventSensesAbstract = entity.entityEventAddAndGet<EventSensesAbstract>();
-
-	eventSensesAbstract->objects = &objects;
+	eventBlackboardUpdated->blackboardNew = memory;
 }
 
 #pragma endregion Systems

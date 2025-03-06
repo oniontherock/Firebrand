@@ -90,22 +90,6 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventObjectSeen());
 		};
 	};
-	struct EventSensesAbstract final : public Event {
-
-		EventSensesAbstract() {
-			clear();
-		};
-
-		std::unordered_map<EntityId, std::pair<ObjectType, uint32_t>>* objects;
-
-		void clear() final {
-			objects = nullptr;
-		}
-
-		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new EventSensesAbstract());
-		};
-	};
 	struct EventCollision final : public Event {
 
 		EventCollision() {
@@ -123,7 +107,22 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventCollision());
 		};
 	};
-	struct EventBlackboardUpdated final : public Event {
+	struct EventMemoryUpdated final : public Event {
+
+		EventMemoryUpdated() {
+			clear();
+		};
+
+		Goap::Blackboard memoryDataNew;
+
+		void clear() final {
+			memoryDataNew = Goap::Blackboard();
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventMemoryUpdated());
+		};
+	};	struct EventBlackboardUpdated final : public Event {
 
 		EventBlackboardUpdated() {
 			clear();
@@ -572,9 +571,7 @@ namespace EntityComponents {
 			hasSystem = true;
 		};
 
-		// unordered_map of pairs, the keys are the EntityIds of objects we've memorized,
-		// the value is a pair, the first value in the pair is the ObjectType of the object, the second value is the time at which the object was seen
-		std::unordered_map<EntityId, std::pair<ObjectType, uint32_t>> objects;
+		Goap::Blackboard memory;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentObjectMemory());
