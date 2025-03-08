@@ -50,7 +50,7 @@ void ObjectAbstractor::animateObjectDataAbstract(Entity& object, ObjectData& obj
 	objectData.dataSet("HasSenseSight", object.entityComponentHas<ComponentObjectVision>());
 }
 void ObjectAbstractor::creatureAffiliationAbstract(Goap::Blackboard& blackboard, Entity& entity, Teams::ThreatLevel threatLevel, ObjectData& objectData, ObjectDataIndex objectInd) {
-	blackboard.dataGet<ObjectDataIndexVector&>("Creatures").insert(objectInd);
+	blackboard.Creatures.insert(objectInd);
 
 	switch (threatLevel) {
 	case Teams::ThreatLevel::Enemy:
@@ -67,27 +67,27 @@ void ObjectAbstractor::creatureAffiliationAbstract(Goap::Blackboard& blackboard,
 
 void ObjectAbstractor::enemyDataAbstract(Goap::Blackboard& blackboard, Entity& entity, ObjectData& objectData, ObjectDataIndex objectInd) {
 	// add object to threat list
-	blackboard.dataGet<ObjectDataIndexVector&>("Threats").insert(objectInd);
-	// increment threat count by one
-	blackboard.dataGet<uint32_t&>("ThreatCount") += 1;
-	// determine if the threat is the closest threat, and if so, set the closest threat related data to that of this threat
-	// first get threat axis (axis from the entity to the threat)
-	sf::Vector2f threatAxis = Vector2fMath::axis(entity.entityComponentGet<ComponentPosition>()->position, objectData.dataGet<sf::Vector2f>("Position"));
-	// then get distance from entity to threat
-	float threatDist = Vector2fMath::length(threatAxis);
-	// if the distance from the entity to the threat is less (or equal to) the current closest threat's distance, then we set the closest threat data to that of the current object
-	if (threatDist <= blackboard.dataGet<sf::Vector2f>("ThreatClosestPolarCoordinates").x) {
-		sf::Vector2f threatPolarCoordinates;
-		threatPolarCoordinates.x = threatDist;
-		threatPolarCoordinates.y = atan2(threatAxis.y, threatAxis.x);
-		blackboard.dataSet("ThreatClosestPolarCoordinates", threatPolarCoordinates);
-		blackboard.dataSet("ThreatClosestInd", objectInd);
-	}
+	blackboard.Threats.insert(objectInd);
+	//// increment threat count by one
+	//blackboard.dataGet<uint32_t&>("ThreatCount") += 1;
+	//// determine if the threat is the closest threat, and if so, set the closest threat related data to that of this threat
+	//// first get threat axis (axis from the entity to the threat)
+	//sf::Vector2f threatAxis = Vector2fMath::axis(entity.entityComponentGet<ComponentPosition>()->position, objectData.dataGet<sf::Vector2f>("Position"));
+	//// then get distance from entity to threat
+	//float threatDist = Vector2fMath::length(threatAxis);
+	//// if the distance from the entity to the threat is less (or equal to) the current closest threat's distance, then we set the closest threat data to that of the current object
+	//if (threatDist <= blackboard.dataGet<sf::Vector2f>("ThreatClosestPolarCoordinates").x) {
+	//	sf::Vector2f threatPolarCoordinates;
+	//	threatPolarCoordinates.x = threatDist;
+	//	threatPolarCoordinates.y = atan2(threatAxis.y, threatAxis.x);
+	//	blackboard.dataSet("ThreatClosestPolarCoordinates", threatPolarCoordinates);
+	//	blackboard.dataSet("ThreatClosestInd", objectInd);
+	//}
 }
 void ObjectAbstractor::neutralDataAbstract(Goap::Blackboard&, Entity&, ObjectData&, ObjectDataIndex) {
 }
 void ObjectAbstractor::allyDataAbstract(Goap::Blackboard& blackboard, Entity&, ObjectData&, ObjectDataIndex objectInd) {
-	blackboard.dataGet<ObjectDataIndexVector&>("Allies").insert(objectInd);
+	blackboard.Allies.insert(objectInd);
 }
 
 Teams::ThreatLevel ObjectAbstractor::objectThreatLevelAssess(EntityId entityId, EntityId objectId) {

@@ -1076,7 +1076,10 @@ void ComponentObjectMemory::system(Entity& entity) {
 
 	auto& memoryDataNew = entity.entityEventGet<EventMemoryUpdated>()->memoryDataNew;
 
-	for (auto& objectDataCur : memoryDataNew.objects) {
+	// this is temporary, memory isn't set up yet but I'm going to rewrite the Goap::Blackboard a bit and I need to test it
+	memory = memoryDataNew;
+
+	/*for (auto& objectDataCur : memoryDataNew.objects) {
 		EntityId objectId = objectDataCur.dataGet<EntityId>("ObjectId");
 		if (!memory.objectHas(objectId)) {
 			memory.objectAdd(objectDataCur);
@@ -1084,7 +1087,7 @@ void ComponentObjectMemory::system(Entity& entity) {
 		else {
 			memory.objectUpdate(objectDataCur);
 		}
-	};
+	};*/
 
 	auto* eventBlackboardUpdated = entity.entityEventAddAndGet<EventBlackboardUpdated>();
 
