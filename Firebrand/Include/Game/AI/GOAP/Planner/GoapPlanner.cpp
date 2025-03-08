@@ -13,7 +13,7 @@ Goap::Planner::Plan Goap::Planner::actorPlanGet(Actor& actor, Goal& goal) {
 	PreconditionMap preconditions = goal.preconditions;
 
 	for (Precondition preconditionCur : preconditions) {
-		if (std::invoke(preconditionCur.second, actor.blackboard.whiteDataGet().at(preconditionCur.first))) continue;
+		if (std::invoke(preconditionCur.second, actor.blackboard.whiteDataMapGet().at(preconditionCur.first))) continue;
 
 		Plan planCur = actionsGetFromPrecondition(preconditionCur, actor, actor.blackboard);
 		plan.insert(plan.begin(), planCur.begin(), planCur.end());
@@ -63,7 +63,7 @@ Goap::Planner::Plan Goap::Planner::actionsGetFromPrecondition(Precondition preco
 			for (std::pair<const BlackboardKey, Condition>& preconditionCur : actionCur.preconditions) {
 
 				// if the current precondition for the action is satisfied already, go to the next precondition
-				if (std::invoke(preconditionCur.second, actor.blackboard.whiteDataGet().at(preconditionCur.first))) continue;
+				if (std::invoke(preconditionCur.second, actor.blackboard.whiteDataMapGet().at(preconditionCur.first))) continue;
 
 				Plan planCur = actionsGetFromPrecondition(preconditionCur, actor, blackboard);
 

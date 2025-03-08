@@ -31,9 +31,6 @@ namespace ObjectAbstractor {
 	void objectPositionDataAbstract(ObjectData& objectData, Entity& object);
 	void animateObjectDataAbstract(Entity& object, ObjectData& objectData);
 	void creatureAffiliationAbstract(Goap::Blackboard& blackboard, Entity& entity, Teams::ThreatLevel threatLevel, ObjectData& objectData, ObjectDataIndex objectInd);
-	void enemyDataAbstract(Goap::Blackboard& blackboard, Entity& entity, ObjectData& objectData, ObjectDataIndex objectInd);
-	void neutralDataAbstract(Goap::Blackboard& blackboard, Entity& entity, ObjectData& objectData, ObjectDataIndex objectInd);
-	void allyDataAbstract(Goap::Blackboard& blackboard, Entity& entity, ObjectData& objectData, ObjectDataIndex objectInd);
 
 	Teams::ThreatLevel objectThreatLevelAssess(EntityId entityId, EntityId objectId);
 }

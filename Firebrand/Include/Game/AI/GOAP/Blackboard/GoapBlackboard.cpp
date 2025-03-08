@@ -11,7 +11,7 @@ Goap::Blackboard::Blackboard() {
 	}
 }
 
-const DataUMap& Goap::Blackboard::whiteDataGet() {
+const DataUMap& Goap::Blackboard::whiteDataMapGet() {
 	return whiteData.dataUMapGet();
 }
 

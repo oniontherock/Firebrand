@@ -22,9 +22,9 @@ void Goap::ActionRegistry::actionsRegister() {
 
 		action.executionFunctionSet([](Entity& entity, Actor& actor) {
 
-			//float angleToEnemyClosest = actor.blackboard.ThreatClosestPolarCoordinates.y;
+			float angleToEnemyClosest = actor.blackboard.whiteDataGet<sf::Vector2f>("ThreatClosestPolarCoordinates").y;
 
-			//entity.entityEventAddAndGet<EntityEvents::EventMoveDirection>()->moveDirection = -sf::Vector2f(cos(angleToEnemyClosest), sin(angleToEnemyClosest));
+			entity.entityEventAddAndGet<EntityEvents::EventMoveDirection>()->moveDirection = -sf::Vector2f(cos(angleToEnemyClosest), sin(angleToEnemyClosest));
 			});
 		action.evaluationFunctionSet([](Actor&) {
 			return ActionCost(1.f);

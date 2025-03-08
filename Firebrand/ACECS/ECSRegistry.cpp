@@ -1,3 +1,4 @@
+#include "../Include/Game/AI/Sensory Abstraction/BlackboardWhiteDataManager.hpp"
 #include "../Include/Game/AI/Sensory Abstraction/ObjectAbstractor.hpp"
 #include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
 #include "../Include/Game/World/Objects/ObjectRegistry.hpp"
@@ -1078,6 +1079,8 @@ void ComponentObjectMemory::system(Entity& entity) {
 
 	// this is temporary, memory isn't set up yet but I'm going to rewrite the Goap::Blackboard a bit and I need to test it
 	memory = memoryDataNew;
+
+	BlackboardWhiteDataManager::whiteDataObtain(entity, memory);
 
 	/*for (auto& objectDataCur : memoryDataNew.objects) {
 		EntityId objectId = objectDataCur.dataGet<EntityId>("ObjectId");
