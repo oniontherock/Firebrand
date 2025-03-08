@@ -8,6 +8,8 @@ void ObjectAbstractor::blackboardAddObjectData(Goap::Blackboard& blackboard, Ent
 
 	ObjectData objectData = ObjectAbstractor::objectBasicDataAbstract(blackboard, entity, object, objectType);
 
+	objectData.dataSet("TimeSeen", TimeHandler::timeSimulatedGet());
+
 	ObjectDataIndex objectInd = blackboard.objectAdd(objectData);
 
 	if (objectData.dataGet<bool>("IsAnimate")) {
@@ -24,6 +26,7 @@ ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Bla
 	ObjectData objectData;
 
 	objectData.dataSet("ObjectType", objectType);
+	objectData.dataSet("ObjectId", object.Id);
 
 	if (object.entityComponentHas<ComponentRotation>()) objectData.dataSet("Rotation",  object.entityComponentGet<ComponentRotation>()->rotation);
 
@@ -67,10 +70,9 @@ void ObjectAbstractor::enemyDataAbstract(Goap::Blackboard& blackboard, Entity& e
 	blackboard.dataGet<ObjectDataIndexVector&>("Threats").insert(objectInd);
 	// increment threat count by one
 	blackboard.dataGet<uint32_t&>("ThreatCount") += 1;
-	sf::Vector3f threatPositionArea = objectData.dataGet<sf::Vector3f>("PositionArea");
 	// determine if the threat is the closest threat, and if so, set the closest threat related data to that of this threat
 	// first get threat axis (axis from the entity to the threat)
-	sf::Vector2f threatAxis = Vector2fMath::axis(entity.entityComponentGet<ComponentPosition>()->position, sf::Vector2f(threatPositionArea.x, threatPositionArea.y));
+	sf::Vector2f threatAxis = Vector2fMath::axis(entity.entityComponentGet<ComponentPosition>()->position, objectData.dataGet<sf::Vector2f>("Position"));
 	// then get distance from entity to threat
 	float threatDist = Vector2fMath::length(threatAxis);
 	// if the distance from the entity to the threat is less (or equal to) the current closest threat's distance, then we set the closest threat data to that of the current object

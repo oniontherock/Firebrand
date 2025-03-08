@@ -12,10 +12,44 @@ Goap::Blackboard::Blackboard() {
 	dataSet("Allies", ObjectDataIndexVector());
 	dataSet("Items", ObjectDataIndexVector());
 	dataSet("Obstacles", ObjectDataIndexVector());
+
+	for (uint32_t i = 0; i < 10000; i++) {
+		availableObjectIds.insert(i);
+	}
 }
 
 
 ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectAbstractor::ObjectData& objectData) {
-	objects.push_back(objectData);
-	return ObjectAbstractor::ObjectDataIndex(objects.size() - 1);
+	if (availableObjectIds.size() <= 0) {
+		ConsoleHandler::consolePrintErr("Object addition attempted on blackboard when there are no more valid ids");
+		return 0;
+	}
+
+	ObjectAbstractor::ObjectDataIndex ind = *availableObjectIds.begin();
+	availableObjectIds.erase(ind);
+
+	objects.insert(objects.begin() + ind, objectData);
+	objectIds.insert({ objectData.dataGet<EntityId>("ObjectId"), ind });
+
+	return ind;
+}
+
+void Goap::Blackboard::objectRemove(ObjectAbstractor::ObjectDataIndex ind) {
+	if (availableObjectIds.contains(ind)) {
+		ConsoleHandler::consolePrintErr("Object removal attempted on non-existant object (id=" + std::to_string(ind) + ") on Blackboard");
+		return;
+	}
+	
+	availableObjectIds.insert(ind);
+
+	objects[ind].dataClear();
+	objectIds.erase(objects[ind].dataGet<EntityId>("ObjectId"));
+}
+
+bool Goap::Blackboard::objectHas(EntityId objectId) const {
+	return objectIds.contains(objectId);
+}
+
+void Goap::Blackboard::objectUpdate(ObjectAbstractor::ObjectData& objectData) {
+	objects[objectIds[objectData.dataGet<EntityId>("ObjectId")]] = objectData;
 }

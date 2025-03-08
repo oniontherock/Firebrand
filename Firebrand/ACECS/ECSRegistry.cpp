@@ -102,15 +102,15 @@ void EntityComponents::componentIDsInitialize() {
 	// vision
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectVision>>();
 	// hearing
+	// general senses
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractor>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectMemory>>();
 
-	// Actors/Goap
+	// actors/goap
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentIsAnimate>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentActorStateHolder>>();
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentSenseAbstractor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapActor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapPlanner>>();
-	// memory
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentObjectMemory>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -1070,14 +1070,21 @@ void ComponentMovementHandler::system(Entity& entity) {
 	}
 }
 void ComponentObjectMemory::system(Entity& entity) {
-
 	if (!entity.entityEventHas<EventMemoryUpdated>()) return;
 
 	uint32_t timeCur = TimeHandler::timeSimulatedGet();
 
-	auto* eventMemoryUpdated = entity.entityEventGet<EventMemoryUpdated>();
-	
-	memory = eventMemoryUpdated->memoryDataNew;
+	auto& memoryDataNew = entity.entityEventGet<EventMemoryUpdated>()->memoryDataNew;
+
+	for (auto& objectDataCur : memoryDataNew.objects) {
+		EntityId objectId = objectDataCur.dataGet<EntityId>("ObjectId");
+		if (!memory.objectHas(objectId)) {
+			memory.objectAdd(objectDataCur);
+		}
+		else {
+			memory.objectUpdate(objectDataCur);
+		}
+	};
 
 	auto* eventBlackboardUpdated = entity.entityEventAddAndGet<EventBlackboardUpdated>();
 
