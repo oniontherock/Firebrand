@@ -14,7 +14,6 @@ namespace Goap {
 		void actionAdd(Action action);
 		void actionAdd(ActionName actionName);
 
-
 		std::vector<Action> actions;
 		std::vector<Goal> goals;
 

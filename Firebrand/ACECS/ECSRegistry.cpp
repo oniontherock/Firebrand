@@ -1,3 +1,4 @@
+#include "../Include/Debugging/AStarPathDrawer.hpp"
 #include "../Include/Game/AI/Sensory Abstraction/BlackboardWhiteDataManager.hpp"
 #include "../Include/Game/AI/Sensory Abstraction/MemoryUpdater.hpp"
 #include "../Include/Game/AI/Sensory Abstraction/ObjectAbstractor.hpp"
@@ -244,7 +245,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			sf::Vector2f(-12, -24), sf::Vector2f(12, -24), sf::Vector2f(12, 24), sf::Vector2f(-12, 24)
 				})),
 			createComponentPairFromType<ComponentCollisionResponse>(),
-			createComponentPairFromType<ComponentMoveSpeed>(60.f),
+			createComponentPairFromType<ComponentMoveSpeed>(100.f),
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
 			createComponentPairFromType<ComponentTeam>(),
@@ -1113,6 +1114,8 @@ void ComponentPathfinder::system(Entity& entity) {
 		}
 
 		entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
+
+		AStarPathDrawer::pathDraw(path);
 	}
 }
 

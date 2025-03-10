@@ -13,7 +13,7 @@ void AStarPathDrawer::pathDraw(AStarPath path) {
 	sf::RectangleShape pathCellShape;
 	pathCellShape.setSize(sf::Vector2f(cellSize, cellSize));
 	pathCellShape.setOrigin(sf::Vector2f(cellSize / 2.f, cellSize / 2.f));
-	pathCellShape.setFillColor(sf::Color(0, 0, 255, 100));
+	pathCellShape.setFillColor(sf::Color(0, 0, 255, 255));
 
 	for (uint16_t i = 0; i < path.size(); i++) {
 		pathCellShape.setPosition(path[i]);

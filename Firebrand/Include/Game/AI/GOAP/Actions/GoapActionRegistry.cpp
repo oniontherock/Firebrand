@@ -25,6 +25,8 @@ void Goap::ActionRegistry::actionsRegister() {
 
 			sf::Vector2f threatClosestPolarCoordinates = actor.blackboard.whiteDataGet<sf::Vector2f>("ThreatClosestPolarCoordinates");
 
+			//if (threatClosestPolarCoordinates.x )
+
 			sf::Vector2f entityPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>()->position;
 
 			sf::Vector2f fleePosition = entityPosition;
