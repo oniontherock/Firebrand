@@ -5,6 +5,7 @@
 #include "GameStates.hpp"
 #include <Auxiliary/TimeHandler.hpp>
 #include <ECS/Entities/EntityManager.hpp>
+#include "../Include/Game/Pathfinding/AStar/Path Creation/PathRequestManager.hpp"
 #include <Graphics/WindowHolder.hpp>
 #include <World/LevelUpdater.hpp>
 
@@ -33,6 +34,7 @@ void GameStatePlay::gameStateUpdate() {
 	}
 	
 	worldClockUpdate();
+	pathRequestsUpdate();
 
 	EntityManager::entitiesIntangibleUpdate();
 	EntityManager::entitiesQueuedUpdate();
@@ -85,3 +87,10 @@ void GameStateLose::gameStateUpdate() {
 	}
 }
 
+void GameStatePlay::pathRequestsUpdate() {
+	static Cooldown cooldown(0.1f);
+
+	if (cooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
+		PathRequestManager::queueProcessNext();
+	}
+}

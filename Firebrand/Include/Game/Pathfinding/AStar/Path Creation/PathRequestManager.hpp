@@ -18,18 +18,16 @@ class PathRequestManager {
 		EntityId pathRequester;
 	};
 
-	// whether or not we are currently processing a path
-	static bool isPathProcessing;
 	// queue of path requests to process
 	static std::queue<PathRequestData> pathRequestQueue;
 	// current path request to process
 	static PathRequestData pathRequestCurrent;
+public:
 	// processes next path request
 	static void queueProcessNext();
 	// sends an event to the current path requester, containing the path and whether or not the pathfinding was successful
-	static void pathProcessFinished(AStarPath path);
+	static void pathProcessFinished(AStarPath path, bool success);
 
-public:
 	// request a path to be made
 	static void pathRequest(sf::Vector2f pathStart, sf::Vector2f pathEnd, EntityId pathRequester);
 };

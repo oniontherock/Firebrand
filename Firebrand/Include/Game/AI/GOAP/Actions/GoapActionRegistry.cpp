@@ -1,6 +1,7 @@
-#include "GoapActionRegistry.hpp"
-#include "../Actors/GoapActor.hpp"
+#include "../../Sensory Abstraction/ActorDataHelper.hpp"
 #include "../ACECS/ECSRegistry.hpp"
+#include "../Actors/GoapActor.hpp"
+#include "GoapActionRegistry.hpp"
 
 extern std::map<Goap::ActionName, Goap::Action> Goap::ActionRegistry::actions{};
 
@@ -18,13 +19,24 @@ void Goap::ActionRegistry::actionsRegister() {
 	actionName = "Flee";
 	{
 		Action& action = actionAdd(actionName);
-		action.effectAdd("ThreatCount", uint32_t(0));
+		action.effectAdd("ThreatClosestPolarCoordinates", sf::Vector2f(9999999999.f, 0.f));
 
 		action.executionFunctionSet([](Entity& entity, Actor& actor) {
 
-			float angleToEnemyClosest = actor.blackboard.whiteDataGet<sf::Vector2f>("ThreatClosestPolarCoordinates").y;
+			sf::Vector2f threatClosestPolarCoordinates = actor.blackboard.whiteDataGet<sf::Vector2f>("ThreatClosestPolarCoordinates");
 
-			entity.entityEventAddAndGet<EntityEvents::EventMoveDirection>()->moveDirection = -sf::Vector2f(cos(angleToEnemyClosest), sin(angleToEnemyClosest));
+			sf::Vector2f entityPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>()->position;
+
+			sf::Vector2f fleePosition = entityPosition;
+			while (threatClosestPolarCoordinates.x < 512.f) {
+
+				fleePosition += sf::Vector2f(cos(threatClosestPolarCoordinates.y), sin(threatClosestPolarCoordinates.y)) * -256.f;
+
+				threatClosestPolarCoordinates = ActorDataHelper::pointGetClosestThreatPolarCoordinates(actor, fleePosition);
+				std::cout << threatClosestPolarCoordinates.x << "\n";
+			}
+
+			entity.entityEventAddAndGet<EntityEvents::EventMovementTargetSet>()->target = fleePosition;
 			});
 		action.evaluationFunctionSet([](Actor&) {
 			return ActionCost(1.f);

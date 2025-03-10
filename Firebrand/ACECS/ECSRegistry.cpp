@@ -2,6 +2,7 @@
 #include "../Include/Game/AI/Sensory Abstraction/MemoryUpdater.hpp"
 #include "../Include/Game/AI/Sensory Abstraction/ObjectAbstractor.hpp"
 #include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
+#include "../Include/Game/Pathfinding/AStar/Path Creation/PathRequestManager.hpp"
 #include "../Include/Game/World/Objects/ObjectRegistry.hpp"
 #include "../Include/Game/World/Physics/Collision/Collision Processor/CollisionProcessor.hpp"
 #include "ECSRegistry.hpp"
@@ -12,8 +13,8 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100000;
-uint16_t MAX_EVENT_TYPES = 9;
-uint16_t MAX_COMPONENT_TYPES = 35;
+uint16_t MAX_EVENT_TYPES = 11;
+uint16_t MAX_COMPONENT_TYPES = 37;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -54,6 +55,8 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventMemoryUpdated>>();
 	EventRegistry::typeRegister<EventIDs<EventBlackboardUpdated>>();
 	EventRegistry::typeRegister<EventIDs<EventTeamSwitch>>();
+	EventRegistry::typeRegister<EventIDs<EventMovementTargetSet>>();
+	EventRegistry::typeRegister<EventIDs<EventPathRequestCompleted>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -79,6 +82,8 @@ void EntityComponents::componentIDsInitialize() {
 
 	// collision response
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollisionResponse>>();
+	// pathfinding
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentPathfinder>>();
 	// physics
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentHingeOnPoint>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMass>>();
@@ -168,6 +173,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentGoapActor>(),
 			createComponentPairFromType<ComponentObjectMemory>(),
 			createComponentPairFromType<ComponentGoapPlanExecuter>(),
+			createComponentPairFromType<ComponentPathfinder>(),
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -1068,7 +1074,6 @@ void ComponentMovementHandler::system(Entity& entity) {
 		}
 
 		entity.entityEventAddAndGet<EventMove>()->moveAxis = moveDirectionTotal * float(double(movespeed) * TimeHandler::deltaSimulatedGet());
-
 	}
 }
 void ComponentObjectMemory::system(Entity& entity) {
@@ -1084,6 +1089,31 @@ void ComponentObjectMemory::system(Entity& entity) {
 	BlackboardWhiteDataManager::whiteDataObtain(entity, memory);
 
 	entity.entityEventAddAndGet<EventBlackboardUpdated>()->blackboardNew = memory;
+}
+void ComponentPathfinder::system(Entity& entity) {
+	if (entity.entityEventHas<EventMovementTargetSet>()) {
+
+		sf::Vector2f movementTargetNew = entity.entityEventGet<EventMovementTargetSet>()->target;
+
+		target = movementTargetNew;
+
+		PathRequestManager::pathRequest(entity.entityComponentGet<ComponentPosition>()->position, target, entity.Id);
+	}
+	if (entity.entityEventHas<EventPathRequestCompleted>()) {
+		auto* eventPathRequestCompleted = entity.entityEventGet<EventPathRequestCompleted>();
+
+		path = eventPathRequestCompleted->path;
+	}
+	if (path.size() > 0) {
+
+		sf::Vector2f pathAxis = (*path.rbegin()) - entity.entityComponentGet<ComponentPosition>()->position;
+
+		if (Vector2fMath::lengthSqrd(pathAxis) <= (64.f * 64.f)) {
+			path.pop_back();
+		}
+
+		entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
+	}
 }
 
 #pragma endregion Systems

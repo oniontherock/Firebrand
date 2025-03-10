@@ -34,6 +34,7 @@ struct GameStatePlay : public GameState {
 private:
 	void gameStateStart();
 	void worldClockUpdate();
+	void pathRequestsUpdate();
 };
 
 

@@ -15,8 +15,8 @@ void Goap::GoalRegistry::goalsRegister() {
 	{
 		Goal& goal = goalAdd("KeepSafe");
 		goal.insistenceSet(0.8f);
-		goal.preconditionAdd("ThreatCount", [](BlackboardValue value) {
-			return std::any_cast<uint32_t>(value) <= 0;
+		goal.preconditionAdd("ThreatClosestPolarCoordinates", [](BlackboardValue value) {
+			return std::any_cast<sf::Vector2f>(value).x >= 512.f;
 			}
 		);
 		goal.validationFunctionSet([](const Blackboard&) {

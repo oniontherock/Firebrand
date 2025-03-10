@@ -122,7 +122,8 @@ namespace EntityEvents {
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new EventMemoryUpdated());
 		};
-	};	struct EventBlackboardUpdated final : public Event {
+	};
+	struct EventBlackboardUpdated final : public Event {
 
 		EventBlackboardUpdated() {
 			clear();
@@ -152,6 +153,40 @@ namespace EntityEvents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new EventTeamSwitch());
+		};
+	};
+	struct EventMovementTargetSet final : public Event {
+
+		EventMovementTargetSet() {
+			clear();
+		};
+
+		sf::Vector2f target;
+
+		void clear() final {
+			target = sf::Vector2f(0, 0);
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventMovementTargetSet());
+		};
+	};
+	struct EventPathRequestCompleted final : public Event {
+
+		EventPathRequestCompleted() {
+			clear();
+		};
+
+		AStarPath path;
+		bool success;
+
+		void clear() final {
+			path.clear();
+			success = false;
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventPathRequestCompleted());
 		};
 	};
 }
@@ -199,6 +234,21 @@ namespace EntityComponents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentMovementHandler());
+		};
+	};
+	struct ComponentPathfinder final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentPathfinder() {
+			hasSystem = true;
+		};
+
+		sf::Vector2f target;
+		AStarPath path;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentPathfinder());
 		};
 	};
 	struct ComponentSpriteOrigin final : public Component {

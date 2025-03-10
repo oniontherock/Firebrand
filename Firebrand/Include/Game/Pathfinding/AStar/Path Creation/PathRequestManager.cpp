@@ -1,7 +1,6 @@
 #include "PathRequestManager.hpp"
 #include "../../../ACECS/ECSRegistry.hpp"
 
-bool PathRequestManager::isPathProcessing = false;
 std::queue<PathRequestManager::PathRequestData> PathRequestManager::pathRequestQueue;
 PathRequestManager::PathRequestData PathRequestManager::pathRequestCurrent = PathRequestManager::PathRequestData();
 
@@ -20,27 +19,24 @@ void PathRequestManager::pathRequest(sf::Vector2f pathStart, sf::Vector2f pathEn
 	PathRequestData requestNew = PathRequestData(pathStart, pathEnd, pathRequester);
 	// add request to queue
 	pathRequestQueue.push(requestNew);
-
-	queueProcessNext();
 }
 
 void PathRequestManager::queueProcessNext() {
-	if (!isPathProcessing && !pathRequestQueue.empty()) {
+	if (!pathRequestQueue.empty()) {
 		pathRequestCurrent = pathRequestQueue.front();
 		pathRequestQueue.pop();
-		isPathProcessing = true;
-		//Path
+		
+		pathProcessFinished(AStarPathfinder::pathGet(pathRequestCurrent.pathEnd, pathRequestCurrent.pathRequester), true);
 	}
 }
 
-void PathRequestManager::pathProcessFinished(AStarPath path) {
-	//EntityId pathRequesterCurrentId = pathRequestCurrent.pathRequester;
-	//Entity& pathRequesterCurrent = EntityManager::entityGet(pathRequesterCurrentId);
+void PathRequestManager::pathProcessFinished(AStarPath path, bool success) {
 
-	//auto* eventPath = pathRequesterCurrent.entityEventAddAndGet<EntityEvents::EventPath>();
-	//eventPath->path = path;
-	//eventPath->success = success;
+	EntityId pathRequesterCurrentId = pathRequestCurrent.pathRequester;
+	Entity& pathRequesterCurrent = EntityManager::entityGet(pathRequesterCurrentId);
 
-	queueProcessNext();
+	auto* eventPath = pathRequesterCurrent.entityEventAddAndGet<EntityEvents::EventPathRequestCompleted>();
+	eventPath->path = path;
+	eventPath->success = success;
 }
 
