@@ -5,6 +5,7 @@
 #include "../include/Game/World/Objects/ObjectRegistry.hpp"
 #include "../include/Game/World/Objects/ObjectTypes.hpp"
 #include "../Teams/TeamRelationHolder.hpp"
+#include "ObjectData.hpp"
 
 namespace Goap {
 	// forward declare actor
@@ -13,7 +14,6 @@ namespace Goap {
 
 namespace ObjectAbstractor {
 
-	typedef DataCache ObjectData;
 	typedef std::vector<ObjectData> ObjectDataVector;
 	typedef uint32_t ObjectDataIndex;
 	typedef std::set<ObjectDataIndex> ObjectDataIndexVector;
@@ -30,7 +30,7 @@ namespace ObjectAbstractor {
 
 	void objectPositionDataAbstract(ObjectData& objectData, Entity& object);
 	void animateObjectDataAbstract(Entity& object, ObjectData& objectData);
-	void creatureAffiliationAbstract(Goap::Blackboard& blackboard, Entity& entity, Teams::ThreatLevel threatLevel, ObjectData& objectData, ObjectDataIndex objectInd);
+	void creatureAffiliationAbstract(Goap::Blackboard& blackboard, Teams::ThreatLevel threatLevel, ObjectDataIndex objectInd);
 
 	Teams::ThreatLevel objectThreatLevelAssess(EntityId entityId, EntityId objectId);
 }

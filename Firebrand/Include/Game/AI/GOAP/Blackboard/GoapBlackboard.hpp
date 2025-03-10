@@ -30,13 +30,12 @@ namespace Goap {
 		template <typename T>
 		T whiteDataGet(DataKey dataKey) {
 			return whiteData.dataGet<T>(dataKey);
-
 		}
 		const DataUMap& whiteDataMapGet();
-		ObjectAbstractor::ObjectDataIndex objectAdd(ObjectAbstractor::ObjectData& objectData);
+		ObjectAbstractor::ObjectDataIndex objectAdd(ObjectData& objectData);
 		void objectRemove(ObjectAbstractor::ObjectDataIndex ind);
 		bool objectHas(EntityId objectId) const;
-		void objectUpdate(ObjectAbstractor::ObjectData& objectData);
+		void objectUpdate(ObjectData& objectData);
 
 		friend void whiteDataObtain(Goap::Blackboard& blackboard);
 

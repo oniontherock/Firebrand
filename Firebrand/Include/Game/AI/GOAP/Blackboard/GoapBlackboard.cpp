@@ -15,7 +15,7 @@ const DataUMap& Goap::Blackboard::whiteDataMapGet() {
 	return whiteData.dataUMapGet();
 }
 
-ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectAbstractor::ObjectData& objectData) {
+ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectData& objectData) {
 	if (availableObjectIds.size() <= 0) {
 		ConsoleHandler::consolePrintErr("Object addition attempted on blackboard when there are no more valid ids");
 		return 0;
@@ -25,7 +25,7 @@ ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectAbstractor::
 	availableObjectIds.erase(ind);
 
 	objects.insert(objects.begin() + ind, objectData);
-	objectIds.insert({ objectData.dataGet<EntityId>("ObjectId"), ind });
+	objectIds.insert({ objectData.objectId, ind });
 
 	return ind;
 }
@@ -38,14 +38,14 @@ void Goap::Blackboard::objectRemove(ObjectAbstractor::ObjectDataIndex ind) {
 	
 	availableObjectIds.insert(ind);
 
-	objects[ind].dataClear();
-	objectIds.erase(objects[ind].dataGet<EntityId>("ObjectId"));
+	objects[ind].~ObjectData();
+	objectIds.erase(objects[ind].objectId);
 }
 
 bool Goap::Blackboard::objectHas(EntityId objectId) const {
 	return objectIds.contains(objectId);
 }
 
-void Goap::Blackboard::objectUpdate(ObjectAbstractor::ObjectData& objectData) {
-	objects[objectIds[objectData.dataGet<EntityId>("ObjectId")]] = objectData;
+void Goap::Blackboard::objectUpdate(ObjectData& objectData) {
+	objects[objectIds[objectData.objectId]] = objectData;
 }

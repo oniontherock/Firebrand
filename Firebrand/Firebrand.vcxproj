@@ -161,6 +161,7 @@
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\BlackboardWhiteDataManager.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\MemoryUpdater.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.cpp" />
+    <ClCompile Include="Include\Game\AI\Sensory Abstraction\ObjectData.cpp" />
     <ClCompile Include="Include\Game\AI\Teams\TeamHolder.cpp" />
     <ClCompile Include="Include\Game\AI\Teams\TeamRelationHolder.cpp" />
     <ClCompile Include="Include\Game\Drawing\Batch Draw Handler\BatchDrawHandler.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\BlackboardWhiteDataManager.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\MemoryUpdater.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\ObjectAbstractor.hpp" />
+    <ClInclude Include="Include\Game\AI\Sensory Abstraction\ObjectData.hpp" />
     <ClInclude Include="Include\Game\AI\Teams\TeamHolder.hpp" />
     <ClInclude Include="Include\Game\AI\Teams\TeamRegistry.hpp" />
     <ClInclude Include="Include\Game\AI\Teams\TeamRelationHolder.hpp" />

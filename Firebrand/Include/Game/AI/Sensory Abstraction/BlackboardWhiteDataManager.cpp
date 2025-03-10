@@ -20,7 +20,7 @@ void BlackboardWhiteDataManager::whiteDataObtain(Entity& actor, Goap::Blackboard
 
 		// determine if the threat is the closest threat, and if so, set the closest threat related data to that of this threat
 		// first get threat axis (axis from the entity to the threat)
-		sf::Vector2f threatAxis = Vector2fMath::axis(actor.entityComponentGet<ComponentPosition>()->position, threatCur.dataGet<sf::Vector2f>("Position"));
+		sf::Vector2f threatAxis = Vector2fMath::axis(actor.entityComponentGet<ComponentPosition>()->position, threatCur.position);
 
 		// then get distance from entity to threat
 		float threatDist = Vector2fMath::length(threatAxis);

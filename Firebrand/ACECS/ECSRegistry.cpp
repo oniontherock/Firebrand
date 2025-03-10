@@ -1073,7 +1073,7 @@ void ComponentMovementHandler::system(Entity& entity) {
 void ComponentObjectMemory::system(Entity& entity) {
 	if (!entity.entityEventHas<EventMemoryUpdated>()) return;
 
-	uint32_t timeCur = TimeHandler::timeSimulatedGet();
+	//uint32_t timeCur = TimeHandler::timeSimulatedGet();
 
 	auto& memoryDataNew = entity.entityEventGet<EventMemoryUpdated>()->memoryDataNew;
 

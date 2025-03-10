@@ -8,30 +8,30 @@ void ObjectAbstractor::blackboardAddObjectData(Goap::Blackboard& blackboard, Ent
 
 	ObjectData objectData = ObjectAbstractor::objectBasicDataAbstract(blackboard, entity, object, objectType);
 
-	objectData.dataSet("TimeSeen", TimeHandler::timeSimulatedGet());
+	objectData.timeSeen = TimeHandler::timeSimulatedGet();
 
 	ObjectDataIndex objectInd = blackboard.objectAdd(objectData);
 
-	if (objectData.dataGet<bool>("IsAnimate")) {
+	if (objectData.isAnimate) {
 
 		animateObjectDataAbstract(object, objectData);
 
-		creatureAffiliationAbstract(blackboard, entity, Teams::ThreatLevel::Enemy, objectData, objectInd); // for now every creature is considered an enemy, this is just for testing
+		creatureAffiliationAbstract(blackboard, Teams::ThreatLevel::Enemy, objectInd); // for now every creature is considered an enemy, this is just for testing
 		//creatureAffiliationAbstract(blackboard, ObjectAbstractor::objectThreatLevelAssess(entity.Id, object.Id), objectData, objectInd);
 	}
 }
 
-ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Blackboard&, Entity&, Entity& object, ObjectType objectType) {
+ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Blackboard&, Entity&, Entity& object, ObjectType objectType) {
 
 	ObjectData objectData;
 
-	objectData.dataSet("ObjectType", objectType);
-	objectData.dataSet("ObjectId", object.Id);
+	objectData.objectType = objectType;
+	objectData.objectId = object.Id;
 
-	if (object.entityComponentHas<ComponentRotation>()) objectData.dataSet("Rotation",  object.entityComponentGet<ComponentRotation>()->rotation);
+	if (object.entityComponentHas<ComponentRotation>()) objectData.rotation = object.entityComponentGet<ComponentRotation>()->rotation;
 
 	bool objectIsAnimate = object.entityComponentGet<ComponentIsAnimate>();
-	objectData.dataSet("IsAnimate", objectIsAnimate);
+	objectData.isAnimate = objectIsAnimate;
 
 	objectPositionDataAbstract(objectData, object);
 
@@ -42,14 +42,14 @@ ObjectAbstractor::ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Bla
 	return objectData;
 }
 void ObjectAbstractor::objectPositionDataAbstract(ObjectData& objectData, Entity& object) {
-	objectData.dataSet("Position", object.entityComponentGet<ComponentPosition>()->position);
+	objectData.position = object.entityComponentGet<ComponentPosition>()->position;
 }
 void ObjectAbstractor::animateObjectDataAbstract(Entity& object, ObjectData& objectData) {
-	if (object.entityComponentHas<ComponentActorStateHolder>()) objectData.dataSet("State", object.entityComponentGet<ComponentActorStateHolder>()->actorStateHolder);
+	if (object.entityComponentHas<ComponentActorStateHolder>()) objectData.state = object.entityComponentGet<ComponentActorStateHolder>()->actorStateHolder;
 
-	objectData.dataSet("HasSenseSight", object.entityComponentHas<ComponentObjectVision>());
+	objectData.hasSenseSight = object.entityComponentHas<ComponentObjectVision>();
 }
-void ObjectAbstractor::creatureAffiliationAbstract(Goap::Blackboard& blackboard, Entity& entity, Teams::ThreatLevel threatLevel, ObjectData& objectData, ObjectDataIndex objectInd) {
+void ObjectAbstractor::creatureAffiliationAbstract(Goap::Blackboard& blackboard, Teams::ThreatLevel threatLevel, ObjectDataIndex objectInd) {
 	blackboard.creatures.insert(objectInd);
 
 	switch (threatLevel) {
