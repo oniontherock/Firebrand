@@ -11,7 +11,7 @@ void MemoryUpdater::memoryUpdate(Goap::Blackboard& memory, ObjectAbstractor::Obj
 	// update objects already present in memory that are to be memorized again
 	for (auto& objectCurPair : memory.objects) {
 		auto& objectCur = objectCurPair.second;
-		for (int32_t objectMemoryCurInd = memoryDataNew.size() - 1; objectMemoryCurInd >= 0; objectMemoryCurInd--) {
+		for (int32_t objectMemoryCurInd = int32_t(memoryDataNew.size()) - 1; objectMemoryCurInd >= 0; objectMemoryCurInd--) {
 
 			auto& objectMemoryCur = memoryDataNew[objectMemoryCurInd];
 

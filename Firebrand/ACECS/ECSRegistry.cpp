@@ -1112,9 +1112,9 @@ void ComponentPathfinder::system(Entity& entity) {
 		if (Vector2fMath::lengthSqrd(pathAxis) <= (64.f * 64.f)) {
 			path.pop_back();
 		}
-
-		entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
-
+		else {
+			entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
+		}
 		AStarPathDrawer::pathDraw(path);
 	}
 }

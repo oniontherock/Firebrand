@@ -99,7 +99,10 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 
 	AStarCellPosition cellStart = aStarGrid.coordinatesWorldToCell(pointStart);
 	AStarCellPosition cellEnd = aStarGrid.coordinatesWorldToCell(pointEnd);
-
+	
+	if (!aStarGrid.cellPosIsInGrid(cellStart) || !aStarGrid.cellPosIsInGrid(cellEnd)) {
+		return AStarPath{ pointStart };
+	}
 	if (!aStarGrid.cellGet(cellStart).valid || !aStarGrid.cellGet(cellEnd).valid) {
 		return AStarPath{ pointStart };
 	}

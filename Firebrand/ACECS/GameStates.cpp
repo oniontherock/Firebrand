@@ -90,7 +90,7 @@ void GameStateLose::gameStateUpdate() {
 void GameStatePlay::pathRequestsUpdate() {
 	static Cooldown cooldown(0.1f);
 
-	if (cooldown.updateAutoReset(TimeHandler::deltaRealGet())) {
+	if (cooldown.updateAutoReset(float(TimeHandler::deltaRealGet()))) {
 		PathRequestManager::queueProcessNext();
 	}
 }
