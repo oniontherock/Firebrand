@@ -1,11 +1,6 @@
 #include "GoapBlackboard.hpp"
 
 Goap::Blackboard::Blackboard() {
-
-	whiteData.dataSet("ThreatClosestInd", ObjectAbstractor::ObjectDataIndexVector());
-	whiteData.dataSet("ThreatClosestPolarCoordinates", sf::Vector2f(99999999.f, 0.f));
-	whiteData.dataSet("ThreatCount", uint32_t(0));
-
 	for (uint32_t i = 0; i < 10000; i++) {
 		availableObjectIds.insert(i);
 	}
@@ -13,6 +8,14 @@ Goap::Blackboard::Blackboard() {
 
 const DataUMap& Goap::Blackboard::whiteDataMapGet() {
 	return whiteData.dataUMapGet();
+}
+
+void Goap::Blackboard::objectDesignationsClear() {
+	creatures.clear();
+	threats.clear();
+	allies.clear();
+	items.clear();
+	obstacles.clear();
 }
 
 ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectData& objectData) {
@@ -24,7 +27,7 @@ ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectData& object
 	ObjectAbstractor::ObjectDataIndex ind = *availableObjectIds.begin();
 	availableObjectIds.erase(ind);
 
-	objects.insert(objects.begin() + ind, objectData);
+	objects.insert({ ind, objectData });
 	objectIds.insert({ objectData.objectId, ind });
 
 	return ind;
@@ -32,14 +35,14 @@ ObjectAbstractor::ObjectDataIndex Goap::Blackboard::objectAdd(ObjectData& object
 
 void Goap::Blackboard::objectRemove(ObjectAbstractor::ObjectDataIndex ind) {
 	if (availableObjectIds.contains(ind)) {
-		ConsoleHandler::consolePrintErr("Object removal attempted on non-existant object (id=" + std::to_string(ind) + ") on Blackboard");
+		ConsoleHandler::consolePrintErr("Object removal attempted on non-existant object (ind=" + std::to_string(ind) + ") on Blackboard");
 		return;
 	}
 	
 	availableObjectIds.insert(ind);
 
-	objects[ind].~ObjectData();
 	objectIds.erase(objects[ind].objectId);
+	objects.erase(ind);
 }
 
 bool Goap::Blackboard::objectHas(EntityId objectId) const {

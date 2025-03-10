@@ -1,4 +1,5 @@
 #include "../Include/Game/AI/Sensory Abstraction/BlackboardWhiteDataManager.hpp"
+#include "../Include/Game/AI/Sensory Abstraction/MemoryUpdater.hpp"
 #include "../Include/Game/AI/Sensory Abstraction/ObjectAbstractor.hpp"
 #include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
 #include "../Include/Game/World/Objects/ObjectRegistry.hpp"
@@ -990,7 +991,7 @@ void ComponentSenseAbstractor::system(Entity& entity) {
 
 				EntityId objectId = objectIdVector->at(objTypeCur)[objCur];
 
-				ObjectAbstractor::blackboardAddObjectData(memoryDataNew, entity, EntityManager::entityGet(objectId), ObjectType(objTypeCur));
+				memoryDataNew.push_back(ObjectAbstractor::blackboardAddObjectData(entity, EntityManager::entityGet(objectId), ObjectType(objTypeCur)));
 			}
 		}
 	}
@@ -1078,23 +1079,11 @@ void ComponentObjectMemory::system(Entity& entity) {
 	auto& memoryDataNew = entity.entityEventGet<EventMemoryUpdated>()->memoryDataNew;
 
 	// this is temporary, memory isn't set up yet but I'm going to rewrite the Goap::Blackboard a bit and I need to test it
-	memory = memoryDataNew;
+	MemoryUpdater::memoryUpdate(memory, memoryDataNew);
 
 	BlackboardWhiteDataManager::whiteDataObtain(entity, memory);
 
-	/*for (auto& objectDataCur : memoryDataNew.objects) {
-		EntityId objectId = objectDataCur.dataGet<EntityId>("ObjectId");
-		if (!memory.objectHas(objectId)) {
-			memory.objectAdd(objectDataCur);
-		}
-		else {
-			memory.objectUpdate(objectDataCur);
-		}
-	};*/
-
-	auto* eventBlackboardUpdated = entity.entityEventAddAndGet<EventBlackboardUpdated>();
-
-	eventBlackboardUpdated->blackboardNew = memory;
+	entity.entityEventAddAndGet<EventBlackboardUpdated>()->blackboardNew = memory;
 }
 
 #pragma endregion Systems

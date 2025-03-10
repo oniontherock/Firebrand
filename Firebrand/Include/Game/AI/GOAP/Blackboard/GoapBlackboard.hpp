@@ -14,14 +14,17 @@ namespace Goap {
 
 		Blackboard();
 
-		ObjectAbstractor::ObjectDataVector objects;
+		std::map<uint32_t, ObjectData> objects;
 		std::unordered_map<EntityId, ObjectAbstractor::ObjectDataIndex> objectIds;
 
-		ObjectAbstractor::ObjectDataIndexVector creatures;
-		ObjectAbstractor::ObjectDataIndexVector threats;
-		ObjectAbstractor::ObjectDataIndexVector allies;
-		ObjectAbstractor::ObjectDataIndexVector items;
-		ObjectAbstractor::ObjectDataIndexVector obstacles;
+		// clears all the ObjectDataIndexSets, like threats, creatures, etc
+		void objectDesignationsClear();
+
+		ObjectAbstractor::ObjectDataIndexSet creatures;
+		ObjectAbstractor::ObjectDataIndexSet threats;
+		ObjectAbstractor::ObjectDataIndexSet allies;
+		ObjectAbstractor::ObjectDataIndexSet items;
+		ObjectAbstractor::ObjectDataIndexSet obstacles;
 
 		template <typename T>
 		void whiteDataSet(DataKey dataKey, T dataValue) {

@@ -14,9 +14,9 @@ void BlackboardWhiteDataManager::whiteDataObtain(Entity& actor, Goap::Blackboard
 
 	sf::Vector2f threatClosestPolarCoordinates = sf::Vector2f(9999999999.f, 0.f);
 	uint32_t threatClosestInd = 0;
-	for (uint32_t i = 0; i < blackboard.threats.size(); i++) {
+	for (ObjectAbstractor::ObjectDataIndex objectDataIndex : blackboard.threats) {
 
-		ObjectData& threatCur = blackboard.objects[i];
+		ObjectData& threatCur = blackboard.objects[objectDataIndex];
 
 		// determine if the threat is the closest threat, and if so, set the closest threat related data to that of this threat
 		// first get threat axis (axis from the entity to the threat)
@@ -30,9 +30,10 @@ void BlackboardWhiteDataManager::whiteDataObtain(Entity& actor, Goap::Blackboard
 			threatPolarCoordinates.x = threatDist;
 			threatPolarCoordinates.y = atan2(threatAxis.y, threatAxis.x);
 			threatClosestPolarCoordinates = threatPolarCoordinates;
-			threatClosestInd = i;
+			threatClosestInd = objectDataIndex;
 		}
 	}
+
 	blackboard.whiteDataSet("ThreatClosestPolarCoordinates", threatClosestPolarCoordinates);
 	blackboard.whiteDataSet("ThreatClosestInd", threatClosestInd);
 }

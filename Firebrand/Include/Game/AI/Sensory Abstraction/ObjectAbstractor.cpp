@@ -4,24 +4,24 @@
 
 using namespace EntityComponents;
 
-void ObjectAbstractor::blackboardAddObjectData(Goap::Blackboard& blackboard, Entity& entity, Entity& object, ObjectType objectType) {
+ObjectData ObjectAbstractor::blackboardAddObjectData(Entity& entity, Entity& object, ObjectType objectType) {
 
-	ObjectData objectData = ObjectAbstractor::objectBasicDataAbstract(blackboard, entity, object, objectType);
+	ObjectData objectData = ObjectAbstractor::objectBasicDataAbstract(entity, object, objectType);
 
-	objectData.timeSeen = TimeHandler::timeSimulatedGet();
-
-	ObjectDataIndex objectInd = blackboard.objectAdd(objectData);
+	objectData.timeMemorized = TimeHandler::timeSimulatedGet();
 
 	if (objectData.isAnimate) {
 
 		animateObjectDataAbstract(object, objectData);
 
-		creatureAffiliationAbstract(blackboard, Teams::ThreatLevel::Enemy, objectInd); // for now every creature is considered an enemy, this is just for testing
-		//creatureAffiliationAbstract(blackboard, ObjectAbstractor::objectThreatLevelAssess(entity.Id, object.Id), objectData, objectInd);
+		objectData.threatLevel = Teams::ThreatLevel::Enemy; // for now every creature is considered an enemy, this is just for testing
+		//objectData.threatLevel = ObjectAbstractor::objectThreatLevelAssess(entity.Id, object.Id);
 	}
+
+	return objectData;
 }
 
-ObjectData ObjectAbstractor::objectBasicDataAbstract(Goap::Blackboard&, Entity&, Entity& object, ObjectType objectType) {
+ObjectData ObjectAbstractor::objectBasicDataAbstract(Entity&, Entity& object, ObjectType objectType) {
 
 	ObjectData objectData;
 
@@ -48,18 +48,6 @@ void ObjectAbstractor::animateObjectDataAbstract(Entity& object, ObjectData& obj
 	if (object.entityComponentHas<ComponentActorStateHolder>()) objectData.state = object.entityComponentGet<ComponentActorStateHolder>()->actorStateHolder;
 
 	objectData.hasSenseSight = object.entityComponentHas<ComponentObjectVision>();
-}
-void ObjectAbstractor::creatureAffiliationAbstract(Goap::Blackboard& blackboard, Teams::ThreatLevel threatLevel, ObjectDataIndex objectInd) {
-	blackboard.creatures.insert(objectInd);
-
-	switch (threatLevel) {
-	case Teams::ThreatLevel::Enemy:
-		blackboard.threats.insert(objectInd);
-		break;
-	case Teams::ThreatLevel::Ally:
-		blackboard.allies.insert(objectInd);
-		break;
-	}
 }
 
 Teams::ThreatLevel ObjectAbstractor::objectThreatLevelAssess(EntityId entityId, EntityId objectId) {

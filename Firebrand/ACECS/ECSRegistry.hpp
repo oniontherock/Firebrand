@@ -113,10 +113,10 @@ namespace EntityEvents {
 			clear();
 		};
 
-		Goap::Blackboard memoryDataNew;
+		ObjectAbstractor::ObjectDataVector memoryDataNew;
 
 		void clear() final {
-			memoryDataNew = Goap::Blackboard();
+			memoryDataNew.clear();
 		}
 
 		std::unique_ptr<Duplicatable> duplicate() override {

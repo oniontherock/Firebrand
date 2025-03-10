@@ -1,7 +1,5 @@
 #include "ObjectData.hpp"
 
-ObjectData::ObjectData() {
-}
-ObjectData::~ObjectData() {
+void ObjectData::dataClear() {
 	state.dataClear();
 }

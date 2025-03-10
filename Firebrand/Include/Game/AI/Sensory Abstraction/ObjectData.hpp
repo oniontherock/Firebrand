@@ -2,15 +2,16 @@
 #define __OBJECT_DATA_H__
 
 #include "../include/Common/DataCache.hpp"
+#include "../include/Game/World/Objects/ObjectTypes.hpp"
+#include "../Teams/TeamRelationHolder.hpp"
 #include <cstdint>
 #include <ECS/Entities/Entity.hpp>
-#include "../include/Game/World/Objects/ObjectTypes.hpp"
 
 struct ObjectData {
-	ObjectData();
-	~ObjectData();
 
-	uint32_t timeSeen = 0;
+	void dataClear();
+
+	uint32_t timeMemorized = 0;
 
 	EntityId objectId = 0;
 	ObjectType objectType = ObjectType::Null;
@@ -21,6 +22,8 @@ struct ObjectData {
 
 	bool isAnimate = false;
 	bool hasSenseSight = false;
+
+	Teams::ThreatLevel threatLevel = Teams::ThreatLevel::Neutral;
 };
 
 
