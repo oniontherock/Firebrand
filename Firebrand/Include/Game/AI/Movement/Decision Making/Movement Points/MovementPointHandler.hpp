@@ -1,5 +1,5 @@
-#ifndef __MOVEMENT_ACTOR_H__
-#define __MOVEMENT_ACTOR_H__
+#ifndef __MOVEMENT_POINT_HANDLER_H__
+#define __MOVEMENT_POINT_HANDLER_H__
 
 #include <SFML/System/Vector2.hpp>
 #include <vector>
@@ -18,7 +18,7 @@ namespace Movement {
 		bool operator< (const MovementPoint& other);
 	};
 
-	class Actor {
+	struct MovementPointHandler {
 		// points the actor should move towards, the actor moves to the closest (or easiest) point first, and then goes towards the next point in the list
 		std::vector<MovementPoint> targetPoints;
 		// points the actor should avoid going within the threshold of, the actor will avoid these points when pathfinding.

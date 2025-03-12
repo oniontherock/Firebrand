@@ -158,7 +158,8 @@
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoal.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Planner\GoapPlanner.cpp" />
-    <ClCompile Include="Include\Game\AI\Movement\Decision Making\MovementActor.cpp" />
+    <ClCompile Include="Include\Game\AI\Movement\Decision Making\Movement Points\MovementPlanner.cpp" />
+    <ClCompile Include="Include\Game\AI\Movement\Decision Making\Movement Points\MovementPointHandler.cpp" />
     <ClCompile Include="Include\Game\AI\Movement\Movement States\MovementStateData.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\ActorDataHelper.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\BlackboardWhiteDataManager.cpp" />
@@ -254,7 +255,8 @@
     <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\GoapTypes.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Planner\GoapPlanner.hpp" />
-    <ClInclude Include="Include\Game\AI\Movement\Decision Making\MovementActor.hpp" />
+    <ClInclude Include="Include\Game\AI\Movement\Decision Making\Movement Points\MovementPlanner.hpp" />
+    <ClInclude Include="Include\Game\AI\Movement\Decision Making\Movement Points\MovementPointHandler.hpp" />
     <ClInclude Include="Include\Game\AI\Movement\Movement States\MovementState.hpp" />
     <ClInclude Include="Include\Game\AI\Movement\Movement States\MovementStateData.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\ActorDataHelper.hpp" />
