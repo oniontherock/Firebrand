@@ -8,7 +8,7 @@
 #include "../Include/Game/AI/GOAP/Blackboard/GoapBlackboard.hpp"
 #include "../Include/Game/AI/GOAP/Goals/GoapGoalRegistry.hpp"
 #include "../Include/Game/AI/GOAP/Planner/GoapPlanner.hpp"
-#include "../Include/Game/AI/Movement/MovementStateData.hpp"
+#include "../Include/Game/AI/Movement/Movement States/MovementStateData.hpp"
 #include "../Include/Game/AI/Teams/TeamHolder.hpp"
 #include "../Include/Game/AI/Teams/TeamRegistry.hpp"
 #include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
