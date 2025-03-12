@@ -196,10 +196,10 @@ namespace EntityEvents {
 			clear();
 		};
 
-		MovementStates::MovementState movementState;
+		Movement::MovementState movementState;
 
 		void clear() final {
-			movementState = MovementStates::MovementState::Walk;
+			movementState = Movement::MovementState::Walk;
 		}
 
 		std::unique_ptr<Duplicatable> duplicate() override {
@@ -979,13 +979,13 @@ namespace EntityComponents {
 		ComponentMovementStatesHolder() {
 			hasSystem = false;
 		};
-		ComponentMovementStatesHolder(std::set<MovementStates::MovementState> _movementStates) :
+		ComponentMovementStatesHolder(std::set<Movement::MovementState> _movementStates) :
 			ComponentMovementStatesHolder()
 		{
 			movementStates = _movementStates;
 		};
 
-		std::set<MovementStates::MovementState> movementStates;
+		std::set<Movement::MovementState> movementStates;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentMovementStatesHolder(movementStates));
@@ -1003,7 +1003,7 @@ namespace EntityComponents {
 			hasSystem = true;
 		};
 
-		MovementStates::MovementState movementState = MovementStates::MovementState::Walk;
+		Movement::MovementState movementState = Movement::MovementState::Walk;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentMovementState());

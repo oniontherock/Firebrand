@@ -37,7 +37,7 @@ void Goap::ActionRegistry::actionsRegister() {
 			}
 
 			entity.entityEventAddAndGet<EntityEvents::EventMovementTargetSet>()->target = fleePosition;
-			entity.entityEventAddAndGet<EntityEvents::EventMovementStateSet>()->movementState = MovementStates::MovementState::Run;
+			entity.entityEventAddAndGet<EntityEvents::EventMovementStateSet>()->movementState = Movement::MovementState::Run;
 			});
 		action.evaluationFunctionSet([](Actor&) {
 			return ActionCost(1.f);

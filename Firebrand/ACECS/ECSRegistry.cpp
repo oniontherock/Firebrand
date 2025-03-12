@@ -297,7 +297,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObserver>(1280.f),
 			createComponentPairFromType<ComponentTeam>(),
 			createComponentPairFromType<ComponentGoapActor>(std::vector<Goap::GoalName>{ "KeepSafe" }, std::vector<Goap::ActionName>{ "Flee" }),
-			createComponentPairFromType<ComponentMovementStatesHolder>(std::set{ MovementStates::MovementState::Crouch, MovementStates::MovementState::Walk, MovementStates::MovementState::Run }),
+			createComponentPairFromType<ComponentMovementStatesHolder>(std::set{ Movement::MovementState::Crouch, Movement::MovementState::Walk, Movement::MovementState::Run }),
 		}
 	);
 #pragma region Wall Templates
@@ -1173,7 +1173,7 @@ void ComponentMovementState::system(Entity& entity) {
 
 	if (entity.entityEventHas<EventMovementStateSet>()) {
 
-		MovementStates::MovementState movementStateNew = entity.entityEventGet<EventMovementStateSet>()->movementState;
+		Movement::MovementState movementStateNew = entity.entityEventGet<EventMovementStateSet>()->movementState;
 
 		auto* componentMovementStatesHolder = entity.entityComponentGet<ComponentMovementStatesHolder>();
 

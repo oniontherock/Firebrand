@@ -1,8 +1,8 @@
 #include "MovementStateData.hpp"
 
-std::vector<MovementStates::MovementStateData> MovementStates::MovementStateHolder::movementStateVector{};
+std::vector<Movement::MovementStateData> Movement::MovementStateHolder::movementStateVector{};
 
-void MovementStates::MovementStateHolder::movementStatesRegister() {
+void Movement::MovementStateHolder::movementStatesRegister() {
 
 	movementStateVector.resize(uint32_t(MovementState::SIZE));
 
@@ -10,6 +10,6 @@ void MovementStates::MovementStateHolder::movementStatesRegister() {
 	movementStateVector[uint32_t(MovementState::Walk)] = MovementStateData(50.f, 35.f);
 	movementStateVector[uint32_t(MovementState::Run)] = MovementStateData(80.f, 70.f);
 }
-MovementStates::MovementStateData MovementStates::MovementStateHolder::movementStateGet(MovementState movementState) {
+Movement::MovementStateData Movement::MovementStateHolder::movementStateGet(MovementState movementState) {
 	return movementStateVector[uint32_t(movementState)];
 }

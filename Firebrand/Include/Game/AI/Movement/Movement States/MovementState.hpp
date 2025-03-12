@@ -2,7 +2,7 @@
 #define __MOVEMENT_STATE_H__
 
 
-namespace MovementStates {
+namespace Movement {
 	enum class MovementState {
 		Crouch,
 		Walk,

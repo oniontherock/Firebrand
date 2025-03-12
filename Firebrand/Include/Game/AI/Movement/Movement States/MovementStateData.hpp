@@ -4,7 +4,7 @@
 #include "MovementState.hpp"
 #include <vector>
 
-namespace MovementStates {
+namespace Movement {
 
 	typedef float MovementStateValue;
 
