@@ -158,6 +158,7 @@
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoal.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.cpp" />
     <ClCompile Include="Include\Game\AI\GOAP\Planner\GoapPlanner.cpp" />
+    <ClCompile Include="Include\Game\AI\Movement\MovementStateData.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\ActorDataHelper.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\BlackboardWhiteDataManager.cpp" />
     <ClCompile Include="Include\Game\AI\Sensory Abstraction\MemoryUpdater.cpp" />
@@ -252,6 +253,8 @@
     <ClInclude Include="Include\Game\AI\GOAP\Goals\GoapGoalRegistry.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\GoapTypes.hpp" />
     <ClInclude Include="Include\Game\AI\GOAP\Planner\GoapPlanner.hpp" />
+    <ClInclude Include="Include\Game\AI\Movement\MovementState.hpp" />
+    <ClInclude Include="Include\Game\AI\Movement\MovementStateData.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\ActorDataHelper.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\BlackboardWhiteDataManager.hpp" />
     <ClInclude Include="Include\Game\AI\Sensory Abstraction\MemoryUpdater.hpp" />
