@@ -25,8 +25,6 @@ void Goap::ActionRegistry::actionsRegister() {
 
 			sf::Vector2f threatClosestPolarCoordinates = actor.blackboard.whiteDataGet<sf::Vector2f>("ThreatClosestPolarCoordinates");
 
-			//if (threatClosestPolarCoordinates.x )
-
 			sf::Vector2f entityPosition = entity.entityComponentGet<EntityComponents::ComponentPosition>()->position;
 
 			sf::Vector2f fleePosition = entityPosition;
@@ -39,6 +37,7 @@ void Goap::ActionRegistry::actionsRegister() {
 			}
 
 			entity.entityEventAddAndGet<EntityEvents::EventMovementTargetSet>()->target = fleePosition;
+			entity.entityEventAddAndGet<EntityEvents::EventMovementStateSet>()->movementState = MovementStates::MovementState::Run;
 			});
 		action.evaluationFunctionSet([](Actor&) {
 			return ActionCost(1.f);

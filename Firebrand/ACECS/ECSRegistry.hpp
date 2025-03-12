@@ -8,6 +8,7 @@
 #include "../Include/Game/AI/GOAP/Blackboard/GoapBlackboard.hpp"
 #include "../Include/Game/AI/GOAP/Goals/GoapGoalRegistry.hpp"
 #include "../Include/Game/AI/GOAP/Planner/GoapPlanner.hpp"
+#include "../Include/Game/AI/Movement/MovementStateData.hpp"
 #include "../Include/Game/AI/Teams/TeamHolder.hpp"
 #include "../Include/Game/AI/Teams/TeamRegistry.hpp"
 #include "../Include/Game/AI/Teams/TeamRelationHolder.hpp"
@@ -187,6 +188,22 @@ namespace EntityEvents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new EventPathRequestCompleted());
+		};
+	};
+	struct EventMovementStateSet final : public Event {
+
+		EventMovementStateSet() {
+			clear();
+		};
+
+		MovementStates::MovementState movementState;
+
+		void clear() final {
+			movementState = MovementStates::MovementState::Walk;
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventMovementStateSet());
 		};
 	};
 }
@@ -954,6 +971,42 @@ namespace EntityComponents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentGoapPlanExecuter());
+		};
+	};
+	// holds a list of movement states that the entity may use
+	struct ComponentMovementStatesHolder final : public Component {
+
+		ComponentMovementStatesHolder() {
+			hasSystem = false;
+		};
+		ComponentMovementStatesHolder(std::set<MovementStates::MovementState> _movementStates) :
+			ComponentMovementStatesHolder()
+		{
+			movementStates = _movementStates;
+		};
+
+		std::set<MovementStates::MovementState> movementStates;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentMovementStatesHolder(movementStates));
+		};
+
+		void save(std::ofstream& str) override;
+		void load(std::ifstream& str) override;
+	};
+	// holds the current movement state the entity is in
+	struct ComponentMovementState final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentMovementState() {
+			hasSystem = true;
+		};
+
+		MovementStates::MovementState movementState = MovementStates::MovementState::Walk;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentMovementState());
 		};
 	};
 }

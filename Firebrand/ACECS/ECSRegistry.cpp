@@ -14,8 +14,8 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100000;
-uint16_t MAX_EVENT_TYPES = 11;
-uint16_t MAX_COMPONENT_TYPES = 37;
+uint16_t MAX_EVENT_TYPES = 12;
+uint16_t MAX_COMPONENT_TYPES = 39;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -58,6 +58,7 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventTeamSwitch>>();
 	EventRegistry::typeRegister<EventIDs<EventMovementTargetSet>>();
 	EventRegistry::typeRegister<EventIDs<EventPathRequestCompleted>>();
+	EventRegistry::typeRegister<EventIDs<EventMovementStateSet>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -120,6 +121,10 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapActor>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentGoapPlanner>>();
 
+	// AI movement
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementStatesHolder>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementState>>();
+
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteFlip>>();
@@ -160,9 +165,20 @@ void EntityComponents::componentTemplatesInitialize() {
 		);
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
-		"Actor",
+		"MovementStates",
 		{
 			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentMovementStatesHolder>(),
+			createComponentPairFromType<ComponentMovementState>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"Actor",
+		{
 		},
 		/// list of components in template
 		{
@@ -263,6 +279,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			"DecisionMaker",
 			"Seeing",
 			"Sensory",
+			"MovementStates",
 		},
 		/// list of components in template
 		{
@@ -280,6 +297,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentObserver>(1280.f),
 			createComponentPairFromType<ComponentTeam>(),
 			createComponentPairFromType<ComponentGoapActor>(std::vector<Goap::GoalName>{ "KeepSafe" }, std::vector<Goap::ActionName>{ "Flee" }),
+			createComponentPairFromType<ComponentMovementStatesHolder>(std::set{ MovementStates::MovementState::Crouch, MovementStates::MovementState::Walk, MovementStates::MovementState::Run }),
 		}
 	);
 #pragma region Wall Templates
@@ -1144,6 +1162,29 @@ void ComponentPathfinder::system(Entity& entity) {
 			entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
 		}
 		AStarPathDrawer::pathDraw(path);
+	}
+}
+void ComponentMovementState::system(Entity& entity) {
+
+	if (!entity.entityComponentHas<ComponentMovementStatesHolder>()) {
+		ConsoleHandler::consolePrintErr("Entity (id=" + std::to_string(entity.Id) + ") has ComponentMovementState, but does not have ComponentMovementStatesHolder!");
+		return;
+	}
+
+	if (entity.entityEventHas<EventMovementStateSet>()) {
+
+		MovementStates::MovementState movementStateNew = entity.entityEventGet<EventMovementStateSet>()->movementState;
+
+		auto* componentMovementStatesHolder = entity.entityComponentGet<ComponentMovementStatesHolder>();
+
+		if (!componentMovementStatesHolder->movementStates.contains(movementStateNew)) {
+			// print error if the ComponentMovementStatesHolder does not contain the movementStateNew
+			ConsoleHandler::consolePrintErr("Entity (id=" + std::to_string(entity.Id) + ") has received an EventMovementStateSet containing a MovementState that the entity's ComponentMovementStatesHolder does not contain (Invalid MovementState=" + std::to_string(uint32_t(movementStateNew)) + ")");
+			return;
+		}
+
+		// set the movementState to the new movement state given by the EventMovementStateSet
+		movementState = movementStateNew;
 	}
 }
 

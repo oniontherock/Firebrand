@@ -417,5 +417,11 @@ void EntityComponents::ComponentObserver::save(std::ofstream& str) {
 void EntityComponents::ComponentObserver::load(std::ifstream& str) {
 	str >> observationDistance;
 }
+void EntityComponents::ComponentMovementStatesHolder::save(std::ofstream& str) {
+	str << movementStates;
+}
+void EntityComponents::ComponentMovementStatesHolder::load(std::ifstream& str) {
+	str >> movementStates;
+}
 
 #pragma endregion
