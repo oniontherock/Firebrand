@@ -138,7 +138,6 @@ void EntityComponents::componentTemplatesInitialize() {
 	using namespace EntityComponents;
 
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Transform",
 		/// list of components in template
@@ -148,7 +147,6 @@ void EntityComponents::componentTemplatesInitialize() {
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Input Controlled",
 		{
@@ -161,7 +159,6 @@ void EntityComponents::componentTemplatesInitialize() {
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Actor",
 		{
@@ -169,16 +166,48 @@ void EntityComponents::componentTemplatesInitialize() {
 		},
 		/// list of components in template
 		{
-			createComponentPairFromType<ComponentSenseAbstractor>(),
 			createComponentPairFromType<ComponentActorStateHolder>(),
 			createComponentPairFromType<ComponentGoapActor>(),
-			createComponentPairFromType<ComponentObjectMemory>(),
-			createComponentPairFromType<ComponentGoapPlanExecuter>(),
-			createComponentPairFromType<ComponentPathfinder>(),
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(
-
+		/// template name
+		"Sensory",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentSenseAbstractor>(),
+			createComponentPairFromType<ComponentObjectMemory>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"Seeing",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentObjectVision>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"DecisionMaker",
+		{
+			"Transform",
+			"Actor",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentGoapPlanner>(),
+			createComponentPairFromType<ComponentGoapPlanExecuter>(),
+			createComponentPairFromType<ComponentPathfinder>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
 		"Creature",
 		{
@@ -201,7 +230,6 @@ void EntityComponents::componentTemplatesInitialize() {
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Player",
 		{
@@ -226,13 +254,15 @@ void EntityComponents::componentTemplatesInitialize() {
 		}
 	);
 	ComponentTemplateManager::componentTemplateAdd(
-
 		/// template name
 		"Test Creature",
 		{
 			"Transform",
 			"Creature",
 			"Actor",
+			"DecisionMaker",
+			"Seeing",
+			"Sensory",
 		},
 		/// list of components in template
 		{
@@ -249,9 +279,7 @@ void EntityComponents::componentTemplatesInitialize() {
 			createComponentPairFromType<ComponentMass>(120.f),
 			createComponentPairFromType<ComponentObserver>(1280.f),
 			createComponentPairFromType<ComponentTeam>(),
-			createComponentPairFromType<ComponentObjectVision>(),
 			createComponentPairFromType<ComponentGoapActor>(std::vector<Goap::GoalName>{ "KeepSafe" }, std::vector<Goap::ActionName>{ "Flee" }),
-			createComponentPairFromType<ComponentGoapPlanner>(),
 		}
 	);
 #pragma region Wall Templates
