@@ -10,12 +10,13 @@
 class PathRequestManager {
 
 	struct PathRequestData {
-		PathRequestData(sf::Vector2f _pathStart, sf::Vector2f _pathEnd, EntityId _pathRequester);
-		PathRequestData();
 
 		sf::Vector2f pathStart;
 		sf::Vector2f pathEnd;
 		EntityId pathRequester;
+
+		bool isSpecialized;
+		AStarPathfinder::SpecializationFunction specializationFunction;
 	};
 
 	// queue of path requests to process
@@ -30,6 +31,8 @@ public:
 
 	// request a path to be made
 	static void pathRequest(sf::Vector2f pathStart, sf::Vector2f pathEnd, EntityId pathRequester);
+	// request a path to be made
+	static void pathRequest(sf::Vector2f pathStart, sf::Vector2f pathEnd, EntityId pathRequester, AStarPathfinder::SpecializationFunction specializationFunction);
 };
 
 #endif

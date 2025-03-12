@@ -8,7 +8,7 @@
 
 namespace Movement {
 	namespace MovementPlanner {
-		void movementPlan(Entity& entity, MovementPointHandler movementPointHandler);
+		void movementsPlan(Entity& entity, MovementPointHandler movementPointHandler);
 	};
 }
 

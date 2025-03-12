@@ -4,6 +4,7 @@
 #include "../../../ACECS/GameLevel.hpp"
 #include "../Grid/AStarGrid.hpp"
 #include <ECS.hpp>
+#include <functional>
 
 class AStarPathfinder {
 
@@ -16,6 +17,12 @@ public:
 	static AStarPath pathGet(sf::Vector2f pointStart, sf::Vector2f pointEnd, AStarGrid& aStarGrid);
 	static AStarPath pathGet(sf::Vector2f pointEnd, Entity& entity);
 	static AStarPath pathGet(sf::Vector2f pointEnd, EntityId entityId);
+
+
+	typedef std::function<uint16_t(AStarCell&)> SpecializationFunction;
+	static AStarPath pathGet(sf::Vector2f pointStart, sf::Vector2f pointEnd, AStarGrid& aStarGrid, SpecializationFunction specializationFunction);
+	static AStarPath pathGet(sf::Vector2f pointEnd, Entity& entity, SpecializationFunction specializationFunction);
+	static AStarPath pathGet(sf::Vector2f pointEnd, EntityId entityId, SpecializationFunction specializationFunction);
 };
 
 
