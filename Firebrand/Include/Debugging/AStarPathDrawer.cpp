@@ -8,7 +8,7 @@ void AStarPathDrawer::pathsTextureReset() {
 
 void AStarPathDrawer::pathDraw(AStarPath path) {
 
-	float cellSize = 16.f;
+	float cellSize = 64.f;
 
 	sf::RectangleShape pathCellShape;
 	pathCellShape.setSize(sf::Vector2f(cellSize, cellSize));

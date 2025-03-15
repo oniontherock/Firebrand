@@ -157,22 +157,6 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventTeamSwitch());
 		};
 	};
-	struct EventMovementTargetSet final : public Event {
-
-		EventMovementTargetSet() {
-			clear();
-		};
-
-		sf::Vector2f target;
-
-		void clear() final {
-			target = sf::Vector2f(0, 0);
-		}
-
-		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new EventMovementTargetSet());
-		};
-	};
 	struct EventPathRequestCompleted final : public Event {
 
 		EventPathRequestCompleted() {
@@ -191,6 +175,22 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventPathRequestCompleted());
 		};
 	};
+	struct EventPathSet final : public Event {
+
+		EventPathSet() {
+			clear();
+		};
+
+		AStarPath path;
+
+		void clear() final {
+			path.clear();
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventPathSet());
+		};
+	};
 	struct EventMovementStateSet final : public Event {
 
 		EventMovementStateSet() {
@@ -207,20 +207,36 @@ namespace EntityEvents {
 			return std::unique_ptr<Duplicatable>(new EventMovementStateSet());
 		};
 	};
-	struct EventAvoidancePointAdd final : public Event {
+	struct EventMovementAvoidancePointAdd final : public Event {
 
-		EventAvoidancePointAdd() {
+		EventMovementAvoidancePointAdd() {
 			clear();
 		};
 
-		sf::Vector2f avoidancePoint;
+		sf::Vector2f point;
 
 		void clear() final {
-			avoidancePoint = sf::Vector2f(0, 0);
+			point = sf::Vector2f(0, 0);
 		}
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new EventAvoidancePointAdd());
+			return std::unique_ptr<Duplicatable>(new EventMovementAvoidancePointAdd());
+		};
+	};
+	struct EventMovementTargetPointAdd final : public Event {
+
+		EventMovementTargetPointAdd() {
+			clear();
+		};
+
+		Movement::MovementPoint point;
+
+		void clear() final {
+			point = Movement::MovementPoint();
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventMovementTargetPointAdd());
 		};
 	};
 }
@@ -270,19 +286,30 @@ namespace EntityComponents {
 			return std::unique_ptr<Duplicatable>(new ComponentMovementHandler());
 		};
 	};
-	struct ComponentPathfinder final : public Component {
+	struct ComponentPathFollower final : public Component {
 
 		void system(Entity& entity) final;
 
-		ComponentPathfinder() {
+		ComponentPathFollower() {
 			hasSystem = true;
 		};
 
-		sf::Vector2f target;
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentPathFollower());
+		};
+	};
+	struct ComponentPathHolder final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentPathHolder() {
+			hasSystem = true;
+		};
+
 		AStarPath path;
 
 		std::unique_ptr<Duplicatable> duplicate() override {
-			return std::unique_ptr<Duplicatable>(new ComponentPathfinder());
+			return std::unique_ptr<Duplicatable>(new ComponentPathHolder());
 		};
 	};
 	struct ComponentSpriteOrigin final : public Component {

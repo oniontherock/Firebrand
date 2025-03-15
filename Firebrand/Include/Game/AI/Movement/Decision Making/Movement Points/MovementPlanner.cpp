@@ -21,8 +21,11 @@ void Movement::MovementPlanner::movementsPlan(Entity& entity, MovementPointHandl
 		return costValue;
 		};
 
+
+	if (movementPointHandler.targetPoints.empty()) return;
+
 	sf::Vector2f startPos = entity.entityComponentGet<EntityComponents::ComponentPosition>()->position;
-	sf::Vector2f endPos = movementPointHandler.targetPoints[0];
+	MovementPoint endPos = movementPointHandler.targetPoints.top();
 
 	PathRequestManager::pathRequest(startPos, endPos, entity.Id, function);
 }

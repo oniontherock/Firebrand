@@ -14,8 +14,8 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100000;
-uint16_t MAX_EVENT_TYPES = 13;
-uint16_t MAX_COMPONENT_TYPES = 40;
+uint16_t MAX_EVENT_TYPES = 14;
+uint16_t MAX_COMPONENT_TYPES = 41;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -56,10 +56,11 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventMemoryUpdated>>();
 	EventRegistry::typeRegister<EventIDs<EventBlackboardUpdated>>();
 	EventRegistry::typeRegister<EventIDs<EventTeamSwitch>>();
-	EventRegistry::typeRegister<EventIDs<EventMovementTargetSet>>();
 	EventRegistry::typeRegister<EventIDs<EventPathRequestCompleted>>();
 	EventRegistry::typeRegister<EventIDs<EventMovementStateSet>>();
-	EventRegistry::typeRegister<EventIDs<EventAvoidancePointAdd>>();
+	EventRegistry::typeRegister<EventIDs<EventMovementAvoidancePointAdd>>();
+	EventRegistry::typeRegister<EventIDs<EventMovementTargetPointAdd>>();
+	EventRegistry::typeRegister<EventIDs<EventPathSet>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -86,7 +87,7 @@ void EntityComponents::componentIDsInitialize() {
 	// collision response
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentCollisionResponse>>();
 	// pathfinding
-	ComponentRegistry::typeRegister<ComponentIDs<ComponentPathfinder>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentPathFollower>>();
 	// physics
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentHingeOnPoint>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMass>>();
@@ -126,6 +127,7 @@ void EntityComponents::componentIDsInitialize() {
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementStatesHolder>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementState>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementActor>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentPathHolder>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -179,7 +181,18 @@ void EntityComponents::componentTemplatesInitialize() {
 		);
 	ComponentTemplateManager::componentTemplateAdd(
 		/// template name
-		"Actor",
+		"MovementActor",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentMovementActor>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"GoapActor",
 		{
 		},
 		/// list of components in template
@@ -216,13 +229,24 @@ void EntityComponents::componentTemplatesInitialize() {
 		"DecisionMaker",
 		{
 			"Transform",
-			"Actor",
+			"GoapActor",
 		},
 		/// list of components in template
 		{
 			createComponentPairFromType<ComponentGoapPlanner>(),
 			createComponentPairFromType<ComponentGoapPlanExecuter>(),
-			createComponentPairFromType<ComponentPathfinder>(),
+		}
+		);
+	ComponentTemplateManager::componentTemplateAdd(
+		/// template name
+		"PathFollower",
+		{
+			"Transform",
+		},
+		/// list of components in template
+		{
+			createComponentPairFromType<ComponentPathFollower>(),
+			createComponentPairFromType<ComponentPathHolder>(),
 		}
 		);
 	ComponentTemplateManager::componentTemplateAdd(
@@ -277,11 +301,13 @@ void EntityComponents::componentTemplatesInitialize() {
 		{
 			"Transform",
 			"Creature",
-			"Actor",
+			"GoapActor",
 			"DecisionMaker",
 			"Seeing",
 			"Sensory",
 			"MovementStates",
+			"MovementActor",
+			"PathFollower",
 		},
 		/// list of components in template
 		{
@@ -1139,31 +1165,36 @@ void ComponentObjectMemory::system(Entity& entity) {
 
 	entity.entityEventAddAndGet<EventBlackboardUpdated>()->blackboardNew = memory;
 }
-void ComponentPathfinder::system(Entity& entity) {
-	if (entity.entityEventHas<EventMovementTargetSet>()) {
+void ComponentPathFollower::system(Entity& entity) {
 
-		sf::Vector2f movementTargetNew = entity.entityEventGet<EventMovementTargetSet>()->target;
-
-		target = movementTargetNew;
-
-		PathRequestManager::pathRequest(entity.entityComponentGet<ComponentPosition>()->position, target, entity.Id);
+	if (!entity.entityComponentHas<ComponentPathHolder>()) {
+		ConsoleHandler::consolePrintErr("entity (id=" + std::to_string(entity.Id) + ") has ComponentPathFollower but lacks ComponentPathHolder");
+		return;
 	}
-	if (entity.entityEventHas<EventPathRequestCompleted>()) {
-		auto* eventPathRequestCompleted = entity.entityEventGet<EventPathRequestCompleted>();
 
-		path = eventPathRequestCompleted->path;
-	}
+	AStarPath& path = entity.entityComponentGet<ComponentPathHolder>()->path;
+
 	if (path.size() > 0) {
 
-		sf::Vector2f pathAxis = (*path.rbegin()) - entity.entityComponentGet<ComponentPosition>()->position;
+		sf::Vector2f pathAxis = Vector2fMath::axis(entity.entityComponentGet<ComponentPosition>()->position, *path.rbegin());
 
-		if (Vector2fMath::lengthSqrd(pathAxis) <= (64.f * 64.f)) {
+		const float aStarGridCellSize = GameLevelGrid::levelGet(entity.levelId)->aStarGrid.cellsGetSizeX();
+		const float aStarGridCellSizeSqrd = aStarGridCellSize * aStarGridCellSize;
+
+		entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
+
+		AStarPathDrawer::pathDraw(path);
+
+		if (Vector2fMath::lengthSqrd(pathAxis) <= 1.f) {
 			path.pop_back();
 		}
-		else {
-			entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
-		}
-		AStarPathDrawer::pathDraw(path);
+	}
+}
+void ComponentPathHolder::system(Entity& entity) {
+	if (entity.entityEventHas<EventPathSet>()) {
+		auto* eventPathRequestCompleted = entity.entityEventGet<EventPathSet>();
+
+		path = eventPathRequestCompleted->path;
 	}
 }
 void ComponentMovementState::system(Entity& entity) {
@@ -1190,15 +1221,51 @@ void ComponentMovementState::system(Entity& entity) {
 	}
 }
 void ComponentMovementActor::system(Entity& entity) {
-	if (entity.entityEventHas<EventAvoidancePointAdd>()) {
+	
+	if (entity.entityEventHas<EventPathRequestCompleted>()) {
+		entity.entityEventAddAndGet<EventPathSet>()->path = entity.entityEventGet<EventPathRequestCompleted>()->path;
+	}
 
-		auto eventAvoidancePointAddAll = entity.entityEventGetAllOfType<EventAvoidancePointAdd>();
+	if (entity.entityEventHas<EventMovementAvoidancePointAdd>()) {
+
+		auto eventAvoidancePointAddAll = entity.entityEventGetAllOfType<EventMovementAvoidancePointAdd>();
 
 		for (uint16_t i = 0; i < eventAvoidancePointAddAll.size(); i++) {
 			auto* eventCur = eventAvoidancePointAddAll[i];
-			actor.movementPointHandler.avoidancePointAdd(eventCur->avoidancePoint, 512, 50);
+			actor.movementPointHandler.avoidancePointAdd(eventCur->point, 512, 50);
 		}
 	}
+	if (entity.entityEventHas<EventMovementTargetPointAdd>()) {
+
+		auto eventTargetPointAddAll = entity.entityEventGetAllOfType<EventMovementTargetPointAdd>();
+
+		for (uint16_t i = 0; i < eventTargetPointAddAll.size(); i++) {
+			auto* eventCur = eventTargetPointAddAll[i];
+			actor.movementPointHandler.targetPointAdd(eventCur->point);
+		}
+	}
+
+	if (!actor.movementPointHandler.targetPoints.empty()) {
+
+		sf::Vector2f startPos = entity.entityComponentGet<ComponentPosition>()->position;
+		sf::Vector2f endPos = actor.movementPointHandler.targetPoints.top();
+
+		float distSqrd = Vector2fMath::distSqrd(startPos, endPos);
+		float targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
+
+		std::cout << "target dist: " << sqrt(distSqrd) << " " << targetThreshold << "\n";
+
+		while ((distSqrd <= (targetThreshold * targetThreshold)) && (!actor.movementPointHandler.targetPoints.empty())) {
+			endPos = actor.movementPointHandler.targetPoints.top();
+			targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
+			distSqrd = Vector2fMath::distSqrd(startPos, endPos);
+			actor.movementPointHandler.targetPoints.pop();
+		}
+	}
+
+	std::cout << "target points count: " << actor.movementPointHandler.targetPoints.size() << "\n";
+
+	Movement::MovementPlanner::movementsPlan(entity, actor.movementPointHandler);
 }
 
 #pragma endregion Systems

@@ -188,6 +188,10 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 	// get finished path
 	AStarPath path = pathSimplify(pathRetrace(aStarGrid.cellGet(cellStart), aStarGrid.cellGet(cellEnd)));
 
+	if (path.empty()) {
+		return AStarPath{ pointEnd };
+	}
+
 	return path;
 }
 
@@ -301,6 +305,10 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 
 	// get finished path
 	AStarPath path = pathSimplify(pathRetrace(aStarGrid.cellGet(cellStart), aStarGrid.cellGet(cellEnd)));
+
+	if (path.empty()) {
+		return AStarPath{ pointEnd };
+	}
 
 	return path;
 }

@@ -33,10 +33,9 @@ void Goap::ActionRegistry::actionsRegister() {
 				fleePosition += sf::Vector2f(cos(threatClosestPolarCoordinates.y), sin(threatClosestPolarCoordinates.y)) * -256.f;
 
 				threatClosestPolarCoordinates = ActorDataHelper::pointGetClosestThreatPolarCoordinates(actor, fleePosition);
-				std::cout << threatClosestPolarCoordinates.x << "\n";
 			}
 
-			entity.entityEventAddAndGet<EntityEvents::EventMovementTargetSet>()->target = fleePosition;
+			entity.entityEventAddAndGet<EntityEvents::EventMovementTargetPointAdd>()->point = Movement::MovementPoint(fleePosition, 64.f, 50);
 			entity.entityEventAddAndGet<EntityEvents::EventMovementStateSet>()->movementState = Movement::MovementState::Run;
 			});
 		action.evaluationFunctionSet([](Actor&) {
