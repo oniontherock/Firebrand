@@ -13,9 +13,9 @@ class PathRequestManager {
 
 		sf::Vector2f pathStart;
 		sf::Vector2f pathEnd;
-		EntityId pathRequester;
+		EntityId pathRequester = 0;
 
-		bool isSpecialized;
+		bool isSpecialized = false;
 		AStarPathfinder::SpecializationFunction specializationFunction;
 	};
 

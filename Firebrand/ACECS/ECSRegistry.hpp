@@ -8,6 +8,7 @@
 #include "../Include/Game/AI/GOAP/Blackboard/GoapBlackboard.hpp"
 #include "../Include/Game/AI/GOAP/Goals/GoapGoalRegistry.hpp"
 #include "../Include/Game/AI/GOAP/Planner/GoapPlanner.hpp"
+#include "../Include/Game/AI/Movement/Decision Making/Actor/MovementActor.hpp"
 #include "../Include/Game/AI/Movement/Movement States/MovementStateData.hpp"
 #include "../Include/Game/AI/Teams/TeamHolder.hpp"
 #include "../Include/Game/AI/Teams/TeamRegistry.hpp"
@@ -204,6 +205,22 @@ namespace EntityEvents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new EventMovementStateSet());
+		};
+	};
+	struct EventAvoidancePointAdd final : public Event {
+
+		EventAvoidancePointAdd() {
+			clear();
+		};
+
+		sf::Vector2f avoidancePoint;
+
+		void clear() final {
+			avoidancePoint = sf::Vector2f(0, 0);
+		}
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new EventAvoidancePointAdd());
 		};
 	};
 }
@@ -1007,6 +1024,20 @@ namespace EntityComponents {
 
 		std::unique_ptr<Duplicatable> duplicate() override {
 			return std::unique_ptr<Duplicatable>(new ComponentMovementState());
+		};
+	};
+	struct ComponentMovementActor final : public Component {
+
+		void system(Entity& entity) final;
+
+		ComponentMovementActor() {
+			hasSystem = true;
+		}; 
+
+		Movement::Actor actor;
+
+		std::unique_ptr<Duplicatable> duplicate() override {
+			return std::unique_ptr<Duplicatable>(new ComponentMovementActor());
 		};
 	};
 }

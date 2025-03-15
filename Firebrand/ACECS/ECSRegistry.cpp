@@ -14,8 +14,8 @@
 #include <Input.hpp>
 
 uint32_t MAX_ENTITIES = 100000;
-uint16_t MAX_EVENT_TYPES = 12;
-uint16_t MAX_COMPONENT_TYPES = 39;
+uint16_t MAX_EVENT_TYPES = 13;
+uint16_t MAX_COMPONENT_TYPES = 40;
 
 void ECSRegistry::ECSInitialize() {
 	EntityManager::entityIdsInitialize();
@@ -59,6 +59,7 @@ void EntityEvents::eventIDsInitialize() {
 	EventRegistry::typeRegister<EventIDs<EventMovementTargetSet>>();
 	EventRegistry::typeRegister<EventIDs<EventPathRequestCompleted>>();
 	EventRegistry::typeRegister<EventIDs<EventMovementStateSet>>();
+	EventRegistry::typeRegister<EventIDs<EventAvoidancePointAdd>>();
 
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
 	//EventRegistry::typeRegister<EventIDs<EVENT_GOES_HERE>>();
@@ -124,6 +125,7 @@ void EntityComponents::componentIDsInitialize() {
 	// AI movement
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementStatesHolder>>();
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementState>>();
+	ComponentRegistry::typeRegister<ComponentIDs<ComponentMovementActor>>();
 
 	// sprites/drawing
 	ComponentRegistry::typeRegister<ComponentIDs<ComponentSpriteOrigin>>();
@@ -619,7 +621,7 @@ void ComponentObjectTypeAssigner::system(Entity& entity) {
 	}
 
 	ObjectRegistry::entityObjectTypeAssign(entity.Id, objectType);
-}
+} 
 void ComponentObjectGridInhabiterRadius::system(Entity& entity) {
 	// check that entity has ComponentPosition
 	if (!entity.entityComponentHas<ComponentPosition>()) {
@@ -1185,6 +1187,17 @@ void ComponentMovementState::system(Entity& entity) {
 
 		// set the movementState to the new movement state given by the EventMovementStateSet
 		movementState = movementStateNew;
+	}
+}
+void ComponentMovementActor::system(Entity& entity) {
+	if (entity.entityEventHas<EventAvoidancePointAdd>()) {
+
+		auto eventAvoidancePointAddAll = entity.entityEventGetAllOfType<EventAvoidancePointAdd>();
+
+		for (uint16_t i = 0; i < eventAvoidancePointAddAll.size(); i++) {
+			auto* eventCur = eventAvoidancePointAddAll[i];
+			actor.movementPointHandler.avoidancePointAdd(eventCur->avoidancePoint, 512, 50);
+		}
 	}
 }
 

@@ -24,8 +24,5 @@ void Movement::MovementPlanner::movementsPlan(Entity& entity, MovementPointHandl
 	sf::Vector2f startPos = entity.entityComponentGet<EntityComponents::ComponentPosition>()->position;
 	sf::Vector2f endPos = movementPointHandler.targetPoints[0];
 
-	AStarGrid& aStarGrid = GameLevelGrid::levelGet(entity.levelId)->aStarGrid;
-
 	PathRequestManager::pathRequest(startPos, endPos, entity.Id, function);
-
 }
