@@ -1178,9 +1178,6 @@ void ComponentPathFollower::system(Entity& entity) {
 
 		sf::Vector2f pathAxis = Vector2fMath::axis(entity.entityComponentGet<ComponentPosition>()->position, *path.rbegin());
 
-		const float aStarGridCellSize = GameLevelGrid::levelGet(entity.levelId)->aStarGrid.cellsGetSizeX();
-		const float aStarGridCellSizeSqrd = aStarGridCellSize * aStarGridCellSize;
-
 		entity.entityEventAddAndGet<EventMoveDirection>()->moveDirection = Vector2fMath::normalize(pathAxis);
 
 		AStarPathDrawer::pathDraw(path);
@@ -1253,17 +1250,15 @@ void ComponentMovementActor::system(Entity& entity) {
 		float distSqrd = Vector2fMath::distSqrd(startPos, endPos);
 		float targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
 
-		std::cout << "target dist: " << sqrt(distSqrd) << " " << targetThreshold << "\n";
-
 		while ((distSqrd <= (targetThreshold * targetThreshold)) && (!actor.movementPointHandler.targetPoints.empty())) {
 			endPos = actor.movementPointHandler.targetPoints.top();
 			targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
 			distSqrd = Vector2fMath::distSqrd(startPos, endPos);
 			actor.movementPointHandler.targetPoints.pop();
 		}
-	}
 
-	std::cout << "target points count: " << actor.movementPointHandler.targetPoints.size() << "\n";
+		static_cast<PanelHud&>(PanelManager::panelGet(PanelName::Hud)).testDrawPoint = actor.movementPointHandler.targetPoints.top();
+	}
 
 	Movement::MovementPlanner::movementsPlan(entity, actor.movementPointHandler);
 }

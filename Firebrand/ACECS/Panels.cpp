@@ -382,6 +382,11 @@ void PanelHud::panelUpdate() {
 			}
 		}
 	}
+
+	sf::CircleShape circleShape(4.f);
+	circleShape.setPosition(testDrawPoint);
+	circleShape.setFillColor(sf::Color::Cyan);
+	objectDraw(circleShape);
 }
 void PanelHud::checkModeChange() {
 	if (InputInterface::inputGetActive("Toggle ObjectGrid Rendering")) {

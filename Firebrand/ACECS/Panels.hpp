@@ -71,6 +71,8 @@ struct PanelHud : public Panel {
 
 	Modes mode = Normal;
 
+	sf::Vector2f testDrawPoint;
+
 	void panelUpdate() final;
 
 private:
