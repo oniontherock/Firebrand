@@ -27,6 +27,9 @@ namespace Movement {
 	struct MovementPointHandler {
 		// points the actor should move towards, the actor moves to the closest (or easiest) point first, and then goes towards the next point in the list
 		std::priority_queue<MovementPoint> targetPoints;
+
+		MovementPoint targetCur;
+
 		// points the actor should avoid going within the threshold of, the actor will avoid these points when pathfinding.
 		std::vector<MovementPoint> avoidancePoints;
 

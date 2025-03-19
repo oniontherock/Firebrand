@@ -1242,25 +1242,31 @@ void ComponentMovementActor::system(Entity& entity) {
 		}
 	}
 
-	if (!actor.movementPointHandler.targetPoints.empty()) {
+	static_cast<PanelHud&>(PanelManager::panelGet(PanelName::Hud)).testDrawPoint = sf::Vector2f(0, 0);
 
-		sf::Vector2f startPos = entity.entityComponentGet<ComponentPosition>()->position;
-		sf::Vector2f endPos = actor.movementPointHandler.targetPoints.top();
+	if (actor.movementPointHandler.targetPoints.empty()) return;
 
-		float distSqrd = Vector2fMath::distSqrd(startPos, endPos);
-		float targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
+	sf::Vector2f startPos = entity.entityComponentGet<ComponentPosition>()->position;
+	sf::Vector2f endPos = actor.movementPointHandler.targetPoints.top();
 
-		while ((distSqrd <= (targetThreshold * targetThreshold)) && (!actor.movementPointHandler.targetPoints.empty())) {
-			endPos = actor.movementPointHandler.targetPoints.top();
-			targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
-			distSqrd = Vector2fMath::distSqrd(startPos, endPos);
-			actor.movementPointHandler.targetPoints.pop();
-		}
+	float distSqrd = Vector2fMath::distSqrd(startPos, endPos);
+	float targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
 
-		static_cast<PanelHud&>(PanelManager::panelGet(PanelName::Hud)).testDrawPoint = actor.movementPointHandler.targetPoints.top();
+	while ((distSqrd <= (targetThreshold * targetThreshold)) && (!actor.movementPointHandler.targetPoints.empty())) {
+		endPos = actor.movementPointHandler.targetPoints.top();
+		targetThreshold = actor.movementPointHandler.targetPoints.top().threshold;
+		distSqrd = Vector2fMath::distSqrd(startPos, endPos);
+		actor.movementPointHandler.targetPoints.pop();
 	}
 
-	Movement::MovementPlanner::movementsPlan(entity, actor.movementPointHandler);
+
+	if (Vector2fMath::distSqrd(actor.movementPointHandler.targetCur, actor.movementPointHandler.targetPoints.top()) > 1.f) {
+		actor.movementPointHandler.targetCur = actor.movementPointHandler.targetPoints.top();
+
+		Movement::MovementPlanner::movementsPlan(entity, actor.movementPointHandler);
+	}
+
+	static_cast<PanelHud&>(PanelManager::panelGet(PanelName::Hud)).testDrawPoint = actor.movementPointHandler.targetPoints.top();
 }
 
 #pragma endregion Systems

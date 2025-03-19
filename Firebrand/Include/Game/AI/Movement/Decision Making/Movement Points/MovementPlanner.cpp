@@ -25,7 +25,6 @@ void Movement::MovementPlanner::movementsPlan(Entity& entity, MovementPointHandl
 	if (movementPointHandler.targetPoints.empty()) return;
 
 	sf::Vector2f startPos = entity.entityComponentGet<EntityComponents::ComponentPosition>()->position;
-	MovementPoint endPos = movementPointHandler.targetPoints.top();
 
-	PathRequestManager::pathRequest(startPos, endPos, entity.Id, function);
+	PathRequestManager::pathRequest(startPos, movementPointHandler.targetCur, entity.Id, function);
 }

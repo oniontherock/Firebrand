@@ -151,11 +151,8 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 
 				AStarCell& cellNeighbor = aStarGrid.cellGet(cellPosOffsetX, cellPosOffsetY);
 
-				auto cellPosFind = [cellNeighbor](AStarCellPosition cellPos) { return cellPos == cellNeighbor.cellPositionGrid; };
-				auto cellFind = [cellNeighbor](AStarCell* cell) { return *cell == cellNeighbor; };
-
 				// skip current neighbor if they aren't valid or have already been explored
-				if (!cellNeighbor.valid || std::find_if(cellsClosedVector.begin(), cellsClosedVector.end(), cellPosFind) != cellsClosedVector.end()) continue;
+				if (!cellNeighbor.valid || std::find(cellsClosedVector.begin(), cellsClosedVector.end(), cellNeighbor.cellPositionGrid) != cellsClosedVector.end()) continue;
 
 				// potential new costG for neighbor if path is shorter than existing neighborCur costG
 				AStarCostValue neighborNewCostG = cellCurrent->costG + cellDistanceGet(cellCurrent->cellPositionGrid, cellNeighbor.cellPositionGrid);
@@ -187,10 +184,6 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 
 	// get finished path
 	AStarPath path = pathSimplify(pathRetrace(aStarGrid.cellGet(cellStart), aStarGrid.cellGet(cellEnd)));
-
-	if (path.empty()) {
-		return AStarPath{ pointEnd };
-	}
 
 	return path;
 }
@@ -269,11 +262,8 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 
 				AStarCell& cellNeighbor = aStarGrid.cellGet(cellPosOffsetX, cellPosOffsetY);
 
-				auto cellPosFind = [cellNeighbor](AStarCellPosition cellPos) { return cellPos == cellNeighbor.cellPositionGrid; };
-				auto cellFind = [cellNeighbor](AStarCell* cell) { return *cell == cellNeighbor; };
-
 				// skip current neighbor if they aren't valid or have already been explored
-				if (!cellNeighbor.valid || std::find_if(cellsClosedVector.begin(), cellsClosedVector.end(), cellPosFind) != cellsClosedVector.end()) continue;
+				if (!cellNeighbor.valid || std::find(cellsClosedVector.begin(), cellsClosedVector.end(), cellNeighbor.cellPositionGrid) != cellsClosedVector.end()) continue;
 
 				// potential new costG for neighbor if path is shorter than existing neighborCur costG
 				AStarCostValue neighborNewCostG = cellCurrent->costG + cellDistanceGet(cellCurrent->cellPositionGrid, cellNeighbor.cellPositionGrid);
@@ -294,7 +284,7 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 						cellsOpenHeap.push(&aStarGrid.cellGet(cellNeighbor.cellPositionGrid));
 					}
 				}
-			}
+			}	
 		}
 	}
 
@@ -305,10 +295,6 @@ AStarPath AStarPathfinder::pathGet(sf::Vector2f pointStart, sf::Vector2f pointEn
 
 	// get finished path
 	AStarPath path = pathSimplify(pathRetrace(aStarGrid.cellGet(cellStart), aStarGrid.cellGet(cellEnd)));
-
-	if (path.empty()) {
-		return AStarPath{ pointEnd };
-	}
 
 	return path;
 }
