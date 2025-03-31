@@ -176,6 +176,10 @@
     <ClCompile Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.cpp" />
     <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.cpp" />
     <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.cpp" />
+    <ClCompile Include="Include\Game\Procedural Animation\Fabrik\FabrikJoint.cpp" />
+    <ClCompile Include="Include\Game\Procedural Animation\Fabrik\FabrikJointUpdater.cpp" />
+    <ClCompile Include="Include\Game\Procedural Animation\Fabrik\FabrikLimb.cpp" />
+    <ClCompile Include="Include\Game\Procedural Animation\Fabrik\FabrikResolver.cpp" />
     <ClCompile Include="Include\Game\Raycasting\Object Vision\ObjectVision.cpp" />
     <ClCompile Include="Include\Game\Raycasting\Occlusion Grid\OcclusionGrid.cpp" />
     <ClCompile Include="Include\Game\Raycasting\RayCaster.cpp" />
@@ -276,6 +280,10 @@
     <ClInclude Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.hpp" />
     <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.hpp" />
     <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.hpp" />
+    <ClInclude Include="Include\Game\Procedural Animation\Fabrik\FabrikJoint.hpp" />
+    <ClInclude Include="Include\Game\Procedural Animation\Fabrik\FabrikJointUpdater.hpp" />
+    <ClInclude Include="Include\Game\Procedural Animation\Fabrik\FabrikLimb.hpp" />
+    <ClInclude Include="Include\Game\Procedural Animation\Fabrik\FabrikResolver.hpp" />
     <ClInclude Include="Include\Game\Raycasting\Object Vision\ObjectVision.hpp" />
     <ClInclude Include="Include\Game\Raycasting\Occlusion Grid\OcclusionGrid.hpp" />
     <ClInclude Include="Include\Game\Raycasting\RayCaster.hpp" />
