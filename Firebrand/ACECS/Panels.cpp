@@ -2,6 +2,9 @@
 #include "../Include/Debugging/ObjectGridRenderer.hpp"
 #include "../Include/Game/Drawing/Batch Draw Handler/BatchDrawHandler.hpp"
 #include "../Include/Game/GameData.hpp"
+#include "../Include/Game/Procedural Animation/Body Drawing/LimbDrawer.hpp"
+#include "../Include/Game/Procedural Animation/Fabrik/FabrikJointUpdater.hpp"
+#include "../Include/Game/Procedural Animation/Fabrik/FabrikResolver.hpp"
 #include "ECSRegistry.hpp"
 #include "Panels.hpp"
 #include "SFML/Graphics.hpp"
@@ -127,6 +130,35 @@ void PanelStaticView::charactersDraw(GameLevel* levelActive) {
 
 		texture.draw(sprite);
 	}
+
+	static sf::Vector3f jointPoint;
+
+	jointPoint.x = viewMousePositionGet().x;
+	jointPoint.y = viewMousePositionGet().y;
+	jointPoint.z += InputInterface::mouseScrollAmountGet() * 10.f;
+
+	static ProceduralAnimation::Fabrik::Limb limb = ProceduralAnimation::Fabrik::Limb(48.f, 32, 64.f);
+	static bool once = false;
+	if (!once) {
+		limb.jointA.position = sf::Vector3f(64, 64, 128);
+		limb.jointB.position = sf::Vector3f(128, 64, 16.f);
+		once = true;
+	}
+	limb.jointA.forceApply((jointPoint - limb.jointA.position) * 10.f);
+
+	ProceduralAnimation::Fabrik::Resolver::limbUpdate(limb);
+
+	sf::Texture limbTexture = ProceduralAnimation::Drawing::LimbDrawer::limbTextureGet(limb);
+
+	sf::Sprite limbSprite(limbTexture);
+	limbSprite.setOrigin(sf::Vector2f(limbTexture.getSize()) / 2.f);
+
+	sf::Vector3f limbCenterPoint = (limb.jointA.position + limb.jointB.position) / 2.f;
+
+	limbSprite.setPosition(sf::Vector2f(limbCenterPoint.x, limbCenterPoint.y));
+
+	texture.draw(limbSprite);
+
 }
 
 PanelDynamicView::PanelDynamicView(PanelRect _screenRect, PanelRect _viewRect, sf::Color _clearColor) {

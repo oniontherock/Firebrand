@@ -14,6 +14,8 @@ namespace ProceduralAnimation {
 
 			sf::Vector3f acceleration;
 
+			bool hasUpdated = false;
+
 			// applies a force to the joint
 			void forceApply(sf::Vector3f force);
 		};

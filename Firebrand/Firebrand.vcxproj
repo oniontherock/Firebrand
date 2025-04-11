@@ -146,6 +146,7 @@
     <ClCompile Include="ACECS\Panels.cpp" />
     <ClCompile Include="ACECS\SaveFunctions.cpp" />
     <ClCompile Include="ACECS\SaveOperations.cpp" />
+    <ClCompile Include="Include\Common\ColorConverter.cpp" />
     <ClCompile Include="Include\Common\DataCache.cpp" />
     <ClCompile Include="Include\Common\GridTexture.cpp" />
     <ClCompile Include="Include\Common\TextureGrid.cpp" />
@@ -176,6 +177,8 @@
     <ClCompile Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.cpp" />
     <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.cpp" />
     <ClCompile Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.cpp" />
+    <ClCompile Include="Include\Game\Procedural Animation\Body Drawing\Draw Data\RenderJoint.cpp" />
+    <ClCompile Include="Include\Game\Procedural Animation\Body Drawing\LimbDrawer.cpp" />
     <ClCompile Include="Include\Game\Procedural Animation\Fabrik\FabrikJoint.cpp" />
     <ClCompile Include="Include\Game\Procedural Animation\Fabrik\FabrikJointUpdater.cpp" />
     <ClCompile Include="Include\Game\Procedural Animation\Fabrik\FabrikLimb.cpp" />
@@ -246,6 +249,7 @@
     <ClInclude Include="ACECS\Panels.hpp" />
     <ClInclude Include="ACECS\RNGPoolIdRegistry.hpp" />
     <ClInclude Include="ACECS\SaveOperations.hpp" />
+    <ClInclude Include="Include\Common\ColorConverter.hpp" />
     <ClInclude Include="Include\Common\DataCache.hpp" />
     <ClInclude Include="Include\Common\Grid.hpp" />
     <ClInclude Include="Include\Common\GridTexture.hpp" />
@@ -280,6 +284,9 @@
     <ClInclude Include="Include\Game\Pathfinding\AStar\Grid\AStarGrid.hpp" />
     <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\AStarPathfinder.hpp" />
     <ClInclude Include="Include\Game\Pathfinding\AStar\Path Creation\PathRequestManager.hpp" />
+    <ClInclude Include="Include\Game\Procedural Animation\Body Drawing\Draw Data\RenderJoint.hpp" />
+    <ClInclude Include="Include\Game\Procedural Animation\Body Drawing\LimbDrawer.hpp" />
+    <ClInclude Include="Include\Game\Procedural Animation\Body Drawing\LimbDrawingParameters.hpp" />
     <ClInclude Include="Include\Game\Procedural Animation\Fabrik\FabrikJoint.hpp" />
     <ClInclude Include="Include\Game\Procedural Animation\Fabrik\FabrikJointUpdater.hpp" />
     <ClInclude Include="Include\Game\Procedural Animation\Fabrik\FabrikLimb.hpp" />
