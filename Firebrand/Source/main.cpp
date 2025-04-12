@@ -13,7 +13,11 @@
 #include <Saving/SaveHandler.hpp>
 #include <SFML/Window.hpp>
 
-static void forwardReach(std::vector<sf::Vector2f>& joints, std::vector<float>& jointDistances, std::vector<std::pair<float, float>>& jointAngleConstraints, sf::Vector2f target) {
+typedef std::vector<sf::Vector2f> JointVector;
+typedef std::vector<float> JointDistanceVector;
+typedef std::vector<std::pair<float, float>> JointAngleConstraintVector;
+
+static void forwardReach(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f target) {
 
 	// we set the end effector of the joint chain to the target
 	joints[joints.size() - 1] = target;
@@ -46,7 +50,7 @@ static void forwardReach(std::vector<sf::Vector2f>& joints, std::vector<float>& 
 		joints[uint16_t(i - 1)] = joints[i] + Vector2fMath::rotate(sf::Vector2f(jointDistances[i - 1], 0.f), angle);
 	}
 }
-static void backwardReach(std::vector<sf::Vector2f>& joints, std::vector<float>& jointDistances, std::vector<std::pair<float, float>>& jointAngleConstraints, sf::Vector2f base) {
+static void backwardReach(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f base) {
 	// we set the end effector of the joint chain to the target
 	joints[0] = base;
 
@@ -74,7 +78,7 @@ static void backwardReach(std::vector<sf::Vector2f>& joints, std::vector<float>&
 	}
 }
 
-static float fabrikRun(std::vector<sf::Vector2f>& joints, std::vector<float>& jointDistances, std::vector<std::pair<float, float>>& jointAngleConstraints, sf::Vector2f base, sf::Vector2f target) {
+static float fabrikRun(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f base, sf::Vector2f target) {
 
 	float baseToTargetDistSqrd = Vector2fMath::distSqrd(base, target);
 
@@ -104,8 +108,8 @@ static float fabrikRun(std::vector<sf::Vector2f>& joints, std::vector<float>& jo
 
 const float lerpAmount = 0.5f;
 
-static void fabrikUpdate(std::vector<sf::Vector2f>& joints, std::vector<float>& jointDistances, std::vector<std::pair<float, float>>& jointAngleConstraints, sf::Vector2f base, sf::Vector2f target) {
-	std::vector<sf::Vector2f> jointsOld = joints;
+static void fabrikUpdate(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f base, sf::Vector2f target) {
+	JointVector jointsOld = joints;
 
 	float dist = fabrikRun(joints, jointDistances, jointAngleConstraints, base, target);
 
@@ -118,7 +122,7 @@ static void fabrikUpdate(std::vector<sf::Vector2f>& joints, std::vector<float>& 
 		fabrikRun(joints, jointDistances, jointAngleConstraints, base, targetNew);
 	}
 
-	std::vector<sf::Vector2f> jointsNew(joints.size());
+	JointVector jointsNew(joints.size());
 
 	for (uint16_t i = 0; i < joints.size(); i++) {
 
@@ -136,9 +140,9 @@ static sf::Texture fabrikDraw() {
 
 	fabrikEndTexture.clear(sf::Color::Transparent);
 
-	static std::vector<sf::Vector2f> joints(3);
-	static std::vector<float> jointDistances(2, 64);
-	static std::vector<std::pair<float, float>> jointAngleConstraints{ { -90, 90}, { -90, 90} };
+	static JointVector joints(3);
+	static JointDistanceVector jointDistances(2, 64);
+	static JointAngleConstraintVector jointAngleConstraints{ { -90, 90}, { -90, 90} };
 
 	jointAngleConstraints[0].first = -180.f;
 	jointAngleConstraints[0].second = 180.f;
