@@ -13,11 +13,11 @@
 #include <Saving/SaveHandler.hpp>
 #include <SFML/Window.hpp>
 
-typedef std::vector<sf::Vector2f> JointVector;
+typedef std::vector<sf::Vector3f> JointVector;
 typedef std::vector<float> JointDistanceVector;
 typedef std::vector<std::pair<float, float>> JointAngleConstraintVector;
 
-static void forwardReach(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f target) {
+static void forwardReach(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector3f target) {
 
 	// we set the end effector of the joint chain to the target
 	joints[joints.size() - 1] = target;
@@ -27,30 +27,33 @@ static void forwardReach(JointVector& joints, JointDistanceVector& jointDistance
 
 
 
-		float rootAngle = i >= 2 ? (rootAngle = Vector2fMath::angle(joints[uint16_t(i - 2)], joints[uint16_t(i - 1)])) : 0.f;
+		//float rootAngle = i >= 2 ? (rootAngle = Vector2fMath::angle(joints[uint16_t(i - 2)], joints[uint16_t(i - 1)])) : 0.f;
 
-		float differenceAngleRaw = Vector2fMath::angle(joints[uint16_t(i - 1)], joints[i]) - rootAngle;
+		//float differenceAngleRaw = Vector2fMath::angle(joints[uint16_t(i - 1)], joints[i]) - rootAngle;
 
-		if (differenceAngleRaw < -Mathf::PI) differenceAngleRaw += Mathf::TAU;
-		if (differenceAngleRaw > +Mathf::PI) differenceAngleRaw -= Mathf::TAU;
+		//if (differenceAngleRaw < -Mathf::PI) differenceAngleRaw += Mathf::TAU;
+		//if (differenceAngleRaw > +Mathf::PI) differenceAngleRaw -= Mathf::TAU;
 
-		float differenceAngle = Mathf::clamp(differenceAngleRaw,
-			jointAngleConstraints[uint16_t(i - 1)].first * Mathf::PI / 180.f,
-			jointAngleConstraints[uint16_t(i - 1)].second * Mathf::PI / 180.f
-		);
+		//float differenceAngle = Mathf::clamp(differenceAngleRaw,
+		//	jointAngleConstraints[uint16_t(i - 1)].first * Mathf::PI / 180.f,
+		//	jointAngleConstraints[uint16_t(i - 1)].second * Mathf::PI / 180.f
+		//);
 
-		float angle = rootAngle + differenceAngle;
+		//float angle = rootAngle + differenceAngle;
 
-		angle += Mathf::PI;
+		//angle += Mathf::PI;
 
-		// wrap differenceAngleRaw between -PI and +PI
-		if (angle < -Mathf::PI) angle += Mathf::TAU;
-		if (angle > +Mathf::PI) angle -= Mathf::TAU;
+		//// wrap differenceAngleRaw between -PI and +PI
+		//if (angle < -Mathf::PI) angle += Mathf::TAU;
+		//if (angle > +Mathf::PI) angle -= Mathf::TAU;
 
-		joints[uint16_t(i - 1)] = joints[i] + Vector2fMath::rotate(sf::Vector2f(jointDistances[i - 1], 0.f), angle);
+		float angleNoConstraints = Vector2fMath::angle(joints[uint16_t(i)].x, joints[uint16_t(i)].y, joints[uint16_t(i - 1)].x, joints[uint16_t(i - 1)].y);
+
+		joints[uint16_t(i - 1)].x = joints[i].x + Vector2fMath::rotate(sf::Vector2f(jointDistances[i - 1], 0.f), angleNoConstraints).x;
+		joints[uint16_t(i - 1)].y = joints[i].y + Vector2fMath::rotate(sf::Vector2f(jointDistances[i - 1], 0.f), angleNoConstraints).y;
 	}
 }
-static void backwardReach(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f base) {
+static void backwardReach(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector3f base) {
 	// we set the end effector of the joint chain to the target
 	joints[0] = base;
 
@@ -59,28 +62,32 @@ static void backwardReach(JointVector& joints, JointDistanceVector& jointDistanc
 	// iterate backwards over every joint except for the end effector
 	for (int16_t i = 0; i < joints.size() - 1; i++) {
 
-		float differenceAngleRaw = Vector2fMath::angle(joints[i], joints[uint16_t(i + 1)]) - rootAngle;
+		//float differenceAngleRaw = Vector2fMath::angle(joints[i], joints[uint16_t(i + 1)]) - rootAngle;
 
-		// wrap differenceAngleRaw between -PI and +PI
-		if (differenceAngleRaw < -Mathf::PI) differenceAngleRaw += Mathf::TAU;
-		if (differenceAngleRaw > +Mathf::PI) differenceAngleRaw -= Mathf::TAU;
-		
-		float differenceAngle = Mathf::clamp(
-			differenceAngleRaw,
-			jointAngleConstraints[i].first * Mathf::PI / 180.f,
-			jointAngleConstraints[i].second * Mathf::PI / 180.f
-		);
+		//// wrap differenceAngleRaw between -PI and +PI
+		//if (differenceAngleRaw < -Mathf::PI) differenceAngleRaw += Mathf::TAU;
+		//if (differenceAngleRaw > +Mathf::PI) differenceAngleRaw -= Mathf::TAU;
+		//
+		//float differenceAngle = Mathf::clamp(
+		//	differenceAngleRaw,
+		//	jointAngleConstraints[i].first * Mathf::PI / 180.f,
+		//	jointAngleConstraints[i].second * Mathf::PI / 180.f
+		//);
 
-		float angle = rootAngle + differenceAngle;
+		//float angle = rootAngle + differenceAngle;
 
-		joints[uint16_t(i + 1)] = joints[i] + Vector2fMath::rotate(sf::Vector2f(jointDistances[i], 0.f), angle);
-		rootAngle = angle;
+		float angleNoConstraints = Vector2fMath::angle(joints[i].x, joints[i].y, joints[uint16_t(i + 1)].x, joints[uint16_t(i + 1)].y);
+
+		joints[uint16_t(i + 1)].x = joints[i].x + Vector2fMath::rotate(sf::Vector2f(jointDistances[i], 0.f), angleNoConstraints).x;
+		joints[uint16_t(i + 1)].y = joints[i].y + Vector2fMath::rotate(sf::Vector2f(jointDistances[i], 0.f), angleNoConstraints).y;
+
+		//rootAngle = differenceAngleRaw;
 	}
 }
 
-static float fabrikRun(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f base, sf::Vector2f target) {
+static float fabrikRun(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector3f base, sf::Vector3f target) {
 
-	float baseToTargetDistSqrd = Vector2fMath::distSqrd(base, target);
+	float baseToTargetDistSqrd = Vector3fMath::distSqrd(base, target);
 
 	float jointDistanceTotal = 0.f;
 	for (uint16_t i = 0; i < jointDistances.size(); i++) {
@@ -98,17 +105,17 @@ static float fabrikRun(JointVector& joints, JointDistanceVector& jointDistances,
 		forwardReach(joints, jointDistances, jointAngleConstraints, target);
 		backwardReach(joints, jointDistances, jointAngleConstraints, base);
 
-		if (Vector2fMath::distSqrd(joints[joints.size() - 1], target) < 1.f * 1.f) {
+		if (Vector3fMath::distSqrd(joints[joints.size() - 1].x, joints[joints.size() - 1].y, joints[joints.size() - 1].z, target.x, target.y, 0) < 1.f * 1.f) {
 			break;
 		}
 	}
 
-	return Vector2fMath::distSqrd(joints[joints.size() - 1], target);
+	return Vector3fMath::distSqrd(joints[joints.size() - 1].x, joints[joints.size() - 1].y, joints[joints.size() - 1].z, target.x, target.y, 0);
 }
 
 const float lerpAmount = 0.5f;
 
-static void fabrikUpdate(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector2f base, sf::Vector2f target) {
+static void fabrikUpdate(JointVector& joints, JointDistanceVector& jointDistances, JointAngleConstraintVector& jointAngleConstraints, sf::Vector3f base, sf::Vector3f target) {
 	JointVector jointsOld = joints;
 
 	float dist = fabrikRun(joints, jointDistances, jointAngleConstraints, base, target);
@@ -117,7 +124,7 @@ static void fabrikUpdate(JointVector& joints, JointDistanceVector& jointDistance
 
 		joints = jointsOld;
 
-		sf::Vector2f targetNew = base + (Vector2fMath::dir(base, target) * Vector2fMath::dist(base, joints[joints.size() - 1]));
+		sf::Vector3f targetNew = base + (Vector3fMath::dir(base, target) * Vector3fMath::dist(base, joints[joints.size() - 1]));
 
 		fabrikRun(joints, jointDistances, jointAngleConstraints, base, targetNew);
 	}
@@ -126,7 +133,7 @@ static void fabrikUpdate(JointVector& joints, JointDistanceVector& jointDistance
 
 	for (uint16_t i = 0; i < joints.size(); i++) {
 
-		sf::Vector2f axis = Vector2fMath::axis(jointsOld[i], joints[i]);
+		sf::Vector3f axis = Vector3fMath::axis(jointsOld[i], joints[i]);
 
 		jointsNew[i] = jointsOld[i] + (axis * lerpAmount);
 	}
@@ -140,17 +147,19 @@ static sf::Texture fabrikDraw() {
 
 	fabrikEndTexture.clear(sf::Color::Transparent);
 
-	static JointVector joints(3);
-	static JointDistanceVector jointDistances(2, 64);
-	static JointAngleConstraintVector jointAngleConstraints{ { -90, 90}, { -90, 90} };
+	static JointVector joints(5);
+	static JointDistanceVector jointDistances(4, 64);
+	static JointAngleConstraintVector jointAngleConstraints(4, { -90.f, 90.f });
 
 	jointAngleConstraints[0].first = -180.f;
 	jointAngleConstraints[0].second = 180.f;
 
-	constexpr sf::Vector2f base = sf::Vector2f(640, 360);
-	static sf::Vector2f target = sf::Vector2f(sf::Mouse::getPosition(WindowHolder::windowGet()));
+	constexpr sf::Vector3f base = sf::Vector3f(640, 360, 0);
 
-	target += Vector2fMath::axis(target, sf::Vector2f(sf::Mouse::getPosition(WindowHolder::windowGet()))) * 0.025f;
+	static sf::Vector2i mousePos = sf::Mouse::getPosition(WindowHolder::windowGet());
+	static sf::Vector3f target = sf::Vector3f(mousePos.x, mousePos.y, 64);
+
+	target += Vector3fMath::axis(target.x, target.y, 0, mousePos.x, mousePos.y, 0) * 0.025f;
 
 	fabrikUpdate(joints, jointDistances, jointAngleConstraints, base, target);
 
@@ -164,8 +173,8 @@ static sf::Texture fabrikDraw() {
 
 		limbShape.setOrigin(sf::Vector2f(0, limbDrawWidth / 2.f));
 
-		sf::Vector2f jointA = joints[i];
-		sf::Vector2f jointB = joints[uint16_t(i + 1)];
+		sf::Vector2f jointA = sf::Vector2f(joints[i].x, joints[i].y);
+		sf::Vector2f jointB = sf::Vector2f(joints[uint16_t(i + 1)].x, joints[uint16_t(i + 1)].y);
 
 		limbShape.setPosition(jointA);
 
@@ -183,7 +192,7 @@ static sf::Texture fabrikDraw() {
 	for (uint16_t i = 0; i < joints.size(); i++) {
 		sf::CircleShape jointShape(jointDrawRadius);
 
-		jointShape.setPosition(joints[i]);
+		jointShape.setPosition(sf::Vector2f(joints[i].x, joints[i].y));
 		jointShape.setFillColor(sf::Color(255, 0, 0, 225));
 		jointShape.setOrigin(sf::Vector2f(jointDrawRadius, jointDrawRadius));
 
@@ -203,8 +212,8 @@ static sf::Texture fabrikDraw() {
 
 		if (i > 0) {
 
-			sf::Vector2f joint = joints[i];
-			sf::Vector2f jointPrev = joints[i - 1];
+			sf::Vector2f joint = sf::Vector2f(joints[i].x, joints[i].y);
+			sf::Vector2f jointPrev = sf::Vector2f(joints[i - 1].x, joints[i - 1].y);
 
 			angleConstraintShape.setPosition(joint);
 
@@ -219,7 +228,7 @@ static sf::Texture fabrikDraw() {
 			fabrikEndTexture.draw(angleConstraintShape);
 		}
 		else {
-			sf::Vector2f joint = joints[i];
+			sf::Vector2f joint = sf::Vector2f(joints[i].x, joints[i].y);
 
 			angleConstraintShape.setPosition(joint);
 
