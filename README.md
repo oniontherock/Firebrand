@@ -7,10 +7,7 @@ Firebrand is what happened after [Opticus](https://github.com/oniontherock/Optic
 
 ## The game
 
-You lead a squad of three soldiers through an apocalypse, trying to reach a safe zone by traveling a branching path that leads north. The world is meant to be hostile and atmospheric, populated by things that are deliberately wrong:
-
-- **The Rot** — a sentient mold that spreads from building to building, rearranging furniture to block out all light as it grows.
-- **The Shepherd** — a twenty-foot figure in a cloak whose face is a black hole. Dozens of umbilical cords trail from it, each ending in a human body — necks joined to the cords rather than to heads. It is completely blind, feeling its way through the world for anything it can add to its flock.
+You lead a squad of three soldiers through an apocalypse, trying to reach a safe zone by traveling a branching path that leads north. The world is meant to be hostile and atmospheric, populated by uncanny beings and monsters.
 
 ## What's implemented vs. planned
 
