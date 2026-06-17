@@ -14,7 +14,7 @@ You lead a squad of three soldiers through an apocalypse, trying to reach a safe
 - **Working:** AI pathfinding and basic enemy behavior.
 - **Designed and partly built:** a general-purpose procedural animation system driven by inverse kinematics. The IK animation work was started but not finished.
 
-I've kept this honest rather than tidied up after the fact: it's a prototype where some systems run and others were still on the workbench.
+I've kept this honest: it's a prototype where some systems run and others were still on the workbench.
 
 ## Tech
 
