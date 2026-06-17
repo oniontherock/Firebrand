@@ -12,7 +12,7 @@ You lead a squad of three soldiers through an apocalypse, trying to reach a safe
 ## What's implemented vs. planned
 
 - **Working:** AI pathfinding and basic enemy behavior.
-- **Designed and partly built:** a fully customizable weapon system, and a general-purpose procedural animation system driven by inverse kinematics. The IK animation work was started but not finished.
+- **Designed and partly built:** a general-purpose procedural animation system driven by inverse kinematics. The IK animation work was started but not finished.
 
 I've kept this honest rather than tidied up after the fact: it's a prototype where some systems run and others were still on the workbench.
 
@@ -23,3 +23,5 @@ C++17 with SFML 3.0.0 (bundled in the repo) and a little GLSL, built as a Visual
 ## Status
 
 An unfinished prototype. The pathfinding and core loop work; the larger systems — weapons, IK animation — were in progress when I set it aside.
+
+There are a LOT of details about this game that I haven't gone into detail here. If you'd like a more in depth explanation of my original plans for the game, feel free to reach out.
